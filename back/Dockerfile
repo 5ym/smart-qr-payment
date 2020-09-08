@@ -2,7 +2,7 @@ FROM alpine
 
 WORKDIR /usr/src/app
 COPY . .
-RUN apk add --no-cache python3 py-pip && pip install -r requirements.txt
+RUN apk add --no-cache python3-dev py-pip build-base mariadb-connector-c-dev && pip install -r requirements.txt
 
 EXPOSE 8000
 

@@ -6,4 +6,4 @@ RUN apk add --no-cache python3-dev py-pip build-base mariadb-connector-c-dev && 
 
 EXPOSE 8000
 
-CMD python3 manage.py runserver
+CMD python3 manage.py runserver 0.0.0.0:8000

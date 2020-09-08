@@ -26,7 +26,7 @@ SECRET_KEY = 'id23p7*3ld)0ty@4*kq%*yt)n0lu68%0opdj=c7fcu!((g1q$#'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['sqp.localhost']
 
 
 # Application definition
@@ -66,9 +66,7 @@ JWT_AUTH = {
     'JWT_REFRESH_EXPIRATION_DELTA': datetime.timedelta(days=7),
 }
 
-CORS_ORIGIN_WHITELIST = (
-    'http://sf.localhost',
-)
+AUTH_USER_MODEL = 'sqp.User'
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
@@ -154,4 +152,4 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/3.1/howto/static-files/
 
-STATIC_URL = '/static/'
+STATIC_URL = '/api/static/'

@@ -1,13 +1,15 @@
 version: '3.8'
 services:
-  sb-sqp:
+  sqp-back:
     build: back
     volumes:
       - ./back:/usr/src/app
     networks:
       - docker_default
       - default
-  sf-sqp:
+    labels:
+      - "traefik.http.routers.sb.rule=Host(`sqp.localhost`) && PathPrefix(`/api`)"
+  sqp-front:
     build: front
     volumes:
         - ./front:/usr/src/app

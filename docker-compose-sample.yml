@@ -1,0 +1,28 @@
+version: '3.8'
+services:
+  sb-sqp:
+    build: back
+    volumes:
+      - ./back:/usr/src/app
+    networks:
+      - docker_default
+      - default
+  sf-sqp:
+    build: front
+    volumes:
+        - ./front:/usr/src/app
+    networks:
+        - docker_default
+        - default
+  sqp-db:
+    image: mariadb
+    environment:
+      - MYSQL_ROOT_PASSWORD=toor
+      - MYSQL_DATABASE=sqp
+    labels:
+      - "traefik.enable=false"
+
+networks:
+  docker_default:
+    external: true
+    name: docker_default

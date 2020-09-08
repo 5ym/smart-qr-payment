@@ -30,10 +30,10 @@
                         <v-container>
 
                         <v-text-field
-                            v-model="credentials.username"
+                            v-model="credentials.email"
                             :counter="70"
-                            label="ユーザー名"
-                            :rules="rules.username"
+                            label="メールアドレス"
+                            :rules="rules.email"
                             maxlength="70"
                             required
                         />
@@ -72,13 +72,13 @@ export default {
         valid:true,
         loading:false,
         rules: {
-            username: [
-                v => !!v || "ユーザー名は必須です",
+            email: [
+                v => !!v || "メールアドレスは必須です",
                 v => /^[a-z0-9_]+$/.test(v) || "許可されていない文字が入力されています"
             ],
             password: [
                 v => !!v || "パスワードは必須です",
-                v => (v && v.length > 3) || "パスワードは8文字以上でなければなりません"
+                v => (v && v.length > 7) || "パスワードは8文字以上でなければなりません"
             ]
         }
     }),
@@ -89,14 +89,14 @@ export default {
             axios.post('http://sqp.localhost/api/auth/', this.credentials).then(res => {
                 this.$session.start();
                 this.$session.set('token', res.data.token);
-                router.push('/register');
+                router.go(-1);
             // eslint-disable-next-line
             }).catch(e => {
                 this.loading = false;
                 Swal.fire({
                 type: 'warning',
                 title: 'Error',
-                text: 'ユーザー名もしくはパスワード、または両方が間違っています',
+                text: 'メールアドレスもしくはパスワード、または両方が間違っています',
                 showConfirmButton:false,
                 showCloseButton:false,
                 timer:3000

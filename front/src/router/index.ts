@@ -1,26 +1,31 @@
 import Vue from "vue";
 import VueRouter, { RouteConfig } from "vue-router";
-import Auth from "@/components/pages/Auth.vue";
+import Top from "@/components/pages/Top.vue";
+import Register from "@/components/pages/Register.vue";
+import Login from "@/components/pages/Login.vue";
 
 Vue.use(VueRouter);
-
-const routes: Array<RouteConfig> = [
-  {
-    path: "/",
-    name: "Auth",
-    component: Auth
-  },
-  {
-    path: '/auth',
-    name: 'Auth',
-    component: Auth
-  }
-];
 
 const router = new VueRouter({
   mode: "history",
   base: process.env.BASE_URL,
-  routes
+  routes: [
+    {
+      path: "/",
+      name: "Top",
+      component: Top
+    },
+    {
+      path: "/register",
+      name: "Register",
+      component: Register
+    },
+    {
+      path: '/login',
+      name: 'Login',
+      component: Login
+    }
+  ]
 });
 
 export default router;

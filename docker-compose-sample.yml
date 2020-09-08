@@ -8,14 +8,20 @@ services:
       - docker_default
       - default
     labels:
-      - "traefik.http.routers.sb.rule=Host(`sqp.localhost`) && PathPrefix(`/api`)"
+      - "traefik.http.routers.sb.rule=Host(`${ALLOWED_HOSTS}`) && PathPrefix(`/api`)"
+    environment:
+      - SECRET_KEY=${SECRET_KEY}
+      - DEBUG=${DEBUG}
+      - ALLOWED_HOSTS=${ALLOWED_HOSTS}
   sqp-front:
     build: front
     volumes:
-        - ./front:/usr/src/app
+      - ./front:/usr/src/app
     networks:
-        - docker_default
-        - default
+      - docker_default
+      - default
+    labels:
+      - "traefik.http.routers.sf.rule=Host(`${ALLOWED_HOSTS}`)"
   sqp-db:
     image: mariadb
     environment:

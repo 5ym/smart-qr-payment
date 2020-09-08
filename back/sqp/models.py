@@ -5,7 +5,6 @@ from django.contrib.auth.base_user import AbstractBaseUser
 from django.utils.translation import ugettext_lazy as _
 from django.utils import timezone
 
-
 class CustomUserManager(UserManager):
     """ユーザーマネージャー"""
     use_in_migrations = True
@@ -32,7 +31,6 @@ class CustomUserManager(UserManager):
         if extra_fields.get('is_superuser') is not True:
             raise ValueError('Superuser must have is_superuser=True.')
         return self._create_user(email, password, **extra_fields)
-
 
 class User(AbstractBaseUser, PermissionsMixin):
     """カスタムユーザーモデル."""
@@ -77,3 +75,21 @@ class User(AbstractBaseUser, PermissionsMixin):
         メールアドレスを返す
         """
         return self.email
+
+class Verify(models.Model):
+    """ This model for User activation code """
+    user = models.OneToOneField('sqp.User', on_delete=models.CASCADE)
+    code = models.CharField(max_length=50)
+
+class Product(models.Model):
+    """ This model for Product """
+    price = models.IntegerField()
+    image = models.CharField(max_length=100)
+    title = models.CharField(max_length=100)
+    desc = models.CharField(max_length=100)
+
+class UserProduct(models.Model):
+    """ Count buy product """
+    user = models.ManyToManyField('sqp.User')
+    product = models.ManyToManyField('sqp.Product')
+    count = models.IntegerField()

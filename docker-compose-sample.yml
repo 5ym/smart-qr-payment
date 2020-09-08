@@ -8,11 +8,7 @@ services:
       - docker_default
       - default
     labels:
-      - "traefik.http.routers.sb.rule=Host(`${ALLOWED_HOSTS}`) && PathPrefix(`/api`)"
-    environment:
-      - SECRET_KEY=${SECRET_KEY}
-      - DEBUG=${DEBUG}
-      - ALLOWED_HOSTS=${ALLOWED_HOSTS}
+      - "traefik.http.routers.sb.rule=Host(`sqp.localhost`) && PathPrefix(`/api`)"
   sqp-front:
     build: front
     volumes:
@@ -21,7 +17,7 @@ services:
       - docker_default
       - default
     labels:
-      - "traefik.http.routers.sf.rule=Host(`${ALLOWED_HOSTS}`)"
+      - "traefik.http.routers.sf.rule=Host(`sqp.localhost`)"
   sqp-db:
     image: mariadb
     environment:
@@ -29,6 +25,10 @@ services:
       - MYSQL_DATABASE=sqp
     labels:
       - "traefik.enable=false"
+  smh:
+    image: mailhog/mailhog
+    labels:
+      - "traefik.http.services.smh.loadbalancer.server.port=8025"
 
 networks:
   docker_default:

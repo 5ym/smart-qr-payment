@@ -20,6 +20,6 @@ from django.urls import include
 
 urlpatterns = [
     path('api/admin/', admin.site.urls),
-    path('api/auth/', obtain_jwt_token),
+    path('api/login/', obtain_jwt_token),
     path('api/', include('sqp.urls'))
 ]

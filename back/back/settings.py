@@ -21,9 +21,13 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/3.1/howto/deployment/checklist/
 
-SECRET_KEY = os.environ['SECRET_KEY']
-DEBUG = os.environ['DEBUG']
-ALLOWED_HOSTS = [os.environ['ALLOWED_HOSTS']]
+SECRET_KEY = os.environ.get('SECRET_KEY', '6$h*ya!=#qs8o1xi__tp9w2sxhg_^eo$fgzw-i1&51g_a8g=j$')
+DEBUG = os.environ.get('DEBUG', True)
+ALLOWED_HOSTS = [os.environ.get('ALLOWED_HOSTS', 'sqp.localhost')]
+
+# mail
+EMAIL_HOST = os.environ.get('EMAIL_HOST', 'smh')
+EMAIL_PORT = os.environ.get('EMAIL_PORT', 1025)
 
 # Application definition
 INSTALLED_APPS = [

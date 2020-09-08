@@ -1,22 +1,16 @@
-from .models import User
+from .models import User, Verify
 from rest_framework import generics, permissions
 
-from .serializers import UserSerializer
-
-class UserList(generics.ListAPIView):
-    """ View to list all users"""
-    queryset = User.objects.all()
-    serializer_class = UserSerializer
-    permission_classes = (permissions.IsAuthenticated,)
+from .serializers import *
 
 class UserCreate(generics.CreateAPIView):
     """ View to create a new user. Only accepts POST requests """
     queryset = User.objects.all()
     serializer_class = UserSerializer
 
-class UserRetrieveUpdate(generics.RetrieveUpdateAPIView):
+class UserActivate(generics.RetrieveUpdateAPIView):
     """ Retrieve a user or update user information.
     Accepts GET and PUT requests and the record id must be provided in the request """
     queryset = User.objects.all()
-    serializer_class = UserSerializer
+    serializer_class = ActiveSerializer
     permission_classes = (permissions.IsAuthenticated, )

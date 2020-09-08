@@ -4,4 +4,6 @@ WORKDIR /usr/src/app
 COPY . .
 RUN apk add --no-cache yarn && yarn
 
-CMD yanr serve
+EXPOSE 8080
+
+CMD yarn serve

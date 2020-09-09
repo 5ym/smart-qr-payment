@@ -1,12 +1,9 @@
 <template>
-  <v-container grid-list-md>
-    <v-layout row wrap align-center justify-center fill-height>
-      <v-flex xs12 sm8 lg4 md5>
-        <v-card class="login-card">
-          <v-card-title>
-            <span class="headline">Login to SQP</span>
-          </v-card-title>
-          <v-spacer />
+  <v-container fill-height>
+    <v-row justify="space-around" row="center">
+      <v-col xs=12 sm=8 lg=4 md=5>
+        <v-card>
+          <v-card-title>Login to SQP</v-card-title>
           <v-card-text>
             <v-layout row fill-height justify-center align-center v-if="loading">
               <v-progress-circular :size="50" color="primary" indeterminate />
@@ -36,8 +33,8 @@
             </v-form>
           </v-card-text>
         </v-card>
-      </v-flex>
-    </v-layout>
+      </v-col>
+    </v-row>
   </v-container>
 </template>
 <script>
@@ -45,7 +42,6 @@ import axios from "axios";
 import Swal from "sweetalert2";
 import router from "../../router";
 export default {
-  name: "Auth",
   data: () => ({
     credentials: {},
     valid: true,
@@ -64,26 +60,23 @@ export default {
     login() {
       if (this.$refs.form.validate()) {
         this.loading = true;
-        axios
-          .post("http://sqp.localhost/api/login/", this.credentials)
-          .then(res => {
-            this.$session.start();
-            this.$session.set("token", res.data.token);
-            router.go(-1);
-            // eslint-disable-next-line
-          })
-          .catch(e => {
-            this.loading = false;
-            Swal.fire({
-              type: "warning",
-              title: "Error",
-              text:
-                "メールアドレスもしくはパスワード、または両方が間違っています",
-              showConfirmButton: false,
-              showCloseButton: false,
-              timer: 3000
-            });
+        axios.post(location.protocol+"//"+window.location.hostname+"/api/login/", this.credentials).then(res => {
+          this.$session.start();
+          this.$session.set("token", res.data.token);
+          router.go(-1);
+        })
+        .catch(e => {
+          this.loading = false;
+          Swal.fire({
+            type: "warning",
+            title: "Error",
+            text:
+              "メールアドレスもしくはパスワード、または両方が間違っています",
+            showConfirmButton: false,
+            showCloseButton: false,
+            timer: 3000
           });
+        });
       }
     }
   }

@@ -3,6 +3,7 @@ from rest_framework import serializers
 import random, string
 from django.core.mail import send_mail
 from django.conf import settings
+from django.contrib.auth.hashers import make_password
 
 class VerifySerializer(serializers.ModelSerializer):
     """ A serializer class for the Verify model """
@@ -36,7 +37,7 @@ class UserSerializer(serializers.ModelSerializer):
         fields = ('id', 'email', 'password', 'userproducts')
     # ユーザー作成時にverifyコードの生成,購入商品の登録
     def create(self, validated_data):
-        user = User.objects.create(email=validated_data['email'], password=validated_data['password'], is_active=False)
+        user = User.objects.create(email=validated_data['email'], password=make_password(validated_data['password']), is_active=False)
         code = ''.join([random.choice(string.ascii_letters + string.digits) for i in range(16)])
         verify = Verify(user=user, code=code)
         verify.save()
@@ -51,3 +52,9 @@ class UserSerializer(serializers.ModelSerializer):
             up = UserProduct(user=user, product=item['product'], count=item['count'])
             up.save()
         return user
+
+class ProductSerializer(serializers.ModelSerializer):
+    """ Aserializer class for the Product model """
+    class Meta:
+        model = Product
+        fields = '__all__'

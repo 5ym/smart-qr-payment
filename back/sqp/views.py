@@ -1,4 +1,4 @@
-from .models import User, Verify
+from .models import User, Verify, Product
 from rest_framework import generics, permissions
 from .serializers import *
 
@@ -15,3 +15,9 @@ class UserVerify(generics.RetrieveUpdateAPIView):
     serializer_class = UserVerifySerializer
     permission_classes = (permissions.IsAuthenticated, )
     lookup_field = 'verify__code'
+
+class ProductList(generics.ListAPIView):
+    """ View to list all products """
+    queryset = Product.objects.all()
+    serializer_class = ProductSerializer
+    permission_classes = ()

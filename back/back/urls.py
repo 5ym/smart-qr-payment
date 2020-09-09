@@ -17,9 +17,11 @@ from django.contrib import admin
 from django.urls import path
 from rest_framework_jwt.views import obtain_jwt_token
 from django.urls import include
+from django.conf import settings
+from django.conf.urls.static import static
 
 urlpatterns = [
     path('api/admin/', admin.site.urls),
     path('api/login/', obtain_jwt_token),
     path('api/', include('sqp.urls'))
-]
+] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

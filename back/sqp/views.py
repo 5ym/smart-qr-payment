@@ -13,7 +13,7 @@ class UserVerify(generics.RetrieveUpdateAPIView):
     Accepts GET and PUT requests and the record id must be provided in the request """
     queryset = User.objects.all()
     serializer_class = UserVerifySerializer
-    permission_classes = (permissions.IsAuthenticated, )
+    permission_classes = ()
     lookup_field = 'verify__code'
 
 class ProductList(generics.ListAPIView):

@@ -89,7 +89,12 @@ class Product(models.Model):
     desc = models.CharField(max_length=100)
 
 class UserProduct(models.Model):
-    """ Count buy product """
-    user = models.ForeignKey('sqp.User', related_name='userproducts', on_delete=models.SET_NULL, blank=False, null=True)
-    product = models.ForeignKey('sqp.Product', on_delete=models.SET_NULL, blank=False, null=True)
+    """ Count buy product and purchase price (When ordering) """
+    user = models.ForeignKey('sqp.User', related_name='userproducts', on_delete=models.CASCADE)
+    product = models.ForeignKey('sqp.Product', on_delete=models.CASCADE)
     count = models.IntegerField()
+    price = models.IntegerField()
+
+class Pay(models.Model):
+    """ payment status """
+    user = models.OneToOneField('sqp.User', related_name='pay', on_delete=models.CASCADE)

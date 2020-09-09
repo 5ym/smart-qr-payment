@@ -12,6 +12,6 @@ docker-compose up -d
 ```
 
 必要に応じてスーパーユーザーの作成
-```
+```sh
 docker-compose run --rm sqp-back sh -c 'python3 manage.py createsuperuser'
 ```

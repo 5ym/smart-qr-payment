@@ -49,7 +49,7 @@ class UserSerializer(serializers.ModelSerializer):
             [user.email],
         )
         for item in validated_data['userproducts']:
-            up = UserProduct(user=user, product=item['product'], count=item['count'])
+            up = UserProduct(user=user, product=item['product'], count=item['count'], price=item['product'].price)
             up.save()
         return user
 

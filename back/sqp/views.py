@@ -8,9 +8,10 @@ class UserCreate(generics.CreateAPIView):
     serializer_class = UserSerializer
     permission_classes = ()
 
-class UserActivate(generics.RetrieveUpdateAPIView):
+class UserVerify(generics.RetrieveUpdateAPIView):
     """ Retrieve a user or update user information.
     Accepts GET and PUT requests and the record id must be provided in the request """
     queryset = User.objects.all()
-    serializer_class = ActiveSerializer
+    serializer_class = UserVerifySerializer
     permission_classes = (permissions.IsAuthenticated, )
+    lookup_field = 'activate__code'

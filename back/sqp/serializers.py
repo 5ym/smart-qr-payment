@@ -2,17 +2,18 @@ from .models import User, Verify, Product, UserProduct
 from rest_framework import serializers
 import random, string
 
-class ActiveSerializer(serializers.ModelSerializer):
-    """ A serializer class for the User model """
-    class Meta:
-        model = User
-        fields = ('id', 'is_active')
-
 class VerifySerializer(serializers.ModelSerializer):
     """ A serializer class for the Verify model """
     class Meta:
         model = Verify
-        fields = '__all__'
+        fields = ('id', 'code')
+
+class UserVerifySerializer(serializers.ModelSerializer):
+    """ A serializer class for the User model """
+    verify = VerifySerializer(read_only=True)
+    class Meta:
+        model = User
+        fields = ('id', 'is_active', 'verify')
 
 class UserProductSerializer(serializers.ModelSerializer):
     """ Aserializer class for the UserProduct model """
@@ -26,6 +27,7 @@ class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
         fields = ('id', 'email', 'password', 'userproducts')
+    # ユーザー作成時にverifyコードの生成,購入商品の登録
     def create(self, validated_data):
         user = User.objects.create(email=validated_data['email'], password=validated_data['password'])
         randlst = [random.choice(string.ascii_letters + string.digits) for i in range(16)]

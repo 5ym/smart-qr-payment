@@ -78,10 +78,8 @@ class User(AbstractBaseUser, PermissionsMixin):
 
 class Verify(models.Model):
     """ This model for User activation code """
-    user = models.OneToOneField('sqp.User', on_delete=models.CASCADE)
+    user = models.OneToOneField('sqp.User', related_name='verify', on_delete=models.CASCADE)
     code = models.CharField(max_length=50)
-    def _str_(self):
-        return self.code
 
 class Product(models.Model):
     """ This model for Product """
@@ -92,6 +90,6 @@ class Product(models.Model):
 
 class UserProduct(models.Model):
     """ Count buy product """
-    user = models.ForeignKey('sqp.User', on_delete=models.SET_NULL, blank=False, null=True)
+    user = models.ForeignKey('sqp.User', related_name='userproducts', on_delete=models.SET_NULL, blank=False, null=True)
     product = models.ForeignKey('sqp.Product', on_delete=models.SET_NULL, blank=False, null=True)
     count = models.IntegerField()

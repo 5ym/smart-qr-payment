@@ -3,5 +3,5 @@ from .views import *
 
 urlpatterns = [
     path('register/', UserCreate.as_view()),
-    path('verify/<activate__code>/', UserVerify.as_view())
+    path('verify/<verify__code>/', UserVerify.as_view())
 ]

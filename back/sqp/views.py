@@ -14,4 +14,4 @@ class UserVerify(generics.RetrieveUpdateAPIView):
     queryset = User.objects.all()
     serializer_class = UserVerifySerializer
     permission_classes = (permissions.IsAuthenticated, )
-    lookup_field = 'activate__code'
+    lookup_field = 'verify__code'

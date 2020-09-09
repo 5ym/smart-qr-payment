@@ -80,6 +80,8 @@ class Verify(models.Model):
     """ This model for User activation code """
     user = models.OneToOneField('sqp.User', on_delete=models.CASCADE)
     code = models.CharField(max_length=50)
+    def _str_(self):
+        return self.code
 
 class Product(models.Model):
     """ This model for Product """
@@ -90,6 +92,6 @@ class Product(models.Model):
 
 class UserProduct(models.Model):
     """ Count buy product """
-    user = models.ManyToManyField('sqp.User')
-    product = models.ManyToManyField('sqp.Product')
+    user = models.ForeignKey('sqp.User', on_delete=models.SET_NULL, blank=False, null=True)
+    product = models.ForeignKey('sqp.Product', on_delete=models.SET_NULL, blank=False, null=True)
     count = models.IntegerField()

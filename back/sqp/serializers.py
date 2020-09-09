@@ -14,20 +14,24 @@ class VerifySerializer(serializers.ModelSerializer):
         model = Verify
         fields = '__all__'
 
-class UserProductSerializer():
+class UserProductSerializer(serializers.ModelSerializer):
     """ Aserializer class for the UserProduct model """
     class Meta:
         model = UserProduct
-        fields = '__all__'
+        fields = ('id', 'product', 'count')
 
 class UserSerializer(serializers.ModelSerializer):
     """ A serializer class for the User model """
+    userproducts = UserProductSerializer(many=True)
     class Meta:
         model = User
-        fields = ('id', 'email', 'password')
+        fields = ('id', 'email', 'password', 'userproducts')
     def create(self, validated_data):
         user = User.objects.create(email=validated_data['email'], password=validated_data['password'])
         randlst = [random.choice(string.ascii_letters + string.digits) for i in range(16)]
         verify = Verify(user=user, code=''.join(randlst))
         verify.save()
+        for item in validated_data['userproducts']:
+            up = UserProduct(user=user, product=item['product'], count=item['count'])
+            up.save()
         return user

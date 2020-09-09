@@ -14,10 +14,3 @@ class UserActivate(generics.RetrieveUpdateAPIView):
     queryset = User.objects.all()
     serializer_class = ActiveSerializer
     permission_classes = (permissions.IsAuthenticated, )
-
-class UserProductCreate(generics.CreateAPIView):
-    """ create UserProduct """
-    queryset = User.objects.all()
-    serializer_class = UserProductSerializer
-    permission_classes = (permissions.IsAuthenticated, )
-

@@ -9,26 +9,24 @@
               <v-progress-circular :size="50" color="primary" indeterminate />
             </v-layout>
             <v-form v-else ref="form" v-model="valid" lazy-validation>
-              <v-container>
-                <v-text-field
-                  type="email"
-                  v-model="credentials.email"
-                  :counter="70"
-                  label="メールアドレス"
-                  :rules="rules.email"
-                  maxlength="70"
-                  required
-                />
-                <v-text-field
-                  type="password"
-                  v-model="credentials.password"
-                  :counter="20"
-                  label="パスワード"
-                  :rules="rules.password"
-                  maxlength="20"
-                  required
-                />
-              </v-container>
+              <v-text-field
+                type="email"
+                v-model="credentials.email"
+                :counter="70"
+                label="メールアドレス"
+                :rules="rules.email"
+                maxlength="70"
+                required
+              />
+              <v-text-field
+                type="password"
+                v-model="credentials.password"
+                :counter="20"
+                label="パスワード"
+                :rules="rules.password"
+                maxlength="20"
+                required
+              />
               <v-btn class="pink white--text" :disabled="!valid" @click="login">Login</v-btn>
             </v-form>
           </v-card-text>

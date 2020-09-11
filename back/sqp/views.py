@@ -2,7 +2,6 @@ from .models import User, Verify, Product
 from rest_framework import generics, permissions
 from django.shortcuts import get_object_or_404
 from .serializers import *
-from sqp.permissions import *
 
 class UserCreate(generics.CreateAPIView):
     """ View to create a new user. Only accepts POST requests """
@@ -28,7 +27,7 @@ class OrderGet(generics.RetrieveAPIView):
     """ View to Order """
     queryset = User.objects.all()
     serializer_class = OrderGetSerializer
-    permission_classes = (permissions.IsAuthenticated, IsOwnerOnly)
+    permission_classes = (permissions.IsAuthenticated, )
     def get_object(self):
         queryset = self.get_queryset()
         obj = get_object_or_404(queryset, id=self.request.user.id)

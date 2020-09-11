@@ -48,32 +48,27 @@
         <v-col xs=12 sm=8 lg=4 md=5>
           <v-card>
             <v-card-text>
-              <v-layout row fill-height justify-center align-center v-if="loading">
-                <v-progress-circular :size="50" color="primary" indeterminate />
-              </v-layout>
-              <v-form v-else ref="form" v-model="valid" lazy-validation>
-                <v-container>
-                  <v-text-field
-                    type="email"
-                    v-model="data.email"
-                    :counter="70"
-                    label="メールアドレス"
-                    :rules="rules.email"
-                    maxlength="70"
-                    required
-                  />
-                  <v-text-field
-                    type="password"
-                    v-model="data.password"
-                    :counter="20"
-                    label="パスワード"
-                    :rules="rules.password"
-                    maxlength="20"
-                    required
-                  />
-                </v-container>
-                <v-btn class="pink white--text" :disabled="!valid" @click="register">送信</v-btn>
-              </v-form>
+              <v-container>
+                <v-text-field
+                  type="email"
+                  v-model="data.email"
+                  :counter="70"
+                  label="メールアドレス"
+                  :rules="rules.email"
+                  maxlength="70"
+                  required
+                />
+                <v-text-field
+                  type="password"
+                  v-model="data.password"
+                  :counter="20"
+                  label="パスワード"
+                  :rules="rules.password"
+                  maxlength="20"
+                  required
+                />
+              </v-container>
+              <v-btn class="pink white--text" :disabled="!valid" @click="register">送信</v-btn>
             </v-card-text>
           </v-card>
         </v-col>
@@ -106,7 +101,7 @@
         ]
       },
       cards: [
-        { id: 1, title: 'Now loading', desc: '', image: ''},
+        { id: 1, price: 0, title: 'Now loading', desc: '', image: ''},
       ],
     }),
     created () {

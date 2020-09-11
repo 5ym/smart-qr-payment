@@ -61,6 +61,7 @@ class ProductSerializer(serializers.ModelSerializer):
 
 class UserProductGetSerializer(serializers.ModelSerializer):
     """ Aserializer class for the UserProduct model """
+    product = ProductSerializer()
     class Meta:
         model = UserProduct
         fields = ('id', 'product', 'count', 'price')

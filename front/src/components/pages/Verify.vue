@@ -10,7 +10,7 @@
         Swal.fire({
           type: "info",
           title: "確認完了",
-          text: "メールアドレスの確認が完了しました。3秒後にログイン画面に移動します。その後支払画面に移動します。",
+          text: "メールアドレスの確認が完了しました。3秒後に支払画面に移動します。",
           showConfirmButton: false,
           showCloseButton: false,
           timer: 3000,

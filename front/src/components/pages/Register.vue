@@ -138,9 +138,9 @@
               html: "メールを送信いたしました。メールをご確認ください。<br><a href='https://mail.google.com/'>Gmail</a><br><a href='android-app://com.google.android.gm'>受信ボックス(Android)</a><br><a href='message:'>受信ボックス(iOS)</a>",
               showConfirmButton: false,
               showCloseButton: false,
-              onClose: DeleteUnsavedImages
+              onClose: closemes
             });
-            function DeleteUnsavedImages(){
+            function closemes(){
               router.go(0);
             }
           }).catch(e => {
@@ -151,7 +151,6 @@
               text: "送信時にエラーが発生しました。入力内容をお確かめにうえ再度送信してください。",
               showConfirmButton: false,
               showCloseButton: false,
-              timer: 3000
             });
           });
         }

@@ -1,9 +1,10 @@
-from .models import User, Verify, Product, UserProduct
+from .models import User, Verify, Product, UserProduct, Pay
 from rest_framework import serializers
 import random, string
 from django.core.mail import send_mail
 from django.conf import settings
 from django.contrib.auth.hashers import make_password
+import stripe
 
 class VerifySerializer(serializers.ModelSerializer):
     """ A serializer class for the Verify model """
@@ -66,9 +67,35 @@ class UserProductGetSerializer(serializers.ModelSerializer):
         model = UserProduct
         fields = ('id', 'product', 'count', 'price')
 
+class PaySerializer(serializers.ModelSerializer):
+    """ Aserializer class for the Pay model """
+    class Meta:
+        model = Pay
+        fields = ('id', 'token')
+    def create(self, validated_data):
+        request = self.context.get('request', None)
+        stripe.api_key = settings.STRIPE_SECRET_KEY
+        customer = stripe.Customer.create(email=request.user.email, source=validated_data["token"])
+        amount = 0
+        for product in request.user.userproducts.all():
+            amount += product.count * product.price
+        try:
+            charge = stripe.Charge.create(
+                amount=amount,
+                currency="jpy",
+                customer=customer,
+            )
+        except stripe.error.CardError as e:
+            stripe.Customer.delete(customer)
+            raise serializers.ValidationError(e.error.message)
+        code = ''.join([random.choice(string.ascii_letters + string.digits) for i in range(16)])
+        pay = Pay.objects.create(user=request.user, token=customer.id, code=code)
+        return pay
+
 class OrderGetSerializer(serializers.ModelSerializer):
     """ Aserializer class for the UserProduct and User model """
     userproducts = UserProductGetSerializer(many=True)
+    pay = PaySerializer()
     class Meta:
         model = User
-        fields = ('id', 'userproducts')
+        fields = ('id', 'userproducts', 'pay')

@@ -1,4 +1,4 @@
-from .models import User, Verify, Product
+from .models import User, Verify, Product, Pay
 from rest_framework import generics, permissions
 from django.shortcuts import get_object_or_404
 from .serializers import *
@@ -32,3 +32,9 @@ class OrderGet(generics.RetrieveAPIView):
         queryset = self.get_queryset()
         obj = get_object_or_404(queryset, id=self.request.user.id)
         return obj
+
+class PayCreate(generics.CreateAPIView):
+    """ View to create a new pay status. Only accepts POST requests """
+    queryset = Pay.objects.all()
+    serializer_class = PaySerializer
+    permission_classes = (permissions.IsAuthenticated, )

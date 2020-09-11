@@ -45,8 +45,16 @@
       <v-row justify="space-around" row="center">
         <v-col xs="12" sm="8" lg="4" md="5">
           <v-card>
-            <v-card-text>
-              <v-btn class="pink white--text">送信</v-btn>
+            <v-layout row fill-height justify-center align-center v-if="loading">
+              <v-progress-circular :size="50" color="primary" indeterminate />
+            </v-layout>
+            <v-card-text v-else>
+              <card
+                :class='{ complete }'
+                :stripe='pk'
+                @change='complete = $event.complete'
+              />
+              <v-btn class="pink white--text" @click='pay' :disabled='!complete'>支払</v-btn>
             </v-card-text>
           </v-card>
         </v-col>
@@ -57,11 +65,18 @@
 <script>
   import axios from "axios";
   import router from "../../router";
+  import { Card, createToken } from 'vue-stripe-elements-plus';
+  import Vue from "vue";
+  import Swal from "sweetalert2";
+
   export default {
+    components: { Card },
     data: () => ({
       loading: false,
       desserts: [{id: 0, name: 'Now loading', price: 0, count: 0, subtotal: 0,},],
-      total: 0
+      total: 0,
+      complete: false,
+      pk: Vue.prototype.$pk
     }),
     mounted() {
       this.$session.start();
@@ -70,7 +85,8 @@
     created() {
       this.$session.start();
       axios.get(location.protocol + "//" + window.location.hostname + "/api/order", {headers: { Authorization: "JWT " + this.$session.get("token") }}).then(response => {
-        console.log(response.data);
+        if(response.data.pay !== null)
+          router.push("/qr");
         this.desserts = [];
         response.data.userproducts.forEach(i => {
           this.desserts.push({id: i.product.id, title: i.product.title, price: i.price, count: i.count, subtotal: i.price * i.count});
@@ -80,6 +96,41 @@
       }).catch(e => {
         if (e.response.status === 401) router.push("/login");
       });
+    },
+    methods: {
+      pay () {
+        createToken().then(data => {
+          this.loading = true;
+          axios.post(location.protocol + "//" + window.location.hostname + "/api/pay", {token: data.token.id}, {headers: { Authorization: "JWT " + this.$session.get("token") }}).then(response => {
+            this.loading = false;
+            Swal.fire({
+              type: "warning",
+              title: "決済完了",
+              html: "カード決済が完了しました。3秒後にQRコード画面に移動します。",
+              showConfirmButton: false,
+              showCloseButton: false,
+              timer: 3000,
+              onClose: closemes
+            });
+            function closemes(){
+              router.push("/qr");
+            }
+          }).catch(e => {
+            this.loading = false;
+            if (e.response.status === 401) {
+              router.push("/login");
+            } else {
+              Swal.fire({
+                type: "warning",
+                title: "Error",
+                html: "カード決済時にエラーが発生しました。別のカードをお試しいただくか、カード会社にお問い合わせください。<br>エラーメッセージ<br>"+e.response.data[0],
+                showConfirmButton: false,
+                showCloseButton: false,
+              });
+            }
+          });
+        })
+      }
     }
   };
 </script>

@@ -98,3 +98,5 @@ class UserProduct(models.Model):
 class Pay(models.Model):
     """ payment status """
     user = models.OneToOneField('sqp.User', related_name='pay', on_delete=models.CASCADE)
+    token = models.CharField(max_length=100)
+    code = models.CharField(max_length=50)

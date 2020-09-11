@@ -6,6 +6,7 @@ import Login from "@/components/pages/Login.vue";
 import Verify from "@/components/pages/Verify.vue";
 import Not from "@/components/pages/Not.vue";
 import Pay from "@/components/pages/Pay.vue";
+import Qr from "@/components/pages/Qr.vue";
 
 Vue.use(VueRouter);
 
@@ -18,6 +19,7 @@ const router = new VueRouter({
     {path: '/login', name: 'Login', component: Login},
     {path: '/verify/:code', name: 'Verify', component: Verify},
     {path: '/pay', name: 'Pay', component: Pay},
+    {path: '/qr', name: 'Qr', component: Qr},
     {path: '*', name: 'Not', component: Not}
   ]
 });

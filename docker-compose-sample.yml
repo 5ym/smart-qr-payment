@@ -9,6 +9,8 @@ services:
       - default
     labels:
       - "traefik.http.routers.sb.rule=Host(`sqp.localhost`) && PathPrefix(`/api`)"
+    environment:
+      - STRIPE_SECRET_KEY=hoge # stripe用secret key
   sqp-front:
     build: front
     volumes:

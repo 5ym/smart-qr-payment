@@ -28,6 +28,9 @@ ALLOWED_HOSTS = [os.environ.get('ALLOWED_HOSTS', 'sqp.localhost')]
 # mail
 EMAIL_HOST = os.environ.get('EMAIL_HOST', 'smh')
 EMAIL_PORT = os.environ.get('EMAIL_PORT', 1025)
+EMAIL_HOST_USER = os.environ.get('EMAIL_HOST_USER', None)
+EMAIL_HOST_PASSWORD = os.environ.get('EMAIL_HOST_PASSWORD', None)
+EMAIL_USE_SSL = os.environ.get('EMAIL_USE_SSL', False)
 
 # Application definition
 INSTALLED_APPS = [

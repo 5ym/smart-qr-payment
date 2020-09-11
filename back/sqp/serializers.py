@@ -23,7 +23,7 @@ class UserVerifySerializer(serializers.ModelSerializer):
         instance.verify.delete()
         return instance
 
-class UserProductSerializer(serializers.ModelSerializer):
+class UserProductCreateSerializer(serializers.ModelSerializer):
     """ Aserializer class for the UserProduct model """
     class Meta:
         model = UserProduct
@@ -31,7 +31,7 @@ class UserProductSerializer(serializers.ModelSerializer):
 
 class UserSerializer(serializers.ModelSerializer):
     """ A serializer class for the User model """
-    userproducts = UserProductSerializer(many=True)
+    userproducts = UserProductCreateSerializer(many=True)
     class Meta:
         model = User
         fields = ('id', 'email', 'password', 'userproducts')
@@ -58,3 +58,16 @@ class ProductSerializer(serializers.ModelSerializer):
     class Meta:
         model = Product
         fields = '__all__'
+
+class UserProductGetSerializer(serializers.ModelSerializer):
+    """ Aserializer class for the UserProduct model """
+    class Meta:
+        model = UserProduct
+        fields = ('id', 'product', 'count', 'price')
+
+class OrderGetSerializer(serializers.ModelSerializer):
+    """ Aserializer class for the UserProduct and User model """
+    userproducts = UserProductGetSerializer(many=True)
+    class Meta:
+        model = User
+        fields = ('id', 'userproducts')

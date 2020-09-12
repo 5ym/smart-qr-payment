@@ -44,3 +44,13 @@ class SecurePayCreate(generics.CreateAPIView):
     queryset = Pay.objects.all()
     serializer_class = SecurePaySerializer
     permission_classes = (permissions.IsAuthenticated, )
+
+class CodeGet(generics.RetrieveAPIView):
+    """ View to Code """
+    queryset = User.objects.all()
+    serializer_class = CodeGetSerializer
+    permission_classes = (permissions.IsAuthenticated, )
+    def get_object(self):
+        queryset = self.get_queryset()
+        obj = get_object_or_404(queryset, id=self.request.user.id)
+        return obj

@@ -13,7 +13,7 @@ Vue.config.productionTip = false;
 
 Vue.use({
   install(Vue) {
-    Vue.prototype.$pk = process.env.pk || 'pk_test_bvs1no5I4wZDM1hcwhDaAXFJ';
+    Vue.prototype.$pk = process.env.VUE_APP_STRIPE_PUBLISHABLE_KEY || 'pk_test_bvs1no5I4wZDM1hcwhDaAXFJ';
   }
 });
 

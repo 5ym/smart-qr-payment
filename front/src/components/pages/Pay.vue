@@ -13,6 +13,9 @@
     height:100%;
     border: none;
   }
+  .mt {
+    margin-top: 1em;
+  }
 </style>
 <template>
   <v-container>
@@ -57,7 +60,7 @@
           <v-card-text>
             <div id="card-element"></div>
             <div id="card-errors" role="alert"></div>
-            <v-btn class="pink white--text" @click='submit' :disabled='loading' :loading='loading'>支払</v-btn>
+            <v-btn class="pink white--text mt" @click='submit' :disabled='loading' :loading='loading'>支払</v-btn>
           </v-card-text>
         </v-card>
       </v-col>
@@ -67,8 +70,8 @@
 <script>
   import axios from "axios";
   import router from "../../router";
-  import Vue from "vue";
   import Swal from "sweetalert2";
+  import Vue from "vue";
 
   export default {
     data: () => ({
@@ -78,11 +81,10 @@
       stripe: Stripe(Vue.prototype.$pk),
       card: null,
       dialog: false,
-      iframe: null
+      iframe: null,
+      intent: null
     }),
     mounted() {
-      this.$session.start();
-      if (!this.$session.has("token")) router.push("/login");
       // card element
       const elements = this.stripe.elements();
       this.card = elements.create("card");
@@ -99,7 +101,7 @@
       window.addEventListener('message', function(ev) {
         if (ev.data === '3DS-authentication-complete') {
           self.dialog = false;
-          self.stripe.retrievePaymentIntent(self.$session.get("intent").client_secret).then(result => {
+          self.stripe.retrievePaymentIntent(self.intent).then(result => {
             if(!result.error) {
               if (result.paymentIntent.status === 'succeeded') {
                 Swal.fire({
@@ -128,6 +130,7 @@
     },
     created() {
       this.$session.start();
+      if (!this.$session.has("token")) router.push("/login");
       axios.get(location.protocol + "//" + window.location.hostname + "/api/order", {headers: { Authorization: "JWT " + this.$session.get("token") }}).then(response => {
         if(response.data.pay !== null)
           router.push("/qr");
@@ -167,7 +170,7 @@
               router.push("/login");
             } else if(e.response.data[0] === "req") {
               this.stripe.retrievePaymentIntent(e.response.data[1]).then(r => {
-                this.$session.set("intent", r.paymentIntent);
+                this.intent = r.paymentIntent.client_secret;
                 this.iframe = r.paymentIntent.next_action.redirect_to_url.url;
                 this.dialog = true;
               });

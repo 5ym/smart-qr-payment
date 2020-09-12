@@ -1,4 +1,13 @@
 <template>
+  <v-container fill-height>
+      <v-row justify="space-around" row="center">
+        <v-col xs=12 sm=8 lg=4 md=5>
+          <v-card>
+            <v-card-title>処理中...</v-card-title>
+          </v-card>
+        </v-col>
+      </v-row>
+  </v-container>
 </template>
 <script>
   import axios from "axios";

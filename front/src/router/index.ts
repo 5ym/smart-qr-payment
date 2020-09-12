@@ -1,14 +1,16 @@
 import Vue from "vue";
 import VueRouter, { RouteConfig } from "vue-router";
-import Top from "@/components/pages/Top.vue";
-import Register from "@/components/pages/Register.vue";
-import Login from "@/components/pages/Login.vue";
-import Verify from "@/components/pages/Verify.vue";
-import Not from "@/components/pages/Not.vue";
-import Pay from "@/components/pages/Pay.vue";
-import Qr from "@/components/pages/Qr.vue";
-import Secure from "@/components/pages/Secure.vue";
-import Real from "@/components/pages/Real.vue";
+import Top from "@/views/Top.vue";
+import Register from "@/views/pre/Register.vue";
+import Login from "@/views/pre/Login.vue";
+import Verify from "@/views/pre/Verify.vue";
+import Not from "@/views/pre/Not.vue";
+import Pay from "@/views/pre/Pay.vue";
+import Qr from "@/views/pre/Qr.vue";
+import Secure from "@/views/pre/Secure.vue";
+import Real from "@/views/real/Real.vue";
+import Accept from "@/views/real/Accept.vue";
+import Buy from "@/views/real/Buy.vue";
 
 Vue.use(VueRouter);
 
@@ -24,6 +26,8 @@ const router = new VueRouter({
     {path: '/qr', name: 'Qr', component: Qr},
     {path: '/pay/secure', name: 'Secure', component: Secure},
     {path: '/real', name: 'Real', component: Real},
+    {path: '/accept', name: 'Accept', component: Accept},
+    {path: '/buy', name: 'Buy', component: Buy},
     {path: '*', name: 'Not', component: Not}
   ]
 });

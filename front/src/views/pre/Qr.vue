@@ -51,6 +51,7 @@
 <script>
   import VueQrcode from "@chenfengyuan/vue-qrcode";
   import axios from "axios";
+
   export default {
     data: () => ({
       desserts: [{id: 0, name: 'Now loading', price: 0, count: 0, subtotal: 0,},],

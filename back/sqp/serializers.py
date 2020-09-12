@@ -135,3 +135,17 @@ class CodeGetSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
         fields = ('id', 'userproducts', 'pay')
+
+class EmailGetSerializer(serializers.ModelSerializer):
+    """ Aserializer class for the User"""
+    class Meta:
+        model = User
+        fields = ('id', 'email')
+
+class OrderGetAminSerializer(serializers.ModelSerializer):
+    """ Aserializer class for the Pay """
+    userproducts = UserProductGetSerializer(many=True)
+    user = EmailGetSerializer()
+    class Meta:
+        model = Pay
+        fields = ('id', 'userproducts', 'code', 'user')

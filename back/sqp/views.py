@@ -54,3 +54,10 @@ class CodeGet(generics.RetrieveAPIView):
         queryset = self.get_queryset()
         obj = get_object_or_404(queryset, id=self.request.user.id)
         return obj
+
+class OrderGetAmin():
+    """ View to Order from admin """
+    queryset = Pay.objects.all()
+    serializer_class = OrderGetAminSerializer
+    permission_classes = (permissions.IsAdminUser, )
+    lookup_field = 'code'

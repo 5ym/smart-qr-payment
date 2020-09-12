@@ -5,6 +5,7 @@ from django.core.mail import send_mail
 from django.conf import settings
 from django.contrib.auth.hashers import make_password
 import stripe
+stripe.api_key = settings.STRIPE_SECRET_KEY
 
 class VerifySerializer(serializers.ModelSerializer):
     """ A serializer class for the Verify model """
@@ -74,23 +75,44 @@ class PaySerializer(serializers.ModelSerializer):
         fields = ('id', 'token')
     def create(self, validated_data):
         request = self.context.get('request', None)
-        stripe.api_key = settings.STRIPE_SECRET_KEY
-        customer = stripe.Customer.create(email=request.user.email, source=validated_data["token"])
         amount = 0
         for product in request.user.userproducts.all():
             amount += product.count * product.price
+        intentins = stripe.PaymentIntent.create(
+            amount=amount,
+            currency="jpy",
+            payment_method_types=["card"],
+            payment_method=validated_data["token"]
+        )
+        http = "http://" if settings.DEBUG else "https://"
         try:
-            charge = stripe.Charge.create(
-                amount=amount,
-                currency="jpy",
-                customer=customer,
+            intent = stripe.PaymentIntent.confirm(
+                intentins,
+                return_url=http+settings.ALLOWED_HOSTS[0]+"/pay/secure"
             )
         except stripe.error.CardError as e:
-            stripe.Customer.delete(customer)
             raise serializers.ValidationError(e.error.message)
-        code = ''.join([random.choice(string.ascii_letters + string.digits) for i in range(16)])
-        pay = Pay.objects.create(user=request.user, token=customer.id, code=code)
-        return pay
+        if intent.status == "succeeded":
+            code = ''.join([random.choice(string.ascii_letters + string.digits) for i in range(16)])
+            pay = Pay.objects.create(user=request.user, token=intent.id, code=code)
+            return pay
+        else:
+            raise serializers.ValidationError(["req", intent.client_secret])
+
+class SecurePaySerializer(serializers.ModelSerializer):
+    """ Aserializer class for the Pay model """
+    class Meta:
+        model = Pay
+        fields = ('id', 'token')
+    def create(self, validated_data):
+        request = self.context.get('request', None)
+        intent = stripe.PaymentIntent.retrieve(validated_data["token"])
+        if intent.status == "succeeded":
+            code = ''.join([random.choice(string.ascii_letters + string.digits) for i in range(16)])
+            pay = Pay.objects.create(user=request.user, token=intent.id, code=code)
+            return pay
+        else:
+            raise serializers.ValidationError()
 
 class OrderGetSerializer(serializers.ModelSerializer):
     """ Aserializer class for the UserProduct and User model """

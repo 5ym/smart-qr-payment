@@ -1,11 +1,24 @@
 <style>
-  .centered-input input {
-    text-align: center;
-    font-size: 2em;
+  .resp {
+    position:relative;
+    height:0;
+    padding-top:90vh;
+    background: white;
+  }
+  .resp>iframe {
+    position:absolute;
+    top:0;
+    left:0;
+    width:100%;
+    height:100%;
+    border: none;
   }
 </style>
 <template>
   <v-container>
+    <v-dialog v-model="dialog" persistent width="1200">
+      <div class="resp"><iframe :src="iframe"></iframe></div>
+    </v-dialog>
     <div class="text-h6">注文内容をご確認ください。</div>
     <v-row justify="space-around" row="center">
       <v-col xs="12" sm="8" lg="4" md="5">
@@ -63,7 +76,9 @@
       desserts: [{id: 0, name: 'Now loading', price: 0, count: 0, subtotal: 0,},],
       total: 0,
       stripe: Stripe(Vue.prototype.$pk),
-      card: null
+      card: null,
+      dialog: false,
+      iframe: null
     }),
     mounted() {
       this.$session.start();
@@ -80,6 +95,36 @@
           displayError.textContent = '';
         }
       });
+      var self = this;
+      window.addEventListener('message', function(ev) {
+        if (ev.data === '3DS-authentication-complete') {
+          self.dialog = false;
+          self.stripe.retrievePaymentIntent(self.$session.get("intent").client_secret).then(result => {
+            if(!result.error) {
+              if (result.paymentIntent.status === 'succeeded') {
+                Swal.fire({
+                  title: "決済完了",
+                  html: "カード決済が完了しました。3秒後にQRコード画面に移動します。",
+                  showConfirmButton: false,
+                  showCloseButton: false,
+                  timer: 3000,
+                  onClose: closemes
+                });
+                function closemes(){
+                  router.push("/qr");
+                }
+              } else {
+                Swal.fire({
+                  title: "Error",
+                  html: "カード決済時にエラーが発生しました。別のカードをお試しいただくか、カード会社にお問い合わせください。",
+                  showConfirmButton: false,
+                  showCloseButton: false,
+                });
+              }
+            }
+          });
+        }
+      }, false);
     },
     created() {
       this.$session.start();
@@ -99,37 +144,44 @@
     methods: {
       submit() {
         this.loading = true;
-        this.stripe.createToken(this.card).then(result => {
-          if (!result.error) {
-            axios.post(location.protocol + "//" + window.location.hostname + "/api/pay", {token: result.token.id}, {headers: { Authorization: "JWT " + this.$session.get("token") }}).then(response => {
-              this.loading = false;
+        this.stripe.createPaymentMethod({
+          type: 'card',
+          card: this.card
+        }).then(result => {
+          axios.post(location.protocol + "//" + window.location.hostname + "/api/pay", {token: result.paymentMethod.id}, {headers: { Authorization: "JWT " + this.$session.get("token") }}).then(res => {
+            this.loading = false;
+            Swal.fire({
+              title: "決済完了",
+              html: "カード決済が完了しました。3秒後にQRコード画面に移動します。",
+              showConfirmButton: false,
+              showCloseButton: false,
+              timer: 3000,
+              onClose: closemes
+            });
+            function closemes(){
+              router.push("/qr");
+            }
+          }).catch(e => {
+            this.loading = false;
+            if (e.response.status === 401) {
+              router.push("/login");
+            } else if(e.response.data[0] === "req") {
+              this.stripe.retrievePaymentIntent(e.response.data[1]).then(r => {
+                this.$session.set("intent", r.paymentIntent);
+                this.iframe = r.paymentIntent.next_action.redirect_to_url.url;
+                this.dialog = true;
+              });
+            } else {
               Swal.fire({
-                type: "warning",
-                title: "決済完了",
-                html: "カード決済が完了しました。3秒後にQRコード画面に移動します。",
+                title: "Error",
+                html: "カード決済時にエラーが発生しました。別のカードをお試しいただくか、カード会社にお問い合わせください。<br>エラーメッセージ<br>"+e.response.data[0],
                 showConfirmButton: false,
                 showCloseButton: false,
-                timer: 3000,
-                onClose: closemes
               });
-              function closemes(){
-                router.push("/qr");
-              }
-            }).catch(e => {
-              this.loading = false;
-              if (e.response.status === 401) {
-                router.push("/login");
-              } else {
-                Swal.fire({
-                  type: "warning",
-                  title: "Error",
-                  html: "カード決済時にエラーが発生しました。別のカードをお試しいただくか、カード会社にお問い合わせください。<br>エラーメッセージ<br>"+e.response.data[0],
-                  showConfirmButton: false,
-                  showCloseButton: false,
-                });
-              }
-            });
-          }
+            }
+          });
+        }).catch(e => {
+          this.loading = false;
         });
       }
     }

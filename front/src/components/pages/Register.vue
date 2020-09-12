@@ -133,7 +133,6 @@
           axios.post(location.protocol+"//"+window.location.hostname+"/api/register/", this.data).then(res => {
             this.loading = false;
             Swal.fire({
-              type: "info",
               title: "送信完了",
               html: "メールを送信いたしました。メールをご確認ください。<br><a href='https://mail.google.com/'>Gmail</a><br><a href='android-app://com.google.android.gm'>受信ボックス(Android)</a><br><a href='message:'>受信ボックス(iOS)</a>",
               showConfirmButton: false,
@@ -146,7 +145,6 @@
           }).catch(e => {
             this.loading = false;
             Swal.fire({
-              type: "warning",
               title: "Error",
               text: "送信時にエラーが発生しました。入力内容をお確かめにうえ再度送信してください。",
               showConfirmButton: false,

@@ -38,3 +38,9 @@ class PayCreate(generics.CreateAPIView):
     queryset = Pay.objects.all()
     serializer_class = PaySerializer
     permission_classes = (permissions.IsAuthenticated, )
+
+class SecurePayCreate(generics.CreateAPIView):
+    """ View to create a new pay status. Only accepts POST requests """
+    queryset = Pay.objects.all()
+    serializer_class = SecurePaySerializer
+    permission_classes = (permissions.IsAuthenticated, )

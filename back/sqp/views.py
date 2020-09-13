@@ -55,7 +55,7 @@ class CodeGet(generics.RetrieveAPIView):
         obj = get_object_or_404(queryset, id=self.request.user.id)
         return obj
 
-class OrderGetAmin():
+class OrderGetAmin(generics.RetrieveAPIView):
     """ View to Order from admin """
     queryset = Pay.objects.all()
     serializer_class = OrderGetAminSerializer

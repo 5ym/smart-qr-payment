@@ -9,5 +9,5 @@ urlpatterns = [
     path('pay', PayCreate.as_view()),
     path('pay/secure', SecurePayCreate.as_view()),
     path('qr', CodeGet.as_view()),
-    path('orad/<code>', IsAdmin.as_view())
+    path('orad/<code>', OrderGetAmin.as_view())
 ]

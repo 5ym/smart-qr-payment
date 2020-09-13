@@ -16,6 +16,7 @@
     "vue-class-component": "^7.2.3",
     "vue-head": "^2.2.0",
     "vue-property-decorator": "^8.4.2",
+    "vue-qrcode-reader": "^2.3.13",
     "vue-router": "^3.2.0",
     "vue-session": "^1.0.0",
     "vuetify": "^2.2.11",

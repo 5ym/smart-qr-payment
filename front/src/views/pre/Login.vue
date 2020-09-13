@@ -36,47 +36,48 @@
   </v-container>
 </template>
 <script>
-import axios from "axios";
-import Swal from "sweetalert2";
-import router from "../../router";
-export default {
-  data: () => ({
-    credentials: {},
-    valid: true,
-    loading: false,
-    rules: {
-      email: [
-        v => !!v || "メールアドレスは必須です"
-      ],
-      password: [
-        v => !!v || "パスワードは必須です",
-        v => (v && v.length > 7) || "パスワードは8文字以上でなければなりません"
-      ]
-    }
-  }),
-  methods: {
-    login() {
-      if (this.$refs.form.validate()) {
-        this.loading = true;
-        axios.post(location.protocol+"//"+window.location.hostname+"/api/login/", this.credentials).then(res => {
-          this.$session.start();
-          this.$session.set("token", res.data.token);
-          router.go(-1);
-        })
-        .catch(e => {
-          this.loading = false;
-          Swal.fire({
-            type: "warning",
-            title: "Error",
-            text:
-              "メールアドレスもしくはパスワード、または両方が間違っています",
-            showConfirmButton: false,
-            showCloseButton: false,
-            timer: 3000
+  import axios from "axios";
+  import Swal from "sweetalert2";
+  import router from "../../router";
+
+  export default {
+    data: () => ({
+      credentials: {},
+      valid: true,
+      loading: false,
+      rules: {
+        email: [
+          v => !!v || "メールアドレスは必須です"
+        ],
+        password: [
+          v => !!v || "パスワードは必須です",
+          v => (v && v.length > 7) || "パスワードは8文字以上でなければなりません"
+        ]
+      }
+    }),
+    methods: {
+      login() {
+        if (this.$refs.form.validate()) {
+          this.loading = true;
+          axios.post(location.protocol+"//"+window.location.hostname+"/api/login/", this.credentials).then(res => {
+            this.$session.start();
+            this.$session.set("token", res.data.token);
+            router.go(-1);
+          })
+          .catch(e => {
+            this.loading = false;
+            Swal.fire({
+              type: "warning",
+              title: "Error",
+              text:
+                "メールアドレスもしくはパスワード、または両方が間違っています",
+              showConfirmButton: false,
+              showCloseButton: false,
+              timer: 3000
+            });
           });
-        });
+        }
       }
     }
-  }
-};
+  };
 </script>

@@ -23,7 +23,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 
 SECRET_KEY = os.environ.get('SECRET_KEY', '6$h*ya!=#qs8o1xi__tp9w2sxhg_^eo$fgzw-i1&51g_a8g=j$')
 DEBUG = os.environ.get('DEBUG', True)
-ALLOWED_HOSTS = [os.environ.get('ALLOWED_HOSTS', 'sqp.localhost')]
+ALLOWED_HOSTS = ['sqp.localhost', os.environ.get('ALLOWED_HOSTS')]
 
 # mail
 EMAIL_HOST = os.environ.get('EMAIL_HOST', 'smh')

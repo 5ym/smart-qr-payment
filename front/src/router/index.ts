@@ -11,6 +11,7 @@ import Secure from "@/views/pre/Secure.vue";
 import Real from "@/views/real/Real.vue";
 import Accept from "@/views/real/Accept.vue";
 import Buy from "@/views/real/Buy.vue";
+import Confirm from "@/views/real/Confirm.vue";
 
 Vue.use(VueRouter);
 
@@ -27,6 +28,7 @@ const router = new VueRouter({
     {path: '/pay/secure', name: 'Secure', component: Secure},
     {path: '/real', name: 'Real', component: Real},
     {path: '/accept', name: 'Accept', component: Accept},
+    {path: '/confirm/:code', name: 'Confirm', component: Confirm},
     {path: '/buy', name: 'Buy', component: Buy},
     {path: '*', name: 'Not', component: Not}
   ]

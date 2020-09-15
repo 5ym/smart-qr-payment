@@ -1,10 +1,16 @@
 <template>
-  <v-container>
+  <v-container fill-height>
     <v-row justify="space-around" row="center">
       <v-col>
-        <p>{{ error }}</p>
-        <p>Last result: <b>{{ result }}</b></p>
+        <div class="text-h6">{{ error }}</div>
         <qrcode-stream @decode="onDecode" @init="onInit" />
+      </v-col>
+    </v-row>
+    <v-row justify="space-around" row="center">
+      <v-col>
+        <v-card ripple color="secondary" dark to="/real">
+          <v-card-title>戻る</v-card-title>
+        </v-card>
       </v-col>
     </v-row>
   </v-container>
@@ -15,7 +21,6 @@
 
   export default {
     data: () => ({
-      result: '',
       error: ''
     }),
     components: {
@@ -27,7 +32,9 @@
     },
     methods: {
       onDecode (result) {
-        this.result = result
+        if(/[a-zA-Z_0-9]{16}/.test(result)) {
+          router.push("/confirm/"+result);
+        }
       },
       async onInit (promise) {
         try {

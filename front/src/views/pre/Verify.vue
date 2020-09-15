@@ -13,6 +13,7 @@
   import axios from "axios";
   import router from "../../router";
   import Swal from "sweetalert2";
+
   export default {
     created () {
       axios.put(location.protocol+"//"+window.location.hostname+"/api/verify"+this.$route.params.code+'/').then(response => {

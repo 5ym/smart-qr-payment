@@ -1,13 +1,17 @@
 <template>
   <v-container fill-height>
     <v-row justify="space-around" row="center">
-      <v-col>
-        <div class="text-h6">{{ error }}</div>
+      <v-col cols="12">
         <qrcode-stream @decode="onDecode" @init="onInit" />
       </v-col>
     </v-row>
     <v-row justify="space-around" row="center">
-      <v-col>
+      <v-col v-if="error" cols="12">
+        <v-card color="primary" dark>
+          <v-card-title v-text="error"></v-card-title>
+        </v-card>
+      </v-col>
+      <v-col cols="12">
         <v-card ripple color="secondary" dark to="/real">
           <v-card-title>戻る</v-card-title>
         </v-card>
@@ -34,6 +38,8 @@
       onDecode (result) {
         if(/[a-zA-Z_0-9]{16}/.test(result)) {
           router.push("/confirm/"+result);
+        } else {
+          this.error = '不正なQRコードかQRコードが正しく読み取れませんでした。もう一度読み込み直してください。';
         }
       },
       async onInit (promise) {

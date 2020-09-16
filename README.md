@@ -1,7 +1,7 @@
 # Smart QR Payment
 ## 開発環境
 traefik環境を先に構築しておく下記参照  
-https://gist.github.com/5ym/000f1fc05e061ba6976a69fdc00c7792  
+https://github.com/5ym/Local-Dev-Traefik
 下記コマンドで立ち上げ
 ```sh
 cp docker-compose-sample.yml docker-compose.yml

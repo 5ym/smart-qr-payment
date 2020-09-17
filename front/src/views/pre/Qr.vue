@@ -19,6 +19,7 @@
     <v-row justify="space-around" row="center">
       <v-col xs="12" sm="8" lg="4" md="5">
         <v-card>
+          <v-card-title>{{ email }}</v-card-title>
           <v-card-text class="center">
             <v-simple-table>
               <template v-slot:default>
@@ -51,12 +52,14 @@
 <script>
   import VueQrcode from "@chenfengyuan/vue-qrcode";
   import axios from "axios";
+  import router from "../../router";
 
   export default {
     data: () => ({
       desserts: [{id: 0, name: 'Now loading', price: 0, count: 0, subtotal: 0,},],
       total: 0,
-      code: null
+      code: null,
+      email: 'Now loading...'
     }),
     components: {
       VueQrcode
@@ -67,12 +70,13 @@
       axios.get(location.protocol + "//" + window.location.hostname + "/api/qr", {headers: { Authorization: "JWT " + this.$session.get("token") }}).then(response => {
         if(response.data.pay === null)
           router.push("/pay");
+        this.email = response.data.email;
         this.desserts = [];
         response.data.userproducts.forEach(i => {
-          this.desserts.push({id: i.product.id, title: i.product.title, price: i.price, count: i.count, subtotal: i.price * i.count});
+          this.desserts.push({id: i.product.id, title: i.product.title, price: i.price+"円", count: i.count, subtotal: i.price * i.count+"円"});
           this.total += i.price * i.count;
         });
-        this.desserts.push({count: "合計", subtotal: this.total});
+        this.desserts.push({count: "合計", subtotal: this.total+"円"});
         this.code = response.data.pay.code;
       }).catch(e => {
         if (e.response.status === 401) router.push("/login");

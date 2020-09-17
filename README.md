@@ -13,5 +13,10 @@ docker-compose up -d
 
 必要に応じてスーパーユーザーの作成
 ```sh
-docker-compose run --rm sqp-back sh -c 'python3 manage.py createsuperuser'
+docker-compose exec sqp-back sh -c 'python3 manage.py createsuperuser'
+```
+
+モデルを編集しマイグレーションファイルを生成したいとき
+```sh
+docker-compose exec sqp-back sh -c 'python3 manage.py makemigrations && python3 manage.py migrate'
 ```

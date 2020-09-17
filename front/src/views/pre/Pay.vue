@@ -26,6 +26,7 @@
     <v-row justify="space-around" row="center">
       <v-col xs="12" sm="8" lg="4" md="5">
         <v-card>
+          <v-card-title>{{ email }}</v-card-title>
           <v-card-text>
             <v-simple-table>
               <template v-slot:default>
@@ -82,7 +83,8 @@
       card: null,
       dialog: false,
       iframe: null,
-      intent: null
+      intent: null,
+      email: 'Now loading...'
     }),
     mounted() {
       // card element
@@ -102,27 +104,25 @@
         if (ev.data === '3DS-authentication-complete') {
           self.dialog = false;
           self.stripe.retrievePaymentIntent(self.intent).then(result => {
-            if(!result.error) {
-              if (result.paymentIntent.status === 'succeeded') {
-                Swal.fire({
-                  title: "決済完了",
-                  html: "カード決済が完了しました。3秒後にQRコード画面に移動します。",
-                  showConfirmButton: false,
-                  showCloseButton: false,
-                  timer: 3000,
-                  onClose: closemes
-                });
-                function closemes(){
-                  router.push("/qr");
-                }
-              } else {
-                Swal.fire({
-                  title: "Error",
-                  html: "カード決済時にエラーが発生しました。別のカードをお試しいただくか、カード会社にお問い合わせください。",
-                  showConfirmButton: false,
-                  showCloseButton: false,
-                });
+            if (result.paymentIntent.status !== void 0 && result.paymentIntent.status === 'succeeded') {
+              Swal.fire({
+                title: "決済完了",
+                html: "カード決済が完了しました。3秒後にQRコード画面に移動します。",
+                showConfirmButton: false,
+                showCloseButton: false,
+                timer: 3000,
+                onClose: closemes
+              });
+              function closemes(){
+                router.push("/qr");
               }
+            } else {
+              Swal.fire({
+                title: "Error",
+                html: "カード決済時にエラーが発生しました。別のカードをお試しいただくか、カード会社にお問い合わせください。",
+                showConfirmButton: false,
+                showCloseButton: false,
+              });
             }
           });
         }
@@ -134,6 +134,7 @@
       axios.get(location.protocol + "//" + window.location.hostname + "/api/order", {headers: { Authorization: "JWT " + this.$session.get("token") }}).then(response => {
         if(response.data.pay !== null)
           router.push("/qr");
+        this.email = response.data.email;
         this.desserts = [];
         response.data.userproducts.forEach(i => {
           this.desserts.push({id: i.product.id, title: i.product.title, price: i.price, count: i.count, subtotal: i.price * i.count});

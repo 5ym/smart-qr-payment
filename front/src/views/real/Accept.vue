@@ -12,9 +12,7 @@
         </v-card>
       </v-col>
       <v-col cols="12">
-        <v-card ripple color="secondary" dark to="/real">
-          <v-card-title>戻る</v-card-title>
-        </v-card>
+        <v-btn block color="secondary" x-large to="/real">戻る</v-btn>
       </v-col>
     </v-row>
   </v-container>

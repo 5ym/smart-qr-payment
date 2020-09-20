@@ -101,3 +101,4 @@ class Pay(models.Model):
     token = models.CharField(max_length=100)
     code = models.CharField(max_length=50)
     receive = models.BooleanField(default=False)
+    updated_at = models.DateTimeField(auto_now=True)

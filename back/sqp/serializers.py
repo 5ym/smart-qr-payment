@@ -143,9 +143,19 @@ class EmailGetSerializer(serializers.ModelSerializer):
         model = User
         fields = ('id', 'email', 'userproducts')
 
-class OrderGetAminSerializer(serializers.ModelSerializer):
+class OrderAdminSerializer(serializers.ModelSerializer):
     """ Aserializer class for the Pay """
     user = EmailGetSerializer()
     class Meta:
         model = Pay
         fields = ('id', 'code', 'receive', 'user')
+
+class ReceiveAdminSerializer(serializers.ModelSerializer):
+    """ Aserializer class for the Pay """
+    class Meta:
+        model = Pay
+        fields = ('id', 'receive', 'code')
+    def update(self, instance, validated_data):
+        instance.receive = True
+        instance.save()
+        return instance

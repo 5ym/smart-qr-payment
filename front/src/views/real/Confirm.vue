@@ -7,26 +7,24 @@
           <v-card-title>{{ email }}</v-card-title>
           <v-card-text>
             <v-simple-table>
-              <template v-slot:default>
-                <thead>
-                  <tr>
-                    <th class="text-left">商品ID</th>
-                    <th class="text-left">商品名</th>
-                    <th class="text-left">価格</th>
-                    <th class="text-left">購入数</th>
-                    <th class="text-left">小計</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <tr v-for="item in desserts" :key="item.id">
-                    <td>{{ item.id }}</td>
-                    <td>{{ item.title }}</td>
-                    <td>{{ item.price }}</td>
-                    <td>{{ item.count }}</td>
-                    <td>{{ item.subtotal }}</td>
-                  </tr>
-                </tbody>
-              </template>
+              <thead>
+                <tr>
+                  <th class="text-left">商品ID</th>
+                  <th class="text-left">商品名</th>
+                  <th class="text-left">価格</th>
+                  <th class="text-left">購入数</th>
+                  <th class="text-left">小計</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr v-for="item in desserts" :key="item.id">
+                  <td>{{ item.id }}</td>
+                  <td>{{ item.title }}</td>
+                  <td>{{ item.price }}</td>
+                  <td>{{ item.count }}</td>
+                  <td>{{ item.subtotal }}</td>
+                </tr>
+              </tbody>
             </v-simple-table>
           </v-card-text>
         </v-card>
@@ -34,14 +32,10 @@
     </v-row>
     <v-row justify="space-around" row="center">
       <v-col cols="6">
-        <v-card ripple color="secondary" dark to="/accept">
-          <v-card-title>戻る</v-card-title>
-        </v-card>
+        <v-btn block color="secondary" x-large to="/accept">戻る</v-btn>
       </v-col>
       <v-col cols="6">
-        <v-card ripple color="primary" dark>
-          <v-card-title>確定</v-card-title>
-        </v-card>
+        <v-btn block color="primary" x-large @click="confirm" :disabled="loading" :loading="loading">確定</v-btn>
       </v-col>
     </v-row>
   </v-container>
@@ -53,18 +47,19 @@
 
   export default {
     data: () => ({
-      desserts: [{id: 0, name: 'Now loading', price: 0, count: 0, subtotal: 0,},],
+      desserts: [{id: 0, title: 'Now loading', price: 0, count: 0, subtotal: 0,},],
       total: 0,
-      email: 'Now loading...'
+      email: 'Now loading...',
+      loading: true
     }),
     created() {
       if (!/[a-zA-Z_0-9]{16}/.test(this.$route.params.code)) router.push("/404");
       this.$session.start();
       if (!this.$session.has("token")) router.push("/login");
-      axios.get(location.protocol + "//" + window.location.hostname + "/api/orad/" + this.$route.params.code,
+      axios.get(location.protocol + "//" + window.location.hostname + "/api/orad/get/" + this.$route.params.code,
           { headers: { Authorization: "JWT " + this.$session.get("token") } }
         ).then(response => {
-          console.log(response);
+          this.loading = false;
           if(response.data.receive) {
             Swal.fire({
               title: "Error",
@@ -87,6 +82,7 @@
             this.desserts.push({count: "合計", subtotal: this.total});
           }
         }).catch(e => {
+          this.loading = false;
           if(e.response.status === 401) router.push("/login");
           if(e.response.status === 403) router.push("/404");
           if(e.response.status === 404) {
@@ -103,6 +99,44 @@
             }
           }
         });
+    },
+    methods: {
+      confirm() {
+        this.loading = true;
+        axios.put(location.protocol + "//" + window.location.hostname + "/api/orad/receive/" + this.$route.params.code,
+          {code: this.$route.params.code}, { headers: { Authorization: "JWT " + this.$session.get("token") } }
+        ).then(result => {
+          this.loading = false;
+          Swal.fire({
+            title: "Complete",
+            html: "お買い上げありがとうございます。<br>商品をお渡しします。5秒後にトップに戻ります。",
+            showConfirmButton: false,
+            showCloseButton: false,
+            timer: 5000,
+            onClose: closemes
+          });
+          function closemes(){
+            router.push("/real");
+          }
+        }).catch(e => {
+          this.loading = false;
+          if(e.response.status === 401) router.push("/login");
+          if(e.response.status === 403) router.push("/404");
+          if(e.response.status === 404) {
+            Swal.fire({
+              title: "Error",
+              html: "不正なQRコードです。3秒後にQR読み込み画面に戻ります。",
+              showConfirmButton: false,
+              showCloseButton: false,
+              timer: 3000,
+              onClose: closemes
+            });
+            function closemes(){
+              router.push("/accept");
+            }
+          }
+        });
+      }
     }
   };
 </script>

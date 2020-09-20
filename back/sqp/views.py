@@ -55,9 +55,22 @@ class CodeGet(generics.RetrieveAPIView):
         obj = get_object_or_404(queryset, id=self.request.user.id)
         return obj
 
-class OrderGetAmin(generics.RetrieveAPIView):
+class OrderGetAdmin(generics.RetrieveAPIView):
     """ View to Order from admin """
     queryset = Pay.objects.all()
-    serializer_class = OrderGetAminSerializer
+    serializer_class = OrderAdminSerializer
     permission_classes = (permissions.IsAdminUser, )
     lookup_field = 'code'
+
+class OrderSetAdmin(generics.RetrieveUpdateAPIView):
+    """ Set to Order from admin """
+    queryset = Pay.objects.all()
+    serializer_class = ReceiveAdminSerializer
+    permission_classes = (permissions.IsAdminUser, )
+    lookup_field = 'code'
+
+class OrderListAdmin(generics.ListAPIView):
+    """ View to Order from admin """
+    queryset = Pay.objects.filter(receive=True).order_by("updated_at")[:3]
+    serializer_class = OrderAdminSerializer
+    permission_classes = (permissions.IsAdminUser, )

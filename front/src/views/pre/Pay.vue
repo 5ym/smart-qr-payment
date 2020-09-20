@@ -29,26 +29,24 @@
           <v-card-title>{{ email }}</v-card-title>
           <v-card-text>
             <v-simple-table>
-              <template v-slot:default>
-                <thead>
-                  <tr>
-                    <th class="text-left">商品ID</th>
-                    <th class="text-left">商品名</th>
-                    <th class="text-left">価格</th>
-                    <th class="text-left">購入数</th>
-                    <th class="text-left">小計</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <tr v-for="item in desserts" :key="item.id">
-                    <td>{{ item.id }}</td>
-                    <td>{{ item.title }}</td>
-                    <td>{{ item.price }}</td>
-                    <td>{{ item.count }}</td>
-                    <td>{{ item.subtotal }}</td>
-                  </tr>
-                </tbody>
-              </template>
+              <thead>
+                <tr>
+                  <th class="text-left">商品ID</th>
+                  <th class="text-left">商品名</th>
+                  <th class="text-left">価格</th>
+                  <th class="text-left">購入数</th>
+                  <th class="text-left">小計</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr v-for="item in desserts" :key="item.id">
+                  <td>{{ item.id }}</td>
+                  <td>{{ item.title }}</td>
+                  <td>{{ item.price }}</td>
+                  <td>{{ item.count }}</td>
+                  <td>{{ item.subtotal }}</td>
+                </tr>
+              </tbody>
             </v-simple-table>
           </v-card-text>
         </v-card>
@@ -77,7 +75,7 @@
   export default {
     data: () => ({
       loading: false,
-      desserts: [{id: 0, name: 'Now loading', price: 0, count: 0, subtotal: 0,},],
+      desserts: [{id: 0, title: 'Now loading', price: 0, count: 0, subtotal: 0,},],
       total: 0,
       stripe: Stripe(Vue.prototype.$pk),
       card: null,

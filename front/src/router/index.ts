@@ -12,6 +12,8 @@ import Real from "@/views/real/Real.vue";
 import Accept from "@/views/real/Accept.vue";
 import Buy from "@/views/real/Buy.vue";
 import Confirm from "@/views/real/Confirm.vue";
+import Admin from "@/views/real/Admin.vue";
+import Square from "@/views/real/Square.vue";
 
 Vue.use(VueRouter);
 
@@ -30,6 +32,8 @@ const router = new VueRouter({
     {path: '/accept', name: 'Accept', component: Accept},
     {path: '/confirm/:code', name: 'Confirm', component: Confirm},
     {path: '/buy', name: 'Buy', component: Buy},
+    {path: '/admin', name: 'Admin', component: Admin},
+    {path: '/square', name: 'Square', component: Square},
     {path: '*', name: 'Not', component: Not}
   ]
 });

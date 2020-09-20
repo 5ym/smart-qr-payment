@@ -80,6 +80,7 @@
   import axios from "axios";
   import Swal from "sweetalert2";
   import router from "../../router";
+
   export default {
     data: () => ({
       count: [],
@@ -124,12 +125,11 @@
       register() {
         if (this.$refs.form.validate()) {
           this.loading = true;
-          let up = [];
+          var self = this;
           this.count.forEach((v, k) => {
             if(v)
-              up.push({product: k, count:v});
+              self.data.userproducts.push({product: k, count:v});
           });
-          this.data.userproducts = up;
           axios.post(location.protocol+"//"+window.location.hostname+"/api/register", this.data).then(res => {
             this.loading = false;
             Swal.fire({

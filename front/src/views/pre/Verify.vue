@@ -16,7 +16,7 @@
 
   export default {
     created () {
-      axios.put(location.protocol+"//"+window.location.hostname+"/api/verify"+this.$route.params.code+'/').then(response => {
+      axios.put(location.protocol+"//"+window.location.hostname+"/api/verify/"+this.$route.params.code).then(response => {
         Swal.fire({
           type: "info",
           title: "確認完了",

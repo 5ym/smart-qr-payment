@@ -35,7 +35,10 @@
         </v-col>
       </v-row>
       <v-row justify="space-around" row="center">
-        <v-col>
+        <v-col cols="6">
+          <v-btn block color="secondary" x-large to="/real">戻る</v-btn>
+        </v-col>
+        <v-col cols="6">
           <v-btn block color="primary" x-large @click="square" :disabled="!valid || loading" :loading="loading">確定</v-btn>
         </v-col>
       </v-row>
@@ -100,10 +103,9 @@
           });
         }
         let tenderTypes =
-         "com.squareup.pos.TENDER_CARD, \
-          com.squareup.pos.TENDER_CARD_ON_FILE, \
-          com.squareup.pos.TENDER_CASH, \
-          com.squareup.pos.TENDER_OTHER";
+          "com.squareup.pos.TENDER_CARD,"+
+          "com.squareup.pos.TENDER_CASH";
+
         let posUrl =
          "intent:#Intent;" +
          "action=com.squareup.pos.action.CHARGE;" +

@@ -1,7 +1,8 @@
 <template>
   <v-container fill-height>
+    <div class="text-h6">受け取り用QRコードを読み込ませてください。</div>
     <v-row justify="space-around" row="center">
-      <v-col cols="12">
+      <v-col cols="8">
         <qrcode-stream @decode="onDecode" @init="onInit" />
       </v-col>
     </v-row>

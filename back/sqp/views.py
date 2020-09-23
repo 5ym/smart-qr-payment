@@ -74,3 +74,9 @@ class OrderListAdmin(generics.ListAPIView):
     queryset = Pay.objects.filter(receive=True).order_by("updated_at")[:3]
     serializer_class = OrderAdminSerializer
     permission_classes = (permissions.IsAdminUser, )
+
+class BuyAdmin(generics.CreateAPIView):
+    """ View to create a new user. Only accepts POST requests """
+    queryset = User.objects.all()
+    serializer_class = BuySerializer
+    permission_classes = (permissions.IsAdminUser, )

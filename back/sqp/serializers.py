@@ -4,6 +4,7 @@ import random, string
 from django.core.mail import send_mail
 from django.conf import settings
 from django.contrib.auth.hashers import make_password
+import time
 import stripe
 stripe.api_key = settings.STRIPE_SECRET_KEY
 
@@ -39,6 +40,8 @@ class UserSerializer(serializers.ModelSerializer):
         fields = ('id', 'email', 'password', 'userproducts')
     # ユーザー作成時にverifyコードの生成,購入商品の登録
     def create(self, validated_data):
+        if len(validated_data['userproducts']) is 0:
+            raise serializers.ValidationError()
         user = User.objects.create(email=validated_data['email'], password=make_password(validated_data['password']), is_active=False)
         code = ''.join([random.choice(string.ascii_letters + string.digits) for i in range(16)])
         verify = Verify(user=user, code=code)
@@ -159,3 +162,24 @@ class ReceiveAdminSerializer(serializers.ModelSerializer):
         instance.receive = True
         instance.save()
         return instance
+
+class BuySerializer(serializers.ModelSerializer):
+    """ Aserializer class for the User """
+    userproducts = UserProductCreateSerializer(many=True)
+    pay = ReceiveAdminSerializer(read_only=True)
+    class Meta:
+        model = User
+        fields = ('id', 'userproducts', 'pay')
+    # 商品購入データ、疑似ユーザー情報挿入
+    def create(self, validated_data):
+        if len(validated_data['userproducts']) is 0:
+            raise serializers.ValidationError()
+        code = ''.join([random.choice(string.ascii_letters + string.digits) for i in range(16)])
+        user = User.objects.create(email="info+"+str(int(time.time()))+"@daco.dev", password=make_password(code), is_active=True)
+        for item in validated_data['userproducts']:
+            up = UserProduct(user=user, product=item['product'], count=item['count'], price=item['product'].price)
+            up.save()
+        code = ''.join([random.choice(string.ascii_letters + string.digits) for i in range(16)])
+        pay = Pay(user=user, code=code, token=code, receive=False)
+        pay.save()
+        return user

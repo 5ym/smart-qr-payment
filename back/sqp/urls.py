@@ -11,5 +11,6 @@ urlpatterns = [
     path('qr', CodeGet.as_view()),
     path('orad/get/<code>', OrderGetAdmin.as_view()),
     path('orad/receive/<code>', OrderSetAdmin.as_view()),
-    path('orad/list', OrderListAdmin.as_view())
+    path('orad/list', OrderListAdmin.as_view()),
+    path('buy', BuyAdmin.as_view())
 ]

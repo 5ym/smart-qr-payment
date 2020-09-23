@@ -126,6 +126,7 @@
         if (this.$refs.form.validate()) {
           this.loading = true;
           var self = this;
+          this.data.userproducts = [];
           this.count.forEach((v, k) => {
             if(v)
               self.data.userproducts.push({product: k, count:v});

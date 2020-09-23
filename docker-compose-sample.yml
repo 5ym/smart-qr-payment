@@ -12,7 +12,12 @@ services:
     environment:
       - STRIPE_SECRET_KEY=hoge # stripe用secret key
   sqp-front:
-    build: front
+    build:
+      context: front
+      target: build
+    expose:
+      - "8080"
+    command: yarn serve
     volumes:
       - ./front:/usr/src/app
     networks:

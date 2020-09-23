@@ -48,6 +48,7 @@
 <script>
   import router from "../../router";
   import axios from "axios";
+  import Swal from "sweetalert2";
 
   export default {
     data: () => ({
@@ -97,30 +98,46 @@
         if (this.$refs.form.validate()) {
           this.loading = true;
           var self = this;
+          this.data.userproducts = [];
           this.count.forEach((v, k) => {
             if(v)
               self.data.userproducts.push({product: k, count:v});
           });
+          axios.post(location.protocol+"//"+window.location.hostname+"/api/buy", this.data, {headers: {Authorization: "JWT " + this.$session.get("token")}}).then(response => {
+            this.loading = false;
+            let tenderTypes =
+              "com.squareup.pos.TENDER_CARD,"+
+              "com.squareup.pos.TENDER_CASH";
+            let posUrl =
+              "intent:#Intent;" +
+              "action=com.squareup.pos.action.CHARGE;" +
+              "package=com.squareup;" +
+              "S.com.squareup.pos.WEB_CALLBACK_URI=" + this.intent.callbackUrl + ";" +
+              "S.com.squareup.pos.CLIENT_ID=" + this.intent.applicationId + ";" +
+              "S.com.squareup.pos.API_VERSION=" + this.intent.sdkVersion + ";" +
+              "i.com.squareup.pos.TOTAL_AMOUNT=" + this.intent.transactionTotal + ";" +
+              "S.com.squareup.pos.CURRENCY_CODE=" + this.intent.currencyCode + ";" +
+              "S.com.squareup.pos.TENDER_TYPES=" + tenderTypes + ";" +
+              "l.com.squareup.pos.AUTO_RETURN_TIMEOUT_MS=3200;" +
+              "S.com.squareup.pos.REQUEST_METADATA="+response.data.pay.code+";" +
+              "end";
+            window.open(posUrl);
+          }).catch(e => {
+            this.loading = false;
+            if(e.response.status === 401) {
+              router.push("/login");
+            } else if(e.response.status === 403) {
+              router.push("/404");
+            } else {
+              Swal.fire({
+                title: "Error",
+                text: "送信時にエラーが発生しました。入力内容をお確かめにうえ再度送信してください。",
+                showConfirmButton: false,
+                showCloseButton: false,
+              });
+            }
+          });
         }
-        let tenderTypes =
-          "com.squareup.pos.TENDER_CARD,"+
-          "com.squareup.pos.TENDER_CASH";
-
-        let posUrl =
-         "intent:#Intent;" +
-         "action=com.squareup.pos.action.CHARGE;" +
-         "package=com.squareup;" +
-         "S.com.squareup.pos.WEB_CALLBACK_URI=" + this.intent.callbackUrl + ";" +
-         "S.com.squareup.pos.CLIENT_ID=" + this.intent.applicationId + ";" +
-         "S.com.squareup.pos.API_VERSION=" + this.intent.sdkVersion + ";" +
-         "i.com.squareup.pos.TOTAL_AMOUNT=" + this.intent.transactionTotal + ";" +
-         "S.com.squareup.pos.CURRENCY_CODE=" + this.intent.currencyCode + ";" +
-         "S.com.squareup.pos.TENDER_TYPES=" + tenderTypes + ";" +
-         "l.com.squareup.pos.AUTO_RETURN_TIMEOUT_MS=3200;" +
-         "S.com.squareup.pos.REQUEST_METADATA=test;" +
-         "end";
-        
-        window.open(posUrl);
       }
     }
   }

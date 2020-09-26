@@ -1,3 +1,8 @@
+<style>
+  html {
+    user-select: none;
+  }
+</style>
 <template>
   <v-container fill-height>
     <v-row justify="space-around" row="center">

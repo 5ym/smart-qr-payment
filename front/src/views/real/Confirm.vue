@@ -1,3 +1,8 @@
+<style>
+  html {
+    user-select: none;
+  }
+</style>
 <template>
   <v-container>
     <div class="text-h6">注文内容をご確認ください。</div>

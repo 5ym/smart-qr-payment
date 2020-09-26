@@ -1,3 +1,8 @@
+<style>
+  html {
+    user-select: none;
+  }
+</style>
 <template>
   <v-container fill-height>
     <div class="text-h6">受け取り用QRコードを読み込ませてください。</div>

@@ -1,3 +1,8 @@
+<style>
+  html {
+    user-select: none;
+  }
+</style>
 <template>
   <v-container>
     <v-form ref="form" v-model="valid" lazy-validation>
@@ -128,6 +133,13 @@
               router.push("/login");
             } else if(e.response.status === 403) {
               router.push("/404");
+            } else if(e.response.status === 400) {
+              Swal.fire({
+                title: "Error",
+                text: "選択内容をお確かめください。",
+                showConfirmButton: false,
+                showCloseButton: false,
+              });
             } else {
               Swal.fire({
                 title: "Error",

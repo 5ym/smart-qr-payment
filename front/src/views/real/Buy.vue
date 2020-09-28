@@ -1,6 +1,10 @@
-<style>
+<style scoped>
   html {
     user-select: none;
+  }
+  .centered-input input {
+    text-align: center;
+    font-size: 2em;
   }
 </style>
 <template>
@@ -68,7 +72,7 @@
       loading: true,
       rules: {
         count: [
-          v => /^[0-9]+$/.test(v) || ""
+          v => /^\d+$/.test(v) || ""
         ],
       },
       cards: [
@@ -92,11 +96,11 @@
     },
     methods: {
       countUp(id) {
-        this.count[id] += 1;
+        this.count[id] = Number(this.count[id]) + 1;
         this.count = JSON.parse(JSON.stringify(this.count));
       },
       countDown(id) {
-        this.count[id] -= 1;
+        this.count[id] = Number(this.count[id]) - 1;
         this.count = JSON.parse(JSON.stringify(this.count));
       },
       square() {

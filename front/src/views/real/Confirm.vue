@@ -1,4 +1,4 @@
-<style>
+<style scoped>
   html {
     user-select: none;
   }

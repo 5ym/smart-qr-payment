@@ -1,4 +1,4 @@
-<style>
+<style scoped>
   .resp {
     position:relative;
     height:0;

@@ -1,0 +1,20 @@
+[
+{
+    "com.squareup.pos.ERROR_CODE": "com.squareup.pos.ERROR_TRANSACTION_CANCELED",
+    "com.squareup.pos.ERROR_DESCRIPTION": "決済がキャンセルされました",
+    "com.squareup.pos.REQUEST_METADATA": "SPRE7Hy4C9B0TNla"
+},
+"現金",
+{
+    "com.squareup.pos.CLIENT_TRANSACTION_ID": "6746b477-e7ca-4b9d-9053-be8e8920139f",
+    "com.squareup.pos.REQUEST_METADATA": "VPfMEfbJCo3v5b9z"
+},
+"EMV CL",
+{
+    "com.squareup.pos.CLIENT_TRANSACTION_ID": "d49f3a8a-f2f6-4775-8cb5-44a42ef74b2f",
+    "com.squareup.pos.SERVER_TRANSACTION_ID": "NZbYOb132l2Grkbfgx8i4c6eV",
+    "com.squareup.pos.REQUEST_METADATA": "hvTLnN0yeQ5nyRpm"
+},
+"Quic Pay",
+
+]

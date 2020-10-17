@@ -24,11 +24,8 @@
           showConfirmButton: false,
           showCloseButton: false,
           timer: 3000,
-          onClose: DeleteUnsavedImages
+          onClose: () => {this.$router.push('/pay')}
         });
-        function DeleteUnsavedImages(){
-          this.$router.push('/pay');
-        }
       }).catch(e => {
         if(e.response.status === 404) {
           this.$router.push('/404');
@@ -39,11 +36,8 @@
             text: "エラーが発生しました。管理者までお問い合わせください。",
             showConfirmButton: false,
             showCloseButton: false,
-            onClose: DeleteUnsavedImages
+            onClose: () => {router.go(-1)}
           });
-          function DeleteUnsavedImages(){
-            router.go(-1);
-          }
         }
       });
     },

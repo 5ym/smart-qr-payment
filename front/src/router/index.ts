@@ -17,25 +17,27 @@ import Square from "@/views/real/Square.vue";
 
 Vue.use(VueRouter);
 
+const routes: Array<RouteConfig> = [
+  {path: "/", name: "Top", component: Top},
+  {path: "/register", name: "Register", component: Register},
+  {path: '/login', name: 'Login', component: Login},
+  {path: '/verify/:code', name: 'Verify', component: Verify},
+  {path: '/pay', name: 'Pay', component: Pay},
+  {path: '/qr', name: 'Qr', component: Qr},
+  {path: '/pay/secure', name: 'Secure', component: Secure},
+  {path: '/real', name: 'Real', component: Real},
+  {path: '/accept', name: 'Accept', component: Accept},
+  {path: '/confirm/:code', name: 'Confirm', component: Confirm},
+  {path: '/buy', name: 'Buy', component: Buy},
+  {path: '/admin', name: 'Admin', component: Admin},
+  {path: '/square', name: 'Square', component: Square},
+  {path: '*', name: 'Not', component: Not}
+]
+
 const router = new VueRouter({
-  mode: "history",
+  mode: 'history',
   base: process.env.BASE_URL,
-  routes: [
-    {path: "/", name: "Top", component: Top},
-    {path: "/register", name: "Register", component: Register},
-    {path: '/login', name: 'Login', component: Login},
-    {path: '/verify/:code', name: 'Verify', component: Verify},
-    {path: '/pay', name: 'Pay', component: Pay},
-    {path: '/qr', name: 'Qr', component: Qr},
-    {path: '/pay/secure', name: 'Secure', component: Secure},
-    {path: '/real', name: 'Real', component: Real},
-    {path: '/accept', name: 'Accept', component: Accept},
-    {path: '/confirm/:code', name: 'Confirm', component: Confirm},
-    {path: '/buy', name: 'Buy', component: Buy},
-    {path: '/admin', name: 'Admin', component: Admin},
-    {path: '/square', name: 'Square', component: Square},
-    {path: '*', name: 'Not', component: Not}
-  ]
-});
+  routes
+})
 
 export default router;

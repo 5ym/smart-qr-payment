@@ -14,18 +14,15 @@
       if(query["com.squareup.pos.CLIENT_TRANSACTION_ID"]) {
         axios.put("/api/orad/receive/" + query["com.squareup.pos.REQUEST_METADATA"],
           {code: query["com.squareup.pos.REQUEST_METADATA"]}, { headers: { Authorization: "JWT " + this.$session.get("token") } }
-        ).then(response => {
+        ).then(() => {
           Swal.fire({
             title: "Complete",
             html: "お買い上げありがとうございます。<br>商品をお渡しします。5秒後にトップに戻ります。",
             showConfirmButton: false,
             showCloseButton: false,
             timer: 5000,
-            onClose: closemes
+            onClose: () => {this.$router.push("/real")}
           });
-          function closemes(){
-            this.$router.push("/real");
-          }
         }).catch(e => {
           this.loading = false;
           if(e.response.status === 401) this.$router.push("/login");
@@ -39,11 +36,8 @@
           showConfirmButton: false,
           showCloseButton: false,
           timer: 3000,
-          onClose: closemes
+          onClose: () => {this.$router.push("/buy")}
         });
-        function closemes(){
-          this.$router.push("/buy");
-        }
       }
     }
   }

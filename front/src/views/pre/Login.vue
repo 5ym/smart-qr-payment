@@ -38,7 +38,6 @@
 <script>
   import axios from "axios";
   import Swal from "sweetalert2";
-  
 
   export default {
     data: () => ({
@@ -62,7 +61,7 @@
           axios.post(location.protocol+"//"+window.location.hostname+"/api/login/", this.credentials).then(res => {
             this.$session.start();
             this.$session.set("token", res.data.token);
-            router.go(-1);
+            this.$router.go(-1);
           })
           .catch(e => {
             this.loading = false;

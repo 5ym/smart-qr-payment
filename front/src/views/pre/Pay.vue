@@ -68,7 +68,6 @@
 </template>
 <script>
   import axios from "axios";
-  
   import Swal from "sweetalert2";
   import Vue from "vue";
 
@@ -90,14 +89,14 @@
       this.card = elements.create("card");
       this.card.mount("#card-element");
       this.card.on('change', function(event) {
-        var displayError = document.getElementById('card-errors');
+        const displayError = document.getElementById('card-errors');
         if (event.error) {
           displayError.textContent = event.error.message;
         } else {
           displayError.textContent = '';
         }
       });
-      var self = this;
+      const self = this;
       window.addEventListener('message', function(ev) {
         if (ev.data === '3DS-authentication-complete') {
           self.dialog = false;
@@ -109,11 +108,8 @@
                 showConfirmButton: false,
                 showCloseButton: false,
                 timer: 3000,
-                onClose: closemes
+                onClose: () => {this.$router.push("/qr")}
               });
-              function closemes(){
-                this.$router.push("/qr");
-              }
             } else {
               Swal.fire({
                 title: "Error",
@@ -158,11 +154,8 @@
               showConfirmButton: false,
               showCloseButton: false,
               timer: 3000,
-              onClose: closemes
+              onClose: () => {this.$router.push("/qr")}
             });
-            function closemes(){
-              this.$router.push("/qr");
-            }
           }).catch(e => {
             this.loading = false;
             if (e.response.status === 401) {

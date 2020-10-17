@@ -71,11 +71,8 @@
               showConfirmButton: false,
               showCloseButton: false,
               timer: 3000,
-              onClose: closemes
+              onClose: () => {this.$router.push('/accept')}
             });
-            function closemes(){
-              this.$router.push("/accept");
-            }
           } else {
             this.email = response.data.user.email;
             this.desserts = [];
@@ -96,11 +93,8 @@
               showConfirmButton: false,
               showCloseButton: false,
               timer: 3000,
-              onClose: closemes
+              onClose: () => {this.$router.push('/accept')}
             });
-            function closemes(){
-              this.$router.push("/accept");
-            }
           }
         });
     },
@@ -117,11 +111,8 @@
             showConfirmButton: false,
             showCloseButton: false,
             timer: 5000,
-            onClose: closemes
+            onClose: () => {this.$router.push('/real')}
           });
-          function closemes(){
-            this.$router.push("/real");
-          }
         }).catch(e => {
           this.loading = false;
           if(e.response.status === 401) this.$router.push("/login");
@@ -133,11 +124,8 @@
               showConfirmButton: false,
               showCloseButton: false,
               timer: 3000,
-              onClose: closemes
+              onClose: () => {this.$router.push('/accept')}
             });
-            function closemes(){
-              this.$router.push("/accept");
-            }
           }
         });
       }

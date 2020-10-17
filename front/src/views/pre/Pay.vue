@@ -68,7 +68,7 @@
 </template>
 <script>
   import axios from "axios";
-  import router from "../../router";
+  
   import Swal from "sweetalert2";
   import Vue from "vue";
 
@@ -112,7 +112,7 @@
                 onClose: closemes
               });
               function closemes(){
-                router.push("/qr");
+                this.$router.push("/qr");
               }
             } else {
               Swal.fire({
@@ -128,10 +128,10 @@
     },
     created() {
       this.$session.start();
-      if (!this.$session.has("token")) router.push("/login");
-      axios.get(location.protocol + "//" + window.location.hostname + "/api/order", {headers: { Authorization: "JWT " + this.$session.get("token") }}).then(response => {
+      if (!this.$session.has("token")) this.$router.push("/login");
+      axios.get("/api/order", {headers: { Authorization: "JWT " + this.$session.get("token") }}).then(response => {
         if(response.data.pay !== null)
-          router.push("/qr");
+          this.$router.push("/qr");
         this.email = response.data.email;
         this.desserts = [];
         response.data.userproducts.forEach(i => {
@@ -140,7 +140,7 @@
         });
         this.desserts.push({count: "合計", subtotal: this.total});
       }).catch(e => {
-        if (e.response.status === 401) router.push("/login");
+        if (e.response.status === 401) this.$router.push("/login");
       });
     },
     methods: {
@@ -150,7 +150,7 @@
           type: 'card',
           card: this.card
         }).then(result => {
-          axios.post(location.protocol + "//" + window.location.hostname + "/api/pay", {token: result.paymentMethod.id}, {headers: { Authorization: "JWT " + this.$session.get("token") }}).then(res => {
+          axios.post("/api/pay", {token: result.paymentMethod.id}, {headers: { Authorization: "JWT " + this.$session.get("token") }}).then(res => {
             this.loading = false;
             Swal.fire({
               title: "決済完了",
@@ -161,12 +161,12 @@
               onClose: closemes
             });
             function closemes(){
-              router.push("/qr");
+              this.$router.push("/qr");
             }
           }).catch(e => {
             this.loading = false;
             if (e.response.status === 401) {
-              router.push("/login");
+              this.$router.push("/login");
             } else if(e.response.data[0] === "req") {
               this.stripe.retrievePaymentIntent(e.response.data[1]).then(r => {
                 this.intent = r.paymentIntent.client_secret;

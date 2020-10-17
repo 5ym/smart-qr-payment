@@ -11,7 +11,7 @@
 </template>
 <script>
   import axios from "axios";
-  import router from "../../router";
+  
   import Swal from "sweetalert2";
 
   export default {
@@ -27,11 +27,11 @@
           onClose: DeleteUnsavedImages
         });
         function DeleteUnsavedImages(){
-          router.push('/pay');
+          this.$router.push('/pay');
         }
       }).catch(e => {
         if(e.response.status === 404) {
-          router.push('/404');
+          this.$router.push('/404');
         } else {
           Swal.fire({
             type: "warning",

@@ -39,7 +39,7 @@
   </v-container>
 </template>
 <script>
-  import router from "../../router";
+  
   import axios from "axios";
 
   export default {
@@ -51,13 +51,13 @@
     }),
     created() {
       this.$session.start();
-      if (!this.$session.has("token")) router.push("/login");
+      if (!this.$session.has("token")) this.$router.push("/login");
       this.get();
     },
     methods: {
       get() {
         this.loading = true;
-        axios.get(location.protocol + "//" + window.location.hostname + "/api/orad/list").then(response => {
+        axios.get("/api/orad/list").then(response => {
           this.loading = false;
           this.orders = [];
           var self = this;
@@ -75,8 +75,8 @@
           });
         }).catch(e => {
           this.loading = false;
-          if(e.response.status === 401) router.push("/login");
-          if(e.response.status === 403) router.push("/404");
+          if(e.response.status === 401) this.$router.push("/login");
+          if(e.response.status === 403) this.$router.push("/404");
         });
       }
     }

@@ -2,10 +2,6 @@
   html {
     user-select: none;
   }
-  .centered-input input {
-    text-align: center;
-    font-size: 2em;
-  }
 </style>
 <template>
   <v-container>
@@ -55,7 +51,7 @@
   </v-container>
 </template>
 <script>
-  import router from "../../router";
+  
   import axios from "axios";
   import Swal from "sweetalert2";
 
@@ -64,7 +60,6 @@
       intent: {
         callbackUrl: "https://sqp.sub.daco.dev/square",
         applicationId: "sq0idp-4X1uFjfRhZnG4pc2Q_RCZg",
-        transactionTotal: "100",
         currencyCode: "JPY",
         sdkVersion: "v2.0"
       },
@@ -85,7 +80,7 @@
     }),
     created () {
       this.$session.start();
-      if (!this.$session.has("token")) router.push("/login");
+      if (!this.$session.has("token")) this.$router.push("/login");
       axios.get(location.protocol+"//"+window.location.hostname+"/api/products").then(response => {
         this.loading = false;
         this.cards = response.data;
@@ -112,6 +107,10 @@
             if(v)
               self.data.userproducts.push({product: k, count:v});
           });
+          let transactionTotal = 0;
+          this.cards.forEach(v => {
+            transactionTotal += v.price * this.count[v.id];
+          });
           axios.post(location.protocol+"//"+window.location.hostname+"/api/buy", this.data, {headers: {Authorization: "JWT " + this.$session.get("token")}}).then(response => {
             this.loading = false;
             let tenderTypes =
@@ -124,7 +123,7 @@
               "S.com.squareup.pos.WEB_CALLBACK_URI=" + this.intent.callbackUrl + ";" +
               "S.com.squareup.pos.CLIENT_ID=" + this.intent.applicationId + ";" +
               "S.com.squareup.pos.API_VERSION=" + this.intent.sdkVersion + ";" +
-              "i.com.squareup.pos.TOTAL_AMOUNT=" + this.intent.transactionTotal + ";" +
+              "i.com.squareup.pos.TOTAL_AMOUNT=" + transactionTotal + ";" +
               "S.com.squareup.pos.CURRENCY_CODE=" + this.intent.currencyCode + ";" +
               "S.com.squareup.pos.TENDER_TYPES=" + tenderTypes + ";" +
               "l.com.squareup.pos.AUTO_RETURN_TIMEOUT_MS=3200;" +
@@ -134,9 +133,9 @@
           }).catch(e => {
             this.loading = false;
             if(e.response.status === 401) {
-              router.push("/login");
+              this.$router.push("/login");
             } else if(e.response.status === 403) {
-              router.push("/404");
+              this.$router.push("/404");
             } else if(e.response.status === 400) {
               Swal.fire({
                 title: "Error",

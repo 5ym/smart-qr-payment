@@ -43,12 +43,12 @@
   </v-container>
 </template>
 <script>
-  import router from "../../router";
+  
 
   export default {
     created() {
       this.$session.start();
-      if (!this.$session.has("token")) router.push("/login");
+      if (!this.$session.has("token")) this.$router.push("/login");
     }
   }
 </script>

@@ -46,7 +46,6 @@
   </v-container>
 </template>
 <script>
-  import router from "../../router";
   import axios from "axios";
   import Swal from "sweetalert2";
 
@@ -58,10 +57,10 @@
       loading: true
     }),
     created() {
-      if (!/[a-zA-Z_0-9]{16}/.test(this.$route.params.code)) router.push("/404");
+      if (!/[a-zA-Z_0-9]{16}/.test(this.$route.params.code)) this.$router.push("/404");
       this.$session.start();
-      if (!this.$session.has("token")) router.push("/login");
-      axios.get(location.protocol + "//" + window.location.hostname + "/api/orad/get/" + this.$route.params.code,
+      if (!this.$session.has("token")) this.$router.push("/login");
+      axios.get("/api/orad/get/" + this.$route.params.code,
           { headers: { Authorization: "JWT " + this.$session.get("token") } }
         ).then(response => {
           this.loading = false;
@@ -75,7 +74,7 @@
               onClose: closemes
             });
             function closemes(){
-              router.push("/accept");
+              this.$router.push("/accept");
             }
           } else {
             this.email = response.data.user.email;
@@ -88,8 +87,8 @@
           }
         }).catch(e => {
           this.loading = false;
-          if(e.response.status === 401) router.push("/login");
-          if(e.response.status === 403) router.push("/404");
+          if(e.response.status === 401) this.$router.push("/login");
+          if(e.response.status === 403) this.$router.push("/404");
           if(e.response.status === 404) {
             Swal.fire({
               title: "Error",
@@ -100,7 +99,7 @@
               onClose: closemes
             });
             function closemes(){
-              router.push("/accept");
+              this.$router.push("/accept");
             }
           }
         });
@@ -108,7 +107,7 @@
     methods: {
       confirm() {
         this.loading = true;
-        axios.put(location.protocol + "//" + window.location.hostname + "/api/orad/receive/" + this.$route.params.code,
+        axios.put("/api/orad/receive/" + this.$route.params.code,
           {code: this.$route.params.code}, { headers: { Authorization: "JWT " + this.$session.get("token") } }
         ).then(result => {
           this.loading = false;
@@ -121,12 +120,12 @@
             onClose: closemes
           });
           function closemes(){
-            router.push("/real");
+            this.$router.push("/real");
           }
         }).catch(e => {
           this.loading = false;
-          if(e.response.status === 401) router.push("/login");
-          if(e.response.status === 403) router.push("/404");
+          if(e.response.status === 401) this.$router.push("/login");
+          if(e.response.status === 403) this.$router.push("/404");
           if(e.response.status === 404) {
             Swal.fire({
               title: "Error",
@@ -137,7 +136,7 @@
               onClose: closemes
             });
             function closemes(){
-              router.push("/accept");
+              this.$router.push("/accept");
             }
           }
         });

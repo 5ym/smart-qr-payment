@@ -1,4 +1,4 @@
-<style scoped>
+<style>
   .centered-input input {
     text-align: center;
     font-size: 2em;
@@ -79,7 +79,7 @@
 <script>
   import axios from "axios";
   import Swal from "sweetalert2";
-  import router from "../../router";
+  
 
   export default {
     data: () => ({

@@ -8,7 +8,7 @@
             <v-layout row fill-height justify-center align-center v-if="loading">
               <v-progress-circular :size="50" color="primary" indeterminate />
             </v-layout>
-            <v-form v-else ref="form" v-model="valid" lazy-validation>
+            <v-form v-else ref="form" v-model="valid" lazy-validation @submit.prevent="login">
               <v-text-field
                 type="email"
                 v-model="credentials.email"
@@ -27,7 +27,7 @@
                 maxlength="20"
                 required
               />
-              <v-btn class="pink white--text" :disabled="!valid" @click="login">Login</v-btn>
+              <v-btn class="pink white--text" :disabled="!valid" type="submit">Login</v-btn>
             </v-form>
           </v-card-text>
         </v-card>
@@ -38,7 +38,7 @@
 <script>
   import axios from "axios";
   import Swal from "sweetalert2";
-  import router from "../../router";
+  
 
   export default {
     data: () => ({

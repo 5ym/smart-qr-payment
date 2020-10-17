@@ -24,7 +24,7 @@
   </v-container>
 </template>
 <script>
-  import router from "../../router";
+  
   import { QrcodeStream } from 'vue-qrcode-reader';
 
   export default {
@@ -36,12 +36,12 @@
     },
     created() {
       this.$session.start();
-      if (!this.$session.has("token")) router.push("/login");
+      if (!this.$session.has("token")) this.$router.push("/login");
     },
     methods: {
       onDecode (result) {
         if(/[a-zA-Z_0-9]{16}/.test(result)) {
-          router.push("/confirm/"+result);
+          this.$router.push("/confirm/"+result);
         } else {
           this.error = '不正なQRコードかQRコードが正しく読み取れませんでした。もう一度読み込み直してください。';
         }

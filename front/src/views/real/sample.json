@@ -16,5 +16,9 @@
     "com.squareup.pos.REQUEST_METADATA": "hvTLnN0yeQ5nyRpm"
 },
 "Quic Pay",
-
+{
+    "com.squareup.pos.CLIENT_TRANSACTION_ID": "1666ad4f-12fa-447b-bffa-01f4f27385ec",
+    "com.squareup.pos.SERVER_TRANSACTION_ID": "BrVvcK7v75sbfC7CFxcnH4xeV",
+    "com.squareup.pos.REQUEST_METADATA": "LlQ1ELKKiafhKG9n"
+}  
 ]

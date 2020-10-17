@@ -50,7 +50,7 @@
 <script>
   import VueQrcode from "@chenfengyuan/vue-qrcode";
   import axios from "axios";
-  import router from "../../router";
+  
 
   export default {
     data: () => ({
@@ -64,10 +64,10 @@
     },
     created() {
       this.$session.start();
-      if (!this.$session.has("token")) router.push("/login");
-      axios.get(location.protocol + "//" + window.location.hostname + "/api/qr", {headers: { Authorization: "JWT " + this.$session.get("token") }}).then(response => {
+      if (!this.$session.has("token")) this.$router.push("/login");
+      axios.get("/api/qr", {headers: { Authorization: "JWT " + this.$session.get("token") }}).then(response => {
         if(response.data.pay === null)
-          router.push("/pay");
+          this.$router.push("/pay");
         this.email = response.data.email;
         this.desserts = [];
         response.data.userproducts.forEach(i => {
@@ -77,7 +77,7 @@
         this.desserts.push({count: "合計", subtotal: this.total+"円"});
         this.code = response.data.pay.code;
       }).catch(e => {
-        if (e.response.status === 401) router.push("/login");
+        if (e.response.status === 401) this.$router.push("/login");
       });
     }
   }

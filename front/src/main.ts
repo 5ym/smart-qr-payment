@@ -6,7 +6,7 @@ import vuetify from "./plugins/vuetify";
 const VueSession = require('vue-session');
 import VueHead from 'vue-head';
 
-Vue.use(VueSession);
+Vue.use(VueSession, {persist: true});
 Vue.use(VueHead);
 
 Vue.config.productionTip = false;

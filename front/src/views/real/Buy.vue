@@ -51,7 +51,6 @@
   </v-container>
 </template>
 <script>
-  
   import axios from "axios";
   import Swal from "sweetalert2";
 
@@ -101,7 +100,7 @@
       square() {
         if (this.$refs.form.validate()) {
           this.loading = true;
-          var self = this;
+          const self = this;
           this.data.userproducts = [];
           this.count.forEach((v, k) => {
             if(v)
@@ -113,10 +112,10 @@
           });
           axios.post(location.protocol+"//"+window.location.hostname+"/api/buy", this.data, {headers: {Authorization: "JWT " + this.$session.get("token")}}).then(response => {
             this.loading = false;
-            let tenderTypes =
+            const tenderTypes =
               "com.squareup.pos.TENDER_CARD,"+
               "com.squareup.pos.TENDER_CASH";
-            let posUrl =
+            const posUrl =
               "intent:#Intent;" +
               "action=com.squareup.pos.action.CHARGE;" +
               "package=com.squareup;" +

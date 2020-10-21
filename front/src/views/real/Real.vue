@@ -43,8 +43,6 @@
   </v-container>
 </template>
 <script>
-  
-
   export default {
     created() {
       this.$session.start();

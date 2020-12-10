@@ -125,7 +125,7 @@
       register() {
         if (this.$refs.form.validate()) {
           this.loading = true;
-          var self = this;
+          const self = this;
           this.data.userproducts = [];
           this.count.forEach((v, k) => {
             if(v)

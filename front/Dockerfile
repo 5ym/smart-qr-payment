@@ -1,16 +1,18 @@
 FROM alpine AS build
 
 WORKDIR /usr/src/app
+COPY package.json .
+COPY yarn.lock .
+RUN apk add --no-cache yarn && yarn
 COPY . .
-RUN apk add --no-cache yarn && yarn && yarn build
+RUN yarn build
 
 FROM alpine
 
-RUN apk --no-cache add nginx
-RUN mkdir /run/nginx
 WORKDIR /var/lib/nginx/html
-COPY --from=build /usr/src/app/dist .
+RUN apk --no-cache add nginx && mkdir /run/nginx
 COPY default.conf /etc/nginx/conf.d/default.conf
+COPY --from=build /usr/src/app/dist .
 
 EXPOSE 80
 

@@ -60,9 +60,9 @@
         axios.get("/api/orad/list").then(response => {
           this.loading = false;
           this.orders = [];
-          var self = this;
+          const self = this;
           response.data.forEach(item => {
-            let desserts = [];
+            const desserts = [];
             let total = 0;
             item.user.userproducts.forEach(i => {
               desserts.push({id: i.product.id, title: i.product.title, price: i.price, count: i.count, subtotal: i.price * i.count});

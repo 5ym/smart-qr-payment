@@ -1,9 +1,12 @@
 FROM alpine
 
 WORKDIR /usr/src/app
+COPY requirements.txt .
+RUN apk add --no-cache python3-dev py-pip build-base mariadb-connector-c-dev nginx && mkdir /run/nginx && pip install -r requirements.txt
 COPY . .
-RUN apk add --no-cache python3-dev py-pip build-base mariadb-connector-c-dev && pip install -r requirements.txt
+RUN python3 manage.py collectstatic --noinput
+COPY default.conf /etc/nginx/conf.d/
 
-EXPOSE 8000
+EXPOSE 80
 
-CMD python3 manage.py runserver 0.0.0.0:8000
+CMD nginx && gunicorn back.asgi:application -k uvicorn.workers.UvicornWorker

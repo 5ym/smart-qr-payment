@@ -162,3 +162,4 @@ STATIC_URL = '/api/static/'
 # media settings
 MEDIA_URL = '/api/img/'
 MEDIA_ROOT = (os.path.join(BASE_DIR, 'img'))
+STATIC_ROOT = (os.path.join(BASE_DIR, 'static'))

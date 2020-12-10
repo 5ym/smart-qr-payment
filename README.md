@@ -10,7 +10,7 @@ traefik環境を先に構築しておく下記参照
 cp docker-compose-sample.yml docker-compose.yml
 docker-compose run --rm sqp-front sh -c 'yarn'
 docker-compose up -d sqp-db
-docker-compose run --rm sqp-back sh -c 'python3 manage.py migrate'
+docker-compose run --rm sqp-back sh -c 'python3 manage.py migrate && python3 manage.py collectstatic --noinput'
 docker-compose up -d
 ```
 

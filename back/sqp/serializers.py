@@ -46,7 +46,7 @@ class UserSerializer(serializers.ModelSerializer):
         code = ''.join([random.choice(string.ascii_letters + string.digits) for i in range(16)])
         verify = Verify(user=user, code=code)
         verify.save()
-        http = "http://" if settings.DEBUG == True else "https://"
+        http = "http://" if settings.HTTPS == False else "https://"
         send_mail(
             'メールアドレスの確認<Doa>',
             'この度はご注文ありがとうございます。\n下記よりメールアドレスの確認をお願いいたします。確認完了後支払画面に遷移いたします。\n'+http+settings.ALLOWED_HOSTS[0]+"/verify/"+verify.code,
@@ -87,7 +87,7 @@ class PaySerializer(serializers.ModelSerializer):
             payment_method_types=["card"],
             payment_method=validated_data["token"]
         )
-        http = "http://" if settings.DEBUG == True else "https://"
+        http = "http://" if settings.HTTPS == False else "https://"
         try:
             intent = stripe.PaymentIntent.confirm(
                 intentins,

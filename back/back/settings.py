@@ -22,7 +22,8 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/3.1/howto/deployment/checklist/
 
 SECRET_KEY = os.environ.get('SECRET_KEY', '6$h*ya!=#qs8o1xi__tp9w2sxhg_^eo$fgzw-i1&51g_a8g=j$')
-DEBUG = os.environ.get('DEBUG', True)
+DEBUG = os.environ.get('DEBUG', True) == True
+HTTPS = os.environ.get('HTTPS', False) == True
 ALLOWED_HOSTS = [os.environ.get('ALLOWED_HOSTS')]
 
 # mail

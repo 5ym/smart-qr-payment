@@ -1,0 +1,6 @@
+{
+    "extends": [
+        "@nuxtjs/eslint-config-typescript",
+        "plugin:vuetify/base"
+    ]
+}

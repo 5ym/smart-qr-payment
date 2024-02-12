@@ -22,7 +22,7 @@ services:
     environment:
       - STRIPE_SECRET_KEY=hoge # stripe用secret key
       - DEBUG=True
-      - ALLOWED_HOSTS=*
+      - ALLOWED_HOSTS=sqp.localhost
   sqpf:
     build:
       context: front

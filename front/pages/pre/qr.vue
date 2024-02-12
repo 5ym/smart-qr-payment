@@ -59,6 +59,7 @@
 <script>
 import VueQrcode from '@chenfengyuan/vue-qrcode'
 import axios from 'axios'
+import { getCookie } from '../../util/session'
 
 export default {
   components: {
@@ -71,9 +72,8 @@ export default {
     email: 'Now loading...'
   }),
   created () {
-    this.$session.start()
-    if (!this.$session.has('token')) { this.$router.push('/login') }
-    axios.get('/api/qr', { headers: { Authorization: 'JWT ' + this.$session.get('token') } }).then((response) => {
+    if (getCookie('token') === '') { this.$router.push('/login') }
+    axios.get('/api/qr', { headers: { Authorization: 'JWT ' + getCookie('token') } }).then((response) => {
       if (response.data.pay === null) { this.$router.push('/pay') }
       this.email = response.data.email
       this.desserts = []

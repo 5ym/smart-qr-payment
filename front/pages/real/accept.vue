@@ -23,8 +23,8 @@
   </v-container>
 </template>
 <script>
-
 import { QrcodeStream } from 'vue-qrcode-reader'
+import { getCookie } from '../../util/session'
 
 export default {
   components: {
@@ -34,8 +34,7 @@ export default {
     error: ''
   }),
   created () {
-    this.$session.start()
-    if (!this.$session.has('token')) { this.$router.push('/login') }
+    if (getCookie('token') === '') { this.$router.push('/login') }
   },
   methods: {
     onDecode (result) {

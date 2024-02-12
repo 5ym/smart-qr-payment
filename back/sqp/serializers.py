@@ -49,7 +49,7 @@ class UserSerializer(serializers.ModelSerializer):
         http = "http://" if settings.HTTPS == False else "https://"
         send_mail(
             'メールアドレスの確認<Doa>',
-            'この度はご注文ありがとうございます。\n下記よりメールアドレスの確認をお願いいたします。確認完了後支払画面に遷移いたします。\n'+http+settings.ALLOWED_HOSTS[0]+"/verify/"+verify.code,
+            'この度はご注文ありがとうございます。\n下記よりメールアドレスの確認をお願いいたします。確認完了後支払画面に遷移いたします。\n'+http+settings.ALLOWED_HOSTS[0]+"/pre/verify/"+verify.code,
             'no-reply@daco.dev',
             [user.email],
         )
@@ -91,7 +91,7 @@ class PaySerializer(serializers.ModelSerializer):
         try:
             intent = stripe.PaymentIntent.confirm(
                 intentins,
-                return_url=http+settings.ALLOWED_HOSTS[0]+"/pay/secure"
+                return_url=http+settings.ALLOWED_HOSTS[0]+"/pre/pay/secure"
             )
         except stripe.error.CardError as e:
             raise serializers.ValidationError(e.error.message)

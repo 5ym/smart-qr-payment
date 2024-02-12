@@ -20,9 +20,9 @@ services:
       - "traefik.http.routers.sb.rule=Host(`sqp.localhost`) && PathPrefix(`/api`)"
       - "traefik.http.routers.sb.tls=true"
     environment:
-      - STRIPE_SECRET_KEY=hoge # stripe用secret key
+      - STRIPE_SECRET_KEY=sk_test_M7J5dwEFSdnRAJghu2q9h5vN # stripe用secret key
       - DEBUG=True
-      - ALLOWED_HOSTS=*
+      - ALLOWED_HOSTS=sqp.localhost
   sqpf:
     build:
       context: front

@@ -11,14 +11,14 @@
 </template>
 <script>
 import axios from 'axios'
+import { getCookie } from '../../../util/session'
 
 export default {
   created () {
     if (window === window.parent) { this.$router.push('/404') }
-    this.$session.start()
-    if (!this.$session.has('token')) { this.$router.push('/login') }
+    if (getCookie('token') === '') { this.$router.push('/login') }
     if (!this.$route.query.payment_intent) { window.top.postMessage('3DS-authentication-complete') }
-    axios.post('/api/pay/secure', { token: this.$route.query.payment_intent }, { headers: { Authorization: 'JWT ' + this.$session.get('token') } }).then(() => {
+    axios.post('/api/pay/secure', { token: this.$route.query.payment_intent }, { headers: { Authorization: 'JWT ' + getCookie('token') } }).then(() => {
       window.top.postMessage('3DS-authentication-complete')
     }).catch((e) => {
       if (e.response.status === 401) {

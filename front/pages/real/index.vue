@@ -2,22 +2,22 @@
   <v-container fill-height>
     <v-row justify="space-around" row="center">
       <v-col cols="4">
-        <v-card ripple color="primary" dark to="./accept">
+        <v-card ripple color="primary" dark to="/real/accept">
           <v-img
-            src="/api/static/img/real0.png"
+            src="/img/real0.png"
             gradient="to bottom, rgba(0,0,0,.1), rgba(0,0,0,.5)"
-            height="400px"
+            height="380px"
           />
           <v-card-title>受け取り</v-card-title>
           <v-card-subtitle>事前購入された方はこちら</v-card-subtitle>
         </v-card>
       </v-col>
       <v-col cols="4">
-        <v-card ripple color="secondary" dark to="./buy">
+        <v-card ripple color="secondary" dark to="/real/buy">
           <v-img
-            src="/api/static/img/real1.png"
+            src="/img/real1.png"
             gradient="to bottom, rgba(0,0,0,.1), rgba(0,0,0,.5)"
-            height="400px"
+            height="380px"
           />
           <v-card-title>当日購入</v-card-title>
           <v-card-subtitle>当日お買い求めの方はこちら</v-card-subtitle>
@@ -37,14 +37,6 @@
     </v-row>
   </v-container>
 </template>
-<script>
-export default {
-  created () {
-    this.$session.start()
-    if (!this.$session.has('token')) { this.$router.push('/login') }
-  }
-}
-</script>
 <style scoped>
 html {
   user-select: none;

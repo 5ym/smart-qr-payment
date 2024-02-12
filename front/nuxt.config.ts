@@ -3,6 +3,12 @@ import vuetify, { transformAssetUrls } from 'vite-plugin-vuetify'
 // https://nuxt.com/docs/api/configuration/nuxt-config
 export default defineNuxtConfig({
   devtools: { enabled: true },
+  runtimeConfig: {
+    public: {
+      stripePublic: 'pk_test_bvs1no5I4wZDM1hcwhDaAXFJ'
+    }
+  },
+  plugins: ['~/plugins/axios'],
   build: {
     transpile: ['vuetify']
   },
@@ -21,9 +27,5 @@ export default defineNuxtConfig({
       }
     }
   },
-  app: {
-    head: {
-      script: [{ src: 'https://js.stripe.com/v3' }]
-    }
-  }
+  ssr: false
 })

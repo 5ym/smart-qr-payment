@@ -67,8 +67,7 @@ export default {
     loading: false
   }),
   created () {
-    this.$session.start()
-    if (!this.$session.has('token')) { this.$router.push('/login') }
+    if (getCookie('token') === '') { this.$router.push('/login') }
     this.get()
   },
   methods: {

@@ -40,6 +40,7 @@
 <script>
 import axios from 'axios'
 import Swal from 'sweetalert2'
+import { setCookie } from '../util/session'
 
 export default {
   data: () => ({
@@ -61,8 +62,7 @@ export default {
       if (this.$refs.form.validate()) {
         this.loading = true
         axios.post('/api/login/', this.credentials).then((res) => {
-          this.$session.start()
-          this.$session.set('token', res.data.token)
+          setCookie('token', res.data.token)
           this.$router.go(-1)
         })
           .catch(() => {

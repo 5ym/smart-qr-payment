@@ -4,6 +4,7 @@
 <script>
 import axios from 'axios'
 import Swal from 'sweetalert2'
+import { getCookie } from '../../util/session'
 
 export default {
   data: () => ({
@@ -12,7 +13,7 @@ export default {
     const query = this.$route.query
     if (query['com.squareup.pos.CLIENT_TRANSACTION_ID']) {
       axios.put('/api/orad/receive/' + query['com.squareup.pos.REQUEST_METADATA'],
-        { code: query['com.squareup.pos.REQUEST_METADATA'] }, { headers: { Authorization: 'JWT ' + this.$session.get('token') } }
+        { code: query['com.squareup.pos.REQUEST_METADATA'] }, { headers: { Authorization: 'JWT ' + getCookie('token') } }
       ).then(() => {
         Swal.fire({
           title: 'Complete',

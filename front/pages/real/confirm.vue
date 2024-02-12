@@ -1,3 +1,126 @@
+<script>
+import axios from 'axios'
+import Swal from 'sweetalert2'
+import { getCookie } from '../../util/session'
+
+export default {
+  data: () => ({
+    desserts: [
+      { id: 0, title: 'Now loading', price: 0, count: 0, subtotal: 0 }
+    ],
+    total: 0,
+    email: 'Now loading...',
+    loading: true
+  }),
+  created () {
+    if (!/[a-zA-Z_0-9]{16}/.test(this.$route.params.code)) {
+      this.$router.push('/404')
+    }
+    if (getCookie('token') === '') {
+      this.$router.push('/login')
+    }
+    axios
+      .get('/api/orad/get/' + this.$route.params.code, {
+        headers: { Authorization: 'JWT ' + getCookie('token') }
+      })
+      .then((response) => {
+        this.loading = false
+        if (response.data.receive) {
+          Swal.fire({
+            title: 'Error',
+            html: '受け取り済みのQRコードです。3秒後にQR読み込み画面に戻ります。',
+            showConfirmButton: false,
+            showCloseButton: false,
+            timer: 3000,
+            onClose: () => {
+              this.$router.push('/accept')
+            }
+          })
+        } else {
+          this.email = response.data.user.email
+          this.desserts = []
+          response.data.user.userproducts.forEach((i) => {
+            this.desserts.push({
+              id: i.product.id,
+              title: i.product.title,
+              price: i.price,
+              count: i.count,
+              subtotal: i.price * i.count
+            })
+            this.total += i.price * i.count
+          })
+          this.desserts.push({ count: '合計', subtotal: this.total })
+        }
+      })
+      .catch((e) => {
+        this.loading = false
+        if (e.response.status === 401) {
+          this.$router.push('/login')
+        }
+        if (e.response.status === 403) {
+          this.$router.push('/404')
+        }
+        if (e.response.status === 404) {
+          Swal.fire({
+            title: 'Error',
+            html: '不正なQRコードです。3秒後にQR読み込み画面に戻ります。',
+            showConfirmButton: false,
+            showCloseButton: false,
+            timer: 3000,
+            onClose: () => {
+              this.$router.push('/accept')
+            }
+          })
+        }
+      })
+  },
+  methods: {
+    confirm () {
+      this.loading = true
+      axios
+        .put(
+          '/api/orad/receive/' + this.$route.params.code,
+          { code: this.$route.params.code },
+          { headers: { Authorization: 'JWT ' + getCookie('token') } }
+        )
+        .then(() => {
+          this.loading = false
+          Swal.fire({
+            title: 'Complete',
+            html: 'お買い上げありがとうございます。<br>商品をお渡しします。5秒後にトップに戻ります。',
+            showConfirmButton: false,
+            showCloseButton: false,
+            timer: 5000,
+            onClose: () => {
+              this.$router.push('/real')
+            }
+          })
+        })
+        .catch((e) => {
+          this.loading = false
+          if (e.response.status === 401) {
+            this.$router.push('/login')
+          }
+          if (e.response.status === 403) {
+            this.$router.push('/404')
+          }
+          if (e.response.status === 404) {
+            Swal.fire({
+              title: 'Error',
+              html: '不正なQRコードです。3秒後にQR読み込み画面に戻ります。',
+              showConfirmButton: false,
+              showCloseButton: false,
+              timer: 3000,
+              onClose: () => {
+                this.$router.push('/accept')
+              }
+            })
+          }
+        })
+    }
+  }
+}
+</script>
 <template>
   <v-container>
     <div class="text-h6">
@@ -63,129 +186,6 @@
     </v-row>
   </v-container>
 </template>
-<script>
-import axios from 'axios'
-import Swal from 'sweetalert2'
-
-export default {
-  data: () => ({
-    desserts: [
-      { id: 0, title: 'Now loading', price: 0, count: 0, subtotal: 0 }
-    ],
-    total: 0,
-    email: 'Now loading...',
-    loading: true
-  }),
-  created () {
-    if (!/[a-zA-Z_0-9]{16}/.test(this.$route.params.code)) {
-      this.$router.push('/404')
-    }
-    this.$session.start()
-    if (!this.$session.has('token')) {
-      this.$router.push('/login')
-    }
-    axios
-      .get('/api/orad/get/' + this.$route.params.code, {
-        headers: { Authorization: 'JWT ' + this.$session.get('token') }
-      })
-      .then((response) => {
-        this.loading = false
-        if (response.data.receive) {
-          Swal.fire({
-            title: 'Error',
-            html: '受け取り済みのQRコードです。3秒後にQR読み込み画面に戻ります。',
-            showConfirmButton: false,
-            showCloseButton: false,
-            timer: 3000,
-            onClose: () => {
-              this.$router.push('/accept')
-            }
-          })
-        } else {
-          this.email = response.data.user.email
-          this.desserts = []
-          response.data.user.userproducts.forEach((i) => {
-            this.desserts.push({
-              id: i.product.id,
-              title: i.product.title,
-              price: i.price,
-              count: i.count,
-              subtotal: i.price * i.count
-            })
-            this.total += i.price * i.count
-          })
-          this.desserts.push({ count: '合計', subtotal: this.total })
-        }
-      })
-      .catch((e) => {
-        this.loading = false
-        if (e.response.status === 401) {
-          this.$router.push('/login')
-        }
-        if (e.response.status === 403) {
-          this.$router.push('/404')
-        }
-        if (e.response.status === 404) {
-          Swal.fire({
-            title: 'Error',
-            html: '不正なQRコードです。3秒後にQR読み込み画面に戻ります。',
-            showConfirmButton: false,
-            showCloseButton: false,
-            timer: 3000,
-            onClose: () => {
-              this.$router.push('/accept')
-            }
-          })
-        }
-      })
-  },
-  methods: {
-    confirm () {
-      this.loading = true
-      axios
-        .put(
-          '/api/orad/receive/' + this.$route.params.code,
-          { code: this.$route.params.code },
-          { headers: { Authorization: 'JWT ' + this.$session.get('token') } }
-        )
-        .then(() => {
-          this.loading = false
-          Swal.fire({
-            title: 'Complete',
-            html: 'お買い上げありがとうございます。<br>商品をお渡しします。5秒後にトップに戻ります。',
-            showConfirmButton: false,
-            showCloseButton: false,
-            timer: 5000,
-            onClose: () => {
-              this.$router.push('/real')
-            }
-          })
-        })
-        .catch((e) => {
-          this.loading = false
-          if (e.response.status === 401) {
-            this.$router.push('/login')
-          }
-          if (e.response.status === 403) {
-            this.$router.push('/404')
-          }
-          if (e.response.status === 404) {
-            Swal.fire({
-              title: 'Error',
-              html: '不正なQRコードです。3秒後にQR読み込み画面に戻ります。',
-              showConfirmButton: false,
-              showCloseButton: false,
-              timer: 3000,
-              onClose: () => {
-                this.$router.push('/accept')
-              }
-            })
-          }
-        })
-    }
-  }
-}
-</script>
 <style scoped>
 html {
   user-select: none;

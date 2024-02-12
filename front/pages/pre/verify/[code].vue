@@ -11,7 +11,6 @@
 </template>
 <script>
 import axios from 'axios'
-
 import Swal from 'sweetalert2'
 
 export default {
@@ -24,19 +23,21 @@ export default {
         showConfirmButton: false,
         showCloseButton: false,
         timer: 3000,
-        onClose: () => { this.$router.push('/pay') }
+        onClose: () => { this.$router.push('/pre/pay') }
       })
-    }).catch((e) => {
+    }).catch(async (e) => {
       if (e.response.status === 404) {
-        this.$router.push('/404')
+        await this.$router.push('/pre/pay')
       } else {
-        Swal.fire({
+        await Swal.fire({
           type: 'warning',
           title: 'Error',
           text: 'エラーが発生しました。管理者までお問い合わせください。',
           showConfirmButton: false,
           showCloseButton: false,
-          onClose: () => { router.go(-1) }
+          onClose: () => {
+            this.$router.go(-1)
+          }
         })
       }
     })

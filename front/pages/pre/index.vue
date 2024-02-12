@@ -94,10 +94,10 @@ export default {
         >
           <v-card>
             <v-img
-              :src="'/api/static/img/' + card.image"
+              :src="'/img/' + card.image"
               gradient="to bottom, rgba(0,0,0,.1), rgba(0,0,0,.5)"
               class="text-white align-end"
-              height="400px"
+              height="300px"
             >
               <v-card-title>{{ card.price }}円</v-card-title>
             </v-img>
@@ -114,7 +114,6 @@ export default {
               <v-card class="pa-1" flat width="64px">
                 <v-text-field
                   v-model="count[card.id]"
-                  type="text"
                   :rules="rules.count"
                 />
               </v-card>
@@ -156,7 +155,7 @@ export default {
                   required
                 />
               </v-container>
-              <v-btn class="bg-pink text-white" :disabled="!valid" @click="index">
+              <v-btn class="bg-pink text-white" :disabled="!valid" @click="register">
                 送信
               </v-btn>
             </v-card-text>

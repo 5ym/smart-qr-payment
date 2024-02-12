@@ -27,7 +27,7 @@ HTTPS = os.environ.get('HTTPS', 'True') == 'True'
 ALLOWED_HOSTS = [os.environ.get('ALLOWED_HOSTS')]
 
 # mail
-EMAIL_HOST = os.environ.get('EMAIL_HOST', 'smh')
+EMAIL_HOST = os.environ.get('EMAIL_HOST', 'sqpm')
 EMAIL_PORT = os.environ.get('EMAIL_PORT', 1025)
 EMAIL_HOST_USER = os.environ.get('EMAIL_HOST_USER', None)
 EMAIL_HOST_PASSWORD = os.environ.get('EMAIL_HOST_PASSWORD', None)
@@ -157,8 +157,11 @@ USE_TZ = True
 
 
 # Static files (CSS, JavaScript, Images)
-# https://docs.djangoproject.com/en/3.1/howto/static-files/
+# https://docs.djangoproject.com/en/3.2/howto/static-files/
 STATIC_URL = '/api/static/'
+STATICFILES_DIRS = [
+    BASE_DIR / "static",
+]
 
 ASGI_APPLICATION = "back.asgi.application"
 

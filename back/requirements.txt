@@ -4,7 +4,7 @@ django-filter==2.2.0
 djangorestframework==3.11.1
 djangorestframework-jwt==1.11.0
 psycopg2==2.9.9
-PyJWT==1.7.1
+PyJWT==2.4.0
 pytz==2019.1
 stripe==2.51.0
 daphne==4.0.0

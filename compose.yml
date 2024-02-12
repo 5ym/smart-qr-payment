@@ -27,12 +27,13 @@ services:
     build:
       context: front
       target: base
-    command: dev
+    command: run dev
     volumes:
       - ./front:/usr/src/app
     networks:
       - docker_default
       - default
+    tty: true
     labels:
       - "traefik.http.routers.sf.rule=Host(`sqp.localhost`)"
       - "traefik.http.routers.sf.tls=true"
@@ -41,9 +42,11 @@ services:
     environment:
       - POSTGRES_PASSWORD=sergtsop
       - POSTGRES_DB=sqp
+    volumes:
+      - db:/var/lib/postgresql/data
     labels:
       - "traefik.enable=false"
-  smh:
+  sqpm:
     image: mailhog/mailhog
     networks:
       - docker_default
@@ -51,6 +54,8 @@ services:
     labels:
       - "traefik.http.services.smh.loadbalancer.server.port=8025"
 
+volumes:
+  db:
 networks:
   docker_default:
     external: true

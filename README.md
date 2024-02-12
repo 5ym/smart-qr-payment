@@ -8,7 +8,7 @@ traefik環境を先に構築しておく下記参照
 
 ```shell
 cp compose.sample.yml compose.yml
-docker compose run --rm sqpf 'i'
+docker compose run --rm sqpf i
 docker compose run --rm sqpb sh -c 'python manage.py migrate'
 docker compose up -d
 ```

@@ -7,15 +7,22 @@
     "dev": "nuxt dev",
     "generate": "nuxt generate",
     "preview": "nuxt preview",
-    "postinstall": "nuxt prepare"
+    "postinstall": "nuxt prepare",
+    "lint": "eslint .",
+    "lint:fix": "eslint --fix ."
   },
   "dependencies": {
     "@mdi/font": "^7.4.47",
+    "axios": "^1.6.7",
     "nuxt": "^3.10.1",
+    "sweetalert2": "^11.10.5",
     "vue": "^3.4.15",
     "vue-router": "^4.2.5"
   },
   "devDependencies": {
+    "@nuxtjs/eslint-config-typescript": "^12.1.0",
+    "eslint": "^8.56.0",
+    "eslint-plugin-vuetify": "^2.1.1",
     "vite-plugin-vuetify": "^2.0.1",
     "vuetify": "^3.5.3"
   }

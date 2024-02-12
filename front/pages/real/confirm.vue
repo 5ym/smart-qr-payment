@@ -1,24 +1,31 @@
-<style scoped>
-  html {
-    user-select: none;
-  }
-</style>
 <template>
   <v-container>
-    <div class="text-h6">注文内容をご確認ください。</div>
+    <div class="text-h6">
+      注文内容をご確認ください。
+    </div>
     <v-row justify="space-around" row="center">
       <v-col xs="12" sm="8" lg="4" md="5">
         <v-card>
           <v-card-title>{{ email }}</v-card-title>
           <v-card-text>
-            <v-simple-table>
+            <v-table>
               <thead>
                 <tr>
-                  <th class="text-left">商品ID</th>
-                  <th class="text-left">商品名</th>
-                  <th class="text-left">価格</th>
-                  <th class="text-left">購入数</th>
-                  <th class="text-left">小計</th>
+                  <th class="text-left">
+                    商品ID
+                  </th>
+                  <th class="text-left">
+                    商品名
+                  </th>
+                  <th class="text-left">
+                    価格
+                  </th>
+                  <th class="text-left">
+                    購入数
+                  </th>
+                  <th class="text-left">
+                    小計
+                  </th>
                 </tr>
               </thead>
               <tbody>
@@ -30,105 +37,157 @@
                   <td>{{ item.subtotal }}</td>
                 </tr>
               </tbody>
-            </v-simple-table>
+            </v-table>
           </v-card-text>
         </v-card>
       </v-col>
     </v-row>
     <v-row justify="space-around" row="center">
       <v-col cols="6">
-        <v-btn block color="secondary" x-large to="/accept">戻る</v-btn>
+        <v-btn block color="secondary" size="x-large" to="/accept">
+          戻る
+        </v-btn>
       </v-col>
       <v-col cols="6">
-        <v-btn block color="primary" x-large @click="confirm" :disabled="loading" :loading="loading">確定</v-btn>
+        <v-btn
+          block
+          color="primary"
+          size="x-large"
+          :disabled="loading"
+          :loading="loading"
+          @click="confirm"
+        >
+          確定
+        </v-btn>
       </v-col>
     </v-row>
   </v-container>
 </template>
 <script>
-  import axios from "axios";
-  import Swal from "sweetalert2";
+import axios from 'axios'
+import Swal from 'sweetalert2'
 
-  export default {
-    data: () => ({
-      desserts: [{id: 0, title: 'Now loading', price: 0, count: 0, subtotal: 0,},],
-      total: 0,
-      email: 'Now loading...',
-      loading: true
-    }),
-    created() {
-      if (!/[a-zA-Z_0-9]{16}/.test(this.$route.params.code)) this.$router.push("/404");
-      this.$session.start();
-      if (!this.$session.has("token")) this.$router.push("/login");
-      axios.get("/api/orad/get/" + this.$route.params.code,
-          { headers: { Authorization: "JWT " + this.$session.get("token") } }
-        ).then(response => {
-          this.loading = false;
-          if(response.data.receive) {
-            Swal.fire({
-              title: "Error",
-              html: "受け取り済みのQRコードです。3秒後にQR読み込み画面に戻ります。",
-              showConfirmButton: false,
-              showCloseButton: false,
-              timer: 3000,
-              onClose: () => {this.$router.push('/accept')}
-            });
-          } else {
-            this.email = response.data.user.email;
-            this.desserts = [];
-            response.data.user.userproducts.forEach(i => {
-              this.desserts.push({id: i.product.id, title: i.product.title, price: i.price, count: i.count, subtotal: i.price * i.count});
-              this.total += i.price * i.count;
-            });
-            this.desserts.push({count: "合計", subtotal: this.total});
-          }
-        }).catch(e => {
-          this.loading = false;
-          if(e.response.status === 401) this.$router.push("/login");
-          if(e.response.status === 403) this.$router.push("/404");
-          if(e.response.status === 404) {
-            Swal.fire({
-              title: "Error",
-              html: "不正なQRコードです。3秒後にQR読み込み画面に戻ります。",
-              showConfirmButton: false,
-              showCloseButton: false,
-              timer: 3000,
-              onClose: () => {this.$router.push('/accept')}
-            });
-          }
-        });
-    },
-    methods: {
-      confirm() {
-        this.loading = true;
-        axios.put("/api/orad/receive/" + this.$route.params.code,
-          {code: this.$route.params.code}, { headers: { Authorization: "JWT " + this.$session.get("token") } }
-        ).then(result => {
-          this.loading = false;
+export default {
+  data: () => ({
+    desserts: [
+      { id: 0, title: 'Now loading', price: 0, count: 0, subtotal: 0 }
+    ],
+    total: 0,
+    email: 'Now loading...',
+    loading: true
+  }),
+  created () {
+    if (!/[a-zA-Z_0-9]{16}/.test(this.$route.params.code)) {
+      this.$router.push('/404')
+    }
+    this.$session.start()
+    if (!this.$session.has('token')) {
+      this.$router.push('/login')
+    }
+    axios
+      .get('/api/orad/get/' + this.$route.params.code, {
+        headers: { Authorization: 'JWT ' + this.$session.get('token') }
+      })
+      .then((response) => {
+        this.loading = false
+        if (response.data.receive) {
           Swal.fire({
-            title: "Complete",
-            html: "お買い上げありがとうございます。<br>商品をお渡しします。5秒後にトップに戻ります。",
+            title: 'Error',
+            html: '受け取り済みのQRコードです。3秒後にQR読み込み画面に戻ります。',
+            showConfirmButton: false,
+            showCloseButton: false,
+            timer: 3000,
+            onClose: () => {
+              this.$router.push('/accept')
+            }
+          })
+        } else {
+          this.email = response.data.user.email
+          this.desserts = []
+          response.data.user.userproducts.forEach((i) => {
+            this.desserts.push({
+              id: i.product.id,
+              title: i.product.title,
+              price: i.price,
+              count: i.count,
+              subtotal: i.price * i.count
+            })
+            this.total += i.price * i.count
+          })
+          this.desserts.push({ count: '合計', subtotal: this.total })
+        }
+      })
+      .catch((e) => {
+        this.loading = false
+        if (e.response.status === 401) {
+          this.$router.push('/login')
+        }
+        if (e.response.status === 403) {
+          this.$router.push('/404')
+        }
+        if (e.response.status === 404) {
+          Swal.fire({
+            title: 'Error',
+            html: '不正なQRコードです。3秒後にQR読み込み画面に戻ります。',
+            showConfirmButton: false,
+            showCloseButton: false,
+            timer: 3000,
+            onClose: () => {
+              this.$router.push('/accept')
+            }
+          })
+        }
+      })
+  },
+  methods: {
+    confirm () {
+      this.loading = true
+      axios
+        .put(
+          '/api/orad/receive/' + this.$route.params.code,
+          { code: this.$route.params.code },
+          { headers: { Authorization: 'JWT ' + this.$session.get('token') } }
+        )
+        .then(() => {
+          this.loading = false
+          Swal.fire({
+            title: 'Complete',
+            html: 'お買い上げありがとうございます。<br>商品をお渡しします。5秒後にトップに戻ります。',
             showConfirmButton: false,
             showCloseButton: false,
             timer: 5000,
-            onClose: () => {this.$router.push('/real')}
-          });
-        }).catch(e => {
-          this.loading = false;
-          if(e.response.status === 401) this.$router.push("/login");
-          if(e.response.status === 403) this.$router.push("/404");
-          if(e.response.status === 404) {
+            onClose: () => {
+              this.$router.push('/real')
+            }
+          })
+        })
+        .catch((e) => {
+          this.loading = false
+          if (e.response.status === 401) {
+            this.$router.push('/login')
+          }
+          if (e.response.status === 403) {
+            this.$router.push('/404')
+          }
+          if (e.response.status === 404) {
             Swal.fire({
-              title: "Error",
-              html: "不正なQRコードです。3秒後にQR読み込み画面に戻ります。",
+              title: 'Error',
+              html: '不正なQRコードです。3秒後にQR読み込み画面に戻ります。',
               showConfirmButton: false,
               showCloseButton: false,
               timer: 3000,
-              onClose: () => {this.$router.push('/accept')}
-            });
+              onClose: () => {
+                this.$router.push('/accept')
+              }
+            })
           }
-        });
-      }
+        })
     }
-  };
+  }
+}
 </script>
+<style scoped>
+html {
+  user-select: none;
+}
+</style>

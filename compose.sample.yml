@@ -1,6 +1,5 @@
-version: '3.8'
 services:
-  sqp-back:
+  sqpb:
     build: back
     volumes:
       - ./back:/usr/src/app
@@ -8,12 +7,12 @@ services:
       - docker_default
       - default
     labels:
-      - "traefik.http.routers.sb.rule=Host(`sqp.sub.daco.dev`) && PathPrefix(`/api`)"
+      - "traefik.http.routers.sb.rule=Host(`sqp.doany.io`) && PathPrefix(`/api`)"
     environment:
       - STRIPE_SECRET_KEY=hoge # stripe用secret key
-      - ALLOWED_HOSTS=sqp.sub.daco.dev
+      - ALLOWED_HOSTS=sqp.doany.io
       - HTTPS=True
-  sqp-front:
+  sqpf:
     build:
       context: front
       target: build
@@ -26,8 +25,8 @@ services:
       - docker_default
       - default
     labels:
-      - "traefik.http.routers.sf.rule=Host(`sqp.sub.daco.dev`)"
-  sqp-db:
+      - "traefik.http.routers.sf.rule=Host(`sqp.doany.io`)"
+  db:
     image: mariadb
     environment:
       - MYSQL_ROOT_PASSWORD=toor

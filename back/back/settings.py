@@ -112,13 +112,12 @@ WSGI_APPLICATION = 'back.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.mysql',
+        'ENGINE': 'django.db.backends.postgresql',
         'NAME': 'sqp',
-        'USER': 'root',
-        'PASSWORD': 'toor',
-        'HOST': 'sqp-db',
-        'PORT': '3306',
-        'OPTIONS': {'init_command': "SET sql_mode='STRICT_TRANS_TABLES'",},
+        'USER': 'postgres',
+        'PASSWORD': 'sergtsop',
+        'HOST': 'db',
+        'PORT': '5432',
     }
 }
 

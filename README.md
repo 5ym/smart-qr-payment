@@ -8,20 +8,19 @@ traefik環境を先に構築しておく下記参照
 
 ```sh
 cp compose.sample.yml compose.yml
-docker compose run --rm sqp-front sh -c 'yarn'
-docker compose up -d sqp-db
-docker compose run --rm sqp-back sh -c 'python3 manage.py migrate && python3 manage.py collectstatic --noinput'
+docker compose run --rm sqpf sh -c 'yarn'
+docker compose run --rm sqpb sh -c 'python manage.py migrate && python manage.py collectstatic --noinput'
 docker compose up -d
 ```
 
 必要に応じてスーパーユーザーの作成
 
 ```sh
-docker compose exec sqp-back sh -c 'python3 manage.py createsuperuser'
+docker compose exec sqpb sh -c 'python manage.py createsuperuser'
 ```
 
 モデルを編集しマイグレーションファイルを生成したいとき
 
 ```sh
-docker compose exec sqp-back sh -c 'python3 manage.py makemigrations && python3 manage.py migrate'
+docker compose exec sqpb sh -c 'python manage.py makemigrations && python manage.py migrate'
 ```

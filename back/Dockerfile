@@ -1,12 +1,10 @@
-FROM alpine
-
+FROM python:3.9-slim as base
 WORKDIR /usr/src/app
+EXPOSE 8000
 COPY requirements.txt .
-RUN apk add --no-cache python3-dev py-pip build-base mariadb-connector-c-dev nginx && mkdir /run/nginx && pip install -r requirements.txt
+RUN apt update && apt -y install gcc make libpq-dev && pip install -r requirements.txt
+
+FROM base
 COPY . .
-RUN python3 manage.py collectstatic --noinput
-COPY default.conf /etc/nginx/conf.d/
-
-EXPOSE 80
-
-CMD nginx && gunicorn back.asgi:application -k uvicorn.workers.UvicornWorker
+RUN python manage.py collectstatic --noinput
+CMD gunicorn back.asgi:application -k uvicorn.workers.UvicornWorker

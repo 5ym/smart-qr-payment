@@ -11,11 +11,12 @@ services:
       - default
     labels:
       - "traefik.http.routers.sb.rule=Host(`sqp.localhost`) && PathPrefix(`/api`)"
-      - "traefik.http.routers.sb.tls=true"
     environment:
       - STRIPE_SECRET_KEY=hoge # stripe用secret key
       - ALLOWED_HOSTS=sqp.localhost
       - HTTPS=True
+    depends_on:
+      - db
   sqpf:
     build:
       context: front
@@ -30,7 +31,6 @@ services:
       - default
     labels:
       - "traefik.http.routers.sf.rule=Host(`sqp.localhost`)"
-      - "traefik.http.routers.sf.tls=true"
   db:
     image: postgres:16
     environment:

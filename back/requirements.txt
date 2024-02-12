@@ -1,4 +1,4 @@
-Django==3.1.1
+Django==3.2.24
 django-cors-headers==3.5.0
 django-filter==2.2.0
 djangorestframework==3.11.1
@@ -7,7 +7,4 @@ psycopg2==2.9.9
 PyJWT==1.7.1
 pytz==2019.1
 stripe==2.51.0
-uvicorn==0.12.1
-gunicorn==20.0.4
-uvloop==0.14.0
-httptools==0.1.1
+daphne==4.0.0

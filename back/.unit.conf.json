@@ -1,0 +1,33 @@
+{
+    "listeners": {
+        "*:80": {
+            "pass": "routes"
+        }
+    },
+
+    "routes": [
+        {
+            "match": {
+                "uri": "/static/*"
+            },
+
+            "action": {
+                "share": "/usr/src/app$uri"
+            }
+        },
+        {
+            "action": {
+                "pass": "applications/django"
+            }
+        }
+    ],
+
+    "applications": {
+        "django": {
+            "type": "python 3.10",
+            "path": "/usr/src/app/",
+            "home": "/usr/src/app/",
+            "module": "back.asgi"
+        }
+    }
+}

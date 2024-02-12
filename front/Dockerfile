@@ -1,19 +1,15 @@
-FROM alpine AS build
-
+FROM oven/bun:1 AS base
 WORKDIR /usr/src/app
-COPY package.json .
-COPY yarn.lock .
-RUN apk add --no-cache yarn && yarn
+EXPOSE 3000
+
+FROM base as builder
+ENV NODE_ENV production
+COPY package.json bun.lockb ./
+RUN bun
 COPY . .
-RUN yarn build
+RUN bun run build
 
-FROM alpine
-
-WORKDIR /var/lib/nginx/html
-RUN apk --no-cache add nginx && mkdir /run/nginx
-COPY default.conf /etc/nginx/conf.d/default.conf
-COPY --from=build /usr/src/app/dist .
-
-EXPOSE 80
-
-CMD nginx -g "daemon off;"
+FROM base
+USER bun
+COPY --from=builder --chown=bun:bun /usr/src/app/.output .
+CMD [ ".output/server/index.mjs" ]

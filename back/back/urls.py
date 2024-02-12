@@ -24,4 +24,4 @@ urlpatterns = [
     path('api/admin/', admin.site.urls),
     path('api/login/', obtain_jwt_token),
     path('api/', include('sqp.urls'))
-] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+]

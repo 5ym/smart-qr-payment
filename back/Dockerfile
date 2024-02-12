@@ -1,10 +1,10 @@
-FROM python:3.9-slim as base
+FROM unit:python
+USER unit
 WORKDIR /usr/src/app
-EXPOSE 8000
-COPY requirements.txt .
+EXPOSE 80
+COPY --chown=unit:unit requirements.txt .
 RUN apt update && apt -y install gcc make libpq-dev && pip install -r requirements.txt
-
-FROM base
-COPY . .
+COPY --chown=unit:unit . .
 RUN python manage.py collectstatic --noinput
-CMD gunicorn back.asgi:application -k uvicorn.workers.UvicornWorker
+USER root
+COPY .unit.conf.json /docker-entrypoint.d/

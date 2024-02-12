@@ -1,29 +1,33 @@
 services:
   sqpb:
     build:
-      context: back
-      target: base
-    command: gunicorn back.asgi:application -k uvicorn.workers.UvicornWorker --reload
+      dockerfile_inline: |
+        FROM python:3.10-slim as base
+        WORKDIR /usr/src/app
+        COPY back/requirements.txt .
+        RUN apt update && apt -y install gcc make libpq-dev && pip install -r requirements.txt
+    command: python manage.py runserver 0.0.0.0:8000
+    expose:
+      - 8000
     volumes:
       - ./back:/usr/src/app
+    depends_on:
+      - db
     networks:
       - docker_default
       - default
     labels:
       - "traefik.http.routers.sb.rule=Host(`sqp.localhost`) && PathPrefix(`/api`)"
+      - "traefik.http.routers.sb.tls=true"
     environment:
       - STRIPE_SECRET_KEY=hoge # stripe用secret key
-      - ALLOWED_HOSTS=sqp.localhost
-      - HTTPS=True
-    depends_on:
-      - db
+      - DEBUG=True
+      - ALLOWED_HOSTS=*
   sqpf:
     build:
       context: front
-      target: build
-    expose:
-      - "8080"
-    command: yarn serve
+      target: base
+    command: dev
     volumes:
       - ./front:/usr/src/app
     networks:
@@ -31,6 +35,7 @@ services:
       - default
     labels:
       - "traefik.http.routers.sf.rule=Host(`sqp.localhost`)"
+      - "traefik.http.routers.sf.tls=true"
   db:
     image: postgres:16
     environment:

@@ -22,8 +22,8 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/3.1/howto/deployment/checklist/
 
 SECRET_KEY = os.environ.get('SECRET_KEY', '6$h*ya!=#qs8o1xi__tp9w2sxhg_^eo$fgzw-i1&51g_a8g=j$')
-DEBUG = os.environ.get('DEBUG', True) == True
-HTTPS = os.environ.get('HTTPS', False) == True
+DEBUG = os.environ.get('DEBUG', 'False') == 'True'
+HTTPS = os.environ.get('HTTPS', 'True') == 'True'
 ALLOWED_HOSTS = [os.environ.get('ALLOWED_HOSTS')]
 
 # mail
@@ -44,6 +44,7 @@ INSTALLED_APPS = [
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.messages',
+    'daphne',
     'django.contrib.staticfiles',
 
     'rest_framework',
@@ -159,7 +160,6 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/3.1/howto/static-files/
 STATIC_URL = '/api/static/'
 
-# media settings
-MEDIA_URL = '/api/img/'
-MEDIA_ROOT = (os.path.join(BASE_DIR, 'img'))
-STATIC_ROOT = (os.path.join(BASE_DIR, 'static'))
+ASGI_APPLICATION = "back.asgi.application"
+
+DEFAULT_AUTO_FIELD = 'django.db.models.AutoField'

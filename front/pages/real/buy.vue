@@ -1,7 +1,6 @@
 <script>
 import axios from 'axios'
 import Swal from 'sweetalert2'
-import { getCookie } from '../../util/session'
 
 export default {
   data: () => ({
@@ -27,7 +26,7 @@ export default {
     }
   }),
   created () {
-    if (getCookie('token') === '') { this.$router.push('/login') }
+    if (useCookie('token').value === '') { useRouter().push('/login') }
     axios.get('/api/products').then((response) => {
       this.loading = false
       this.cards = response.data
@@ -57,7 +56,7 @@ export default {
         this.cards.forEach((v) => {
           transactionTotal += v.price * this.count[v.id]
         })
-        axios.post('/api/buy', this.data, { headers: { Authorization: 'JWT ' + getCookie('token') } }).then((response) => {
+        axios.post('/api/buy', this.data, { headers: { Authorization: 'JWT ' + useCookie('token').value } }).then((response) => {
           this.loading = false
           const tenderTypes =
               'com.squareup.pos.TENDER_CARD,' +
@@ -79,9 +78,9 @@ export default {
         }).catch((e) => {
           this.loading = false
           if (e.response.status === 401) {
-            this.$router.push('/login')
+            useRouter().push('/login')
           } else if (e.response.status === 403) {
-            this.$router.push('/404')
+            useRouter().push('/404')
           } else if (e.response.status === 400) {
             Swal.fire({
               title: 'Error',
@@ -105,7 +104,11 @@ export default {
 </script>
 <template>
   <v-container>
-    <v-form ref="form" v-model="valid" lazy-validation>
+    <v-form
+      ref="form"
+      v-model="valid"
+      lazy-validation
+    >
       <div class="text-h6">
         欲しい商品の数量を指定してください
       </div>
@@ -129,23 +132,42 @@ export default {
             </v-img>
             <v-card-title>{{ card.title }}</v-card-title>
             <v-card-subtitle>{{ card.desc }}</v-card-subtitle>
-            <v-card class="d-flex flex-row justify-end" flat>
-              <v-card class="pa-2" flat>
-                <v-btn color="red" @click="countDown(card.id)">
+            <v-card
+              class="d-flex flex-row justify-end"
+              flat
+            >
+              <v-card
+                class="pa-2"
+                flat
+              >
+                <v-btn
+                  color="red"
+                  @click="countDown(card.id)"
+                >
                   <v-icon dark>
                     mdi-minus
                   </v-icon>
                 </v-btn>
               </v-card>
-              <v-card class="pa-1" flat width="64px">
+              <v-card
+                class="pa-1"
+                flat
+                width="64px"
+              >
                 <v-text-field
                   v-model="count[card.id]"
                   :rules="rules.count"
                   class="centered-input"
                 />
               </v-card>
-              <v-card class="pa-2" flat>
-                <v-btn color="blue" @click="countUp(card.id)">
+              <v-card
+                class="pa-2"
+                flat
+              >
+                <v-btn
+                  color="blue"
+                  @click="countUp(card.id)"
+                >
                   <v-icon dark>
                     mdi-plus
                   </v-icon>
@@ -155,9 +177,17 @@ export default {
           </v-card>
         </v-col>
       </v-row>
-      <v-row justify="space-around" row="center">
+      <v-row
+        justify="space-around"
+        row="center"
+      >
         <v-col cols="6">
-          <v-btn block color="secondary" size="x-large" to="/real">
+          <v-btn
+            block
+            color="secondary"
+            size="x-large"
+            to="/real"
+          >
             戻る
           </v-btn>
         </v-col>

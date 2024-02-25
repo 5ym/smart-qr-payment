@@ -3,8 +3,16 @@
     <div class="text-h6">
       QRコード
     </div>
-    <v-row justify="space-around" row="center">
-      <v-col xs="12" sm="8" lg="4" md="5">
+    <v-row
+      justify="space-around"
+      row="center"
+    >
+      <v-col
+        xs="12"
+        sm="8"
+        lg="4"
+        md="5"
+      >
         <v-card>
           <v-card-text class="center">
             <vue-qrcode :value="code" />
@@ -15,8 +23,16 @@
     <div class="text-h6">
       注文内容
     </div>
-    <v-row justify="space-around" row="center">
-      <v-col xs="12" sm="8" lg="4" md="5">
+    <v-row
+      justify="space-around"
+      row="center"
+    >
+      <v-col
+        xs="12"
+        sm="8"
+        lg="4"
+        md="5"
+      >
         <v-card>
           <v-card-title>{{ email }}</v-card-title>
           <v-card-text class="center">
@@ -41,7 +57,10 @@
                 </tr>
               </thead>
               <tbody>
-                <tr v-for="item in desserts" :key="item.id">
+                <tr
+                  v-for="item in desserts"
+                  :key="item.id"
+                >
                   <td>{{ item.id }}</td>
                   <td>{{ item.title }}</td>
                   <td>{{ item.price }}</td>
@@ -59,7 +78,6 @@
 <script>
 import VueQrcode from '@chenfengyuan/vue-qrcode'
 import axios from 'axios'
-import { getCookie } from '../../util/session'
 
 export default {
   components: {
@@ -72,9 +90,9 @@ export default {
     email: 'Now loading...'
   }),
   created () {
-    if (getCookie('token') === '') { this.$router.push('/login') }
-    axios.get('/api/qr', { headers: { Authorization: 'JWT ' + getCookie('token') } }).then((response) => {
-      if (response.data.pay === null) { this.$router.push('/pay') }
+    if (useCookie('token').value === '') { useRouter().push('/login') }
+    axios.get('/api/qr', { headers: { Authorization: 'JWT ' + useCookie('token').value } }).then((response) => {
+      if (response.data.pay === null) { useRouter().push('/pay') }
       this.email = response.data.email
       this.desserts = []
       response.data.userproducts.forEach((i) => {
@@ -84,7 +102,7 @@ export default {
       this.desserts.push({ count: '合計', subtotal: this.total + '円' })
       this.code = response.data.pay.code
     }).catch((e) => {
-      if (e.response.status === 401) { this.$router.push('/login') }
+      if (e.response.status === 401) { useRouter().push('/login') }
     })
   }
 }

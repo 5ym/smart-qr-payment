@@ -2,7 +2,6 @@
 import axios from 'axios'
 import Swal from 'sweetalert2'
 import { loadStripe } from '@stripe/stripe-js'
-import { getCookie } from '../../../util/session'
 
 export default {
   data: () => ({
@@ -41,7 +40,7 @@ export default {
               showConfirmButton: false,
               showCloseButton: false,
               timer: 3000,
-              onClose: () => { this.$router.push('/pre/qr') }
+              onClose: () => { useRouter().push('/pre/qr') }
             })
           } else {
             Swal.fire({
@@ -56,9 +55,9 @@ export default {
     }, false)
   },
   created () {
-    if (getCookie('token') === '') { this.$router.push('/login') }
-    axios.get('/api/order', { headers: { Authorization: 'JWT ' + getCookie('token') } }).then((response) => {
-      if (response.data.pay !== null) { this.$router.push('/pre/qr') }
+    if (useCookie('token').value === '') { useRouter().push('/login') }
+    axios.get('/api/order', { headers: { Authorization: 'JWT ' + useCookie('token').value } }).then((response) => {
+      if (response.data.pay !== null) { useRouter().push('/pre/qr') }
       this.email = response.data.email
       this.desserts = []
       response.data.userproducts.forEach((i) => {
@@ -67,7 +66,7 @@ export default {
       })
       this.desserts.push({ count: '合計', subtotal: this.total })
     }).catch((e) => {
-      if (e.response.status === 401) { this.$router.push('/login') }
+      if (e.response.status === 401) { useRouter().push('/login') }
     })
   },
   methods: {
@@ -77,7 +76,7 @@ export default {
         type: 'card',
         card: this.card
       }).then((result) => {
-        axios.post('/api/pay', { token: result.paymentMethod.id }, { headers: { Authorization: 'JWT ' + getCookie('token') } }).then(() => {
+        axios.post('/api/pay', { token: result.paymentMethod.id }, { headers: { Authorization: 'JWT ' + useCookie('token').value } }).then(() => {
           this.loading = false
           Swal.fire({
             title: '決済完了',
@@ -85,12 +84,12 @@ export default {
             showConfirmButton: false,
             showCloseButton: false,
             timer: 3000,
-            onClose: () => { this.$router.push('/pre/qr') }
+            onClose: () => { useRouter().push('/pre/qr') }
           })
         }).catch((e) => {
           this.loading = false
           if (e.response.status === 401) {
-            this.$router.push('/login')
+            useRouter().push('/login')
           } else if (e.response.data[0] === 'req') {
             this.stripe.retrievePaymentIntent(e.response.data[1]).then((r) => {
               this.intent = r.paymentIntent.client_secret
@@ -115,7 +114,11 @@ export default {
 </script>
 <template>
   <v-container>
-    <v-dialog v-model="dialog" persistent width="1200">
+    <v-dialog
+      v-model="dialog"
+      persistent
+      width="1200"
+    >
       <div class="resp">
         <iframe :src="iframe" />
       </div>
@@ -123,8 +126,16 @@ export default {
     <div class="text-h6">
       注文内容をご確認ください。
     </div>
-    <v-row justify="space-around" row="center">
-      <v-col xs="12" sm="8" lg="5" md="5">
+    <v-row
+      justify="space-around"
+      row="center"
+    >
+      <v-col
+        xs="12"
+        sm="8"
+        lg="5"
+        md="5"
+      >
         <v-card>
           <v-card-title>{{ email }}</v-card-title>
           <v-card-text>
@@ -149,7 +160,10 @@ export default {
                 </tr>
               </thead>
               <tbody>
-                <tr v-for="item in desserts" :key="item.id">
+                <tr
+                  v-for="item in desserts"
+                  :key="item.id"
+                >
                   <td>{{ item.id }}</td>
                   <td>{{ item.title }}</td>
                   <td>{{ item.price }}</td>
@@ -165,13 +179,29 @@ export default {
     <div class="text-h6">
       注文内容に誤りがなければ支払情報を入力して支払をクリックしてください。
     </div>
-    <v-row justify="space-around" row="center">
-      <v-col xs="12" sm="8" lg="4" md="5">
+    <v-row
+      justify="space-around"
+      row="center"
+    >
+      <v-col
+        xs="12"
+        sm="8"
+        lg="4"
+        md="5"
+      >
         <v-card>
           <v-card-text>
             <div id="card-element" />
-            <div id="card-errors" role="alert" />
-            <v-btn class="bg-pink text-white mt" :disabled="loading" :loading="loading" @click="submit">
+            <div
+              id="card-errors"
+              role="alert"
+            />
+            <v-btn
+              class="bg-pink text-white mt"
+              :disabled="loading"
+              :loading="loading"
+              @click="submit"
+            >
               支払
             </v-btn>
           </v-card-text>

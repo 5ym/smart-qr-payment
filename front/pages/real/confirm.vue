@@ -1,7 +1,6 @@
 <script>
 import axios from 'axios'
 import Swal from 'sweetalert2'
-import { getCookie } from '../../util/session'
 
 export default {
   data: () => ({
@@ -13,15 +12,15 @@ export default {
     loading: true
   }),
   created () {
-    if (!/[a-zA-Z_0-9]{16}/.test(this.$route.params.code)) {
-      this.$router.push('/404')
+    if (!/[a-zA-Z_0-9]{16}/.test(useRoute().params.code)) {
+      useRouter().push('/404')
     }
-    if (getCookie('token') === '') {
-      this.$router.push('/login')
+    if (useCookie('token').value === '') {
+      useRouter().push('/login')
     }
     axios
-      .get('/api/orad/get/' + this.$route.params.code, {
-        headers: { Authorization: 'JWT ' + getCookie('token') }
+      .get('/api/orad/get/' + useRoute().params.code, {
+        headers: { Authorization: 'JWT ' + useCookie('token').value }
       })
       .then((response) => {
         this.loading = false
@@ -33,7 +32,7 @@ export default {
             showCloseButton: false,
             timer: 3000,
             onClose: () => {
-              this.$router.push('/accept')
+              useRouter().push('/accept')
             }
           })
         } else {
@@ -55,10 +54,10 @@ export default {
       .catch((e) => {
         this.loading = false
         if (e.response.status === 401) {
-          this.$router.push('/login')
+          useRouter().push('/login')
         }
         if (e.response.status === 403) {
-          this.$router.push('/404')
+          useRouter().push('/404')
         }
         if (e.response.status === 404) {
           Swal.fire({
@@ -68,7 +67,7 @@ export default {
             showCloseButton: false,
             timer: 3000,
             onClose: () => {
-              this.$router.push('/accept')
+              useRouter().push('/accept')
             }
           })
         }
@@ -79,9 +78,9 @@ export default {
       this.loading = true
       axios
         .put(
-          '/api/orad/receive/' + this.$route.params.code,
-          { code: this.$route.params.code },
-          { headers: { Authorization: 'JWT ' + getCookie('token') } }
+          '/api/orad/receive/' + useRoute().params.code,
+          { code: useRoute().params.code },
+          { headers: { Authorization: 'JWT ' + useCookie('token').value } }
         )
         .then(() => {
           this.loading = false
@@ -92,17 +91,17 @@ export default {
             showCloseButton: false,
             timer: 5000,
             onClose: () => {
-              this.$router.push('/real')
+              useRouter().push('/real')
             }
           })
         })
         .catch((e) => {
           this.loading = false
           if (e.response.status === 401) {
-            this.$router.push('/login')
+            useRouter().push('/login')
           }
           if (e.response.status === 403) {
-            this.$router.push('/404')
+            useRouter().push('/404')
           }
           if (e.response.status === 404) {
             Swal.fire({
@@ -112,7 +111,7 @@ export default {
               showCloseButton: false,
               timer: 3000,
               onClose: () => {
-                this.$router.push('/accept')
+                useRouter().push('/accept')
               }
             })
           }
@@ -126,8 +125,16 @@ export default {
     <div class="text-h6">
       注文内容をご確認ください。
     </div>
-    <v-row justify="space-around" row="center">
-      <v-col xs="12" sm="8" lg="4" md="5">
+    <v-row
+      justify="space-around"
+      row="center"
+    >
+      <v-col
+        xs="12"
+        sm="8"
+        lg="4"
+        md="5"
+      >
         <v-card>
           <v-card-title>{{ email }}</v-card-title>
           <v-card-text>
@@ -152,7 +159,10 @@ export default {
                 </tr>
               </thead>
               <tbody>
-                <tr v-for="item in desserts" :key="item.id">
+                <tr
+                  v-for="item in desserts"
+                  :key="item.id"
+                >
                   <td>{{ item.id }}</td>
                   <td>{{ item.title }}</td>
                   <td>{{ item.price }}</td>
@@ -165,9 +175,17 @@ export default {
         </v-card>
       </v-col>
     </v-row>
-    <v-row justify="space-around" row="center">
+    <v-row
+      justify="space-around"
+      row="center"
+    >
       <v-col cols="6">
-        <v-btn block color="secondary" size="x-large" to="/accept">
+        <v-btn
+          block
+          color="secondary"
+          size="x-large"
+          to="/accept"
+        >
           戻る
         </v-btn>
       </v-col>

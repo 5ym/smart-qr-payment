@@ -1,8 +1,16 @@
 <template>
   <v-container fill-height>
-    <v-row justify="space-around" row="center">
+    <v-row
+      justify="space-around"
+      row="center"
+    >
       <v-col cols="4">
-        <v-card ripple color="primary" dark to="/real/accept">
+        <v-card
+          ripple
+          color="primary"
+          dark
+          to="/real/accept"
+        >
           <v-img
             src="/img/real0.png"
             gradient="to bottom, rgba(0,0,0,.1), rgba(0,0,0,.5)"
@@ -13,7 +21,12 @@
         </v-card>
       </v-col>
       <v-col cols="4">
-        <v-card ripple color="secondary" dark to="/real/buy">
+        <v-card
+          ripple
+          color="secondary"
+          dark
+          to="/real/buy"
+        >
           <v-img
             src="/img/real1.png"
             gradient="to bottom, rgba(0,0,0,.1), rgba(0,0,0,.5)"

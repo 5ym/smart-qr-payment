@@ -3,19 +3,39 @@
     <div class="text-h6">
       受け取り用QRコードを読み込ませてください。
     </div>
-    <v-row justify="space-around" row="center">
+    <v-row
+      justify="space-around"
+      row="center"
+    >
       <v-col cols="8">
-        <qrcode-stream @decode="onDecode" @init="onInit" />
+        <qrcode-stream
+          @decode="onDecode"
+          @init="onInit"
+        />
       </v-col>
     </v-row>
-    <v-row justify="space-around" row="center">
-      <v-col v-if="error" cols="12">
-        <v-card color="primary" dark>
+    <v-row
+      justify="space-around"
+      row="center"
+    >
+      <v-col
+        v-if="error"
+        cols="12"
+      >
+        <v-card
+          color="primary"
+          dark
+        >
           <v-card-title>{{ error }}</v-card-title>
         </v-card>
       </v-col>
       <v-col cols="12">
-        <v-btn block color="secondary" size="x-large" to="/real">
+        <v-btn
+          block
+          color="secondary"
+          size="x-large"
+          to="/real"
+        >
           戻る
         </v-btn>
       </v-col>
@@ -24,7 +44,6 @@
 </template>
 <script>
 import { QrcodeStream } from 'vue-qrcode-reader'
-import { getCookie } from '../../util/session'
 
 export default {
   components: {
@@ -34,12 +53,12 @@ export default {
     error: ''
   }),
   created () {
-    if (getCookie('token') === '') { this.$router.push('/login') }
+    if (useCookie('token').value === '') { useRouter().push('/login') }
   },
   methods: {
     onDecode (result) {
       if (/[a-zA-Z_0-9]{16}/.test(result)) {
-        this.$router.push('/confirm/' + result)
+        useRouter().push('/confirm/' + result)
       } else {
         this.error = '不正なQRコードかQRコードが正しく読み取れませんでした。もう一度読み込み直してください。'
       }

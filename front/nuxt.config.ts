@@ -8,7 +8,6 @@ export default defineNuxtConfig({
       stripePublic: 'pk_test_bvs1no5I4wZDM1hcwhDaAXFJ'
     }
   },
-  plugins: ['~/plugins/axios'],
   build: {
     transpile: ['vuetify']
   },

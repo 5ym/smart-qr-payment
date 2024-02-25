@@ -1,6 +1,11 @@
 <template>
   <v-container>
-    <v-row v-for="order in orders" :key="order.email" justify="space-around" row="center">
+    <v-row
+      v-for="order in orders"
+      :key="order.email"
+      justify="space-around"
+      row="center"
+    >
       <v-col>
         <v-card>
           <v-card-title>{{ order.email }}</v-card-title>
@@ -26,7 +31,10 @@
                 </tr>
               </thead>
               <tbody>
-                <tr v-for="item in order.desserts" :key="item.id">
+                <tr
+                  v-for="item in order.desserts"
+                  :key="item.id"
+                >
                   <td>{{ item.id }}</td>
                   <td>{{ item.title }}</td>
                   <td>{{ item.price }}</td>
@@ -39,7 +47,10 @@
         </v-card>
       </v-col>
     </v-row>
-    <v-row justify="space-around" row="center">
+    <v-row
+      justify="space-around"
+      row="center"
+    >
       <v-col>
         <v-card
           ripple
@@ -67,7 +78,7 @@ export default {
     loading: false
   }),
   created () {
-    if (getCookie('token') === '') { this.$router.push('/login') }
+    if (getCookie('token') === '') { useRouter().push('/login') }
     this.get()
   },
   methods: {
@@ -91,8 +102,8 @@ export default {
         })
       }).catch((e) => {
         this.loading = false
-        if (e.response.status === 401) { this.$router.push('/login') }
-        if (e.response.status === 403) { this.$router.push('/404') }
+        if (e.response.status === 401) { useRouter().push('/login') }
+        if (e.response.status === 403) { useRouter().push('/404') }
       })
     }
   }

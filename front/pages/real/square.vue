@@ -4,16 +4,15 @@
 <script>
 import axios from 'axios'
 import Swal from 'sweetalert2'
-import { getCookie } from '../../util/session'
 
 export default {
   data: () => ({
   }),
   created () {
-    const query = this.$route.query
+    const query = useRoute().query
     if (query['com.squareup.pos.CLIENT_TRANSACTION_ID']) {
       axios.put('/api/orad/receive/' + query['com.squareup.pos.REQUEST_METADATA'],
-        { code: query['com.squareup.pos.REQUEST_METADATA'] }, { headers: { Authorization: 'JWT ' + getCookie('token') } }
+        { code: query['com.squareup.pos.REQUEST_METADATA'] }, { headers: { Authorization: 'JWT ' + useCookie('token').value } }
       ).then(() => {
         Swal.fire({
           title: 'Complete',
@@ -21,13 +20,13 @@ export default {
           showConfirmButton: false,
           showCloseButton: false,
           timer: 5000,
-          onClose: () => { this.$router.push('/real') }
+          onClose: () => { useRouter().push('/real') }
         })
       }).catch((e) => {
         this.loading = false
-        if (e.response.status === 401) { this.$router.push('/login') }
-        if (e.response.status === 403) { this.$router.push('/404') }
-        if (e.response.status === 404) { this.$router.push('/404') }
+        if (e.response.status === 401) { useRouter().push('/login') }
+        if (e.response.status === 403) { useRouter().push('/404') }
+        if (e.response.status === 404) { useRouter().push('/404') }
       })
     } else {
       Swal.fire({
@@ -36,7 +35,7 @@ export default {
         showConfirmButton: false,
         showCloseButton: false,
         timer: 3000,
-        onClose: () => { this.$router.push('/buy') }
+        onClose: () => { useRouter().push('/buy') }
       })
     }
   }

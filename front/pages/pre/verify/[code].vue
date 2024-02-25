@@ -1,7 +1,15 @@
 <template>
   <v-container fill-height>
-    <v-row justify="space-around" row="center">
-      <v-col xs="12" sm="8" lg="4" md="5">
+    <v-row
+      justify="space-around"
+      row="center"
+    >
+      <v-col
+        xs="12"
+        sm="8"
+        lg="4"
+        md="5"
+      >
         <v-card>
           <v-card-title>処理中...</v-card-title>
         </v-card>
@@ -15,7 +23,7 @@ import Swal from 'sweetalert2'
 
 export default {
   created () {
-    axios.put('/api/verify/' + this.$route.params.code).then(() => {
+    axios.put('/api/verify/' + useRoute().params.code).then(() => {
       Swal.fire({
         type: 'info',
         title: '確認完了',
@@ -23,11 +31,11 @@ export default {
         showConfirmButton: false,
         showCloseButton: false,
         timer: 3000,
-        onClose: () => { this.$router.push('/pre/pay') }
+        onClose: () => { useRouter().push('/pre/pay') }
       })
     }).catch(async (e) => {
       if (e.response.status === 404) {
-        await this.$router.push('/pre/pay')
+        await useRouter().push('/pre/pay')
       } else {
         await Swal.fire({
           type: 'warning',
@@ -36,7 +44,7 @@ export default {
           showConfirmButton: false,
           showCloseButton: false,
           onClose: () => {
-            this.$router.go(-1)
+            useRouter().go(-1)
           }
         })
       }

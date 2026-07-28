@@ -7,4 +7,4 @@ psycopg2==2.9.12
 PyJWT==1.7.1
 pytz==2019.1
 stripe==2.51.0
-daphne==4.0.0
+daphne==4.2.3

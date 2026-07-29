@@ -2,7 +2,7 @@ services:
   sqpb:
     build:
       dockerfile_inline: |
-        FROM python:3.10-slim as base
+        FROM python:3.13-slim as base
         WORKDIR /usr/src/app
         COPY back/requirements.txt .
         RUN apt update && apt -y install gcc make libpq-dev && pip install -r requirements.txt

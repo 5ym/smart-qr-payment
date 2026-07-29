@@ -3,23 +3,25 @@ import axios from 'axios'
 import Swal from 'sweetalert2'
 
 const valid = ref(true)
-const credentials = ref<any>({})
+const credentials = ref<{ email?: string, password?: string }>({})
 const rules = {
   email: [
-    (v: any) => !!v || 'メールアドレスは必須です'
+    (v: string) => !!v || 'メールアドレスは必須です'
   ],
   password: [
-    (v: any) => !!v || 'パスワードは必須です',
-    (v: any) => (v && v.length > 7) || 'パスワードは8文字以上でなければなりません'
+    (v: string) => !!v || 'パスワードは必須です',
+    (v: string) => (v && v.length > 7) || 'パスワードは8文字以上でなければなりません'
   ]
 }
 const loading = ref(false)
 const login = () => {
-  if (valid) {
+  if (valid.value) {
     loading.value = true
     axios.post('/api/login/', credentials.value).then((res) => {
-      const token = useCookie('token')
-      token.value = res.data.token
+      // simplejwt returns an access/refresh pair. The `token` cookie keeps its
+      // name and now holds the access token, sent as `Authorization: Bearer`.
+      useCookie('token').value = res.data.access
+      useCookie('refresh').value = res.data.refresh
       useRouter().go(-1)
     })
         .catch(() => {
@@ -40,7 +42,7 @@ const login = () => {
 <template>
   <v-container fill-height>
     <v-row
-      justify="space-around"
+      class="justify-space-around"
       row="center"
     >
       <v-col
@@ -69,7 +71,7 @@ const login = () => {
               v-else
               ref="form"
               v-model="valid"
-              lazy-validation
+              validate-on="submit"
               @submit.prevent="login"
             >
               <v-text-field

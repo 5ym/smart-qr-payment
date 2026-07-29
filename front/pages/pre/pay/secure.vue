@@ -1,7 +1,7 @@
 <template>
   <v-container fill-height>
     <v-row
-      justify="space-around"
+      class="justify-space-around"
       row="center"
     >
       <v-col
@@ -25,7 +25,7 @@ export default {
     if (window === window.parent) { useRouter().push('/404') }
     if (useCookie('token').value === '') { useRouter().push('/login') }
     if (!useRoute().query.payment_intent) { window.top.postMessage('3DS-authentication-complete') }
-    axios.post('/api/pay/secure', { token: useRoute().query.payment_intent }, { headers: { Authorization: 'JWT ' + useCookie('token').value } }).then(() => {
+    axios.post('/api/pay/secure', { token: useRoute().query.payment_intent }, { headers: { Authorization: 'Bearer ' + useCookie('token').value } }).then(() => {
       window.top.postMessage('3DS-authentication-complete')
     }).catch((e) => {
       if (e.response.status === 401) {

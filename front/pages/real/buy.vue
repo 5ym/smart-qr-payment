@@ -44,19 +44,21 @@ export default {
       this.count[id] = Number(this.count[id]) - 1
       this.count = JSON.parse(JSON.stringify(this.count))
     },
-    square () {
-      if (this.$refs.form.validate()) {
+    async square () {
+      // validate() returns a promise since Vuetify 3, so the bare `if` below
+      // was always truthy and let invalid forms through.
+      const { valid } = await this.$refs.form.validate()
+      if (valid) {
         this.loading = true
-        const self = this
         this.data.userproducts = []
         this.count.forEach((v, k) => {
-          if (v) { self.data.userproducts.push({ product: k, count: v }) }
+          if (v) { this.data.userproducts.push({ product: k, count: v }) }
         })
         let transactionTotal = 0
         this.cards.forEach((v) => {
           transactionTotal += v.price * this.count[v.id]
         })
-        axios.post('/api/buy', this.data, { headers: { Authorization: 'JWT ' + useCookie('token').value } }).then((response) => {
+        axios.post('/api/buy', this.data, { headers: { Authorization: 'Bearer ' + useCookie('token').value } }).then((response) => {
           this.loading = false
           const tenderTypes =
               'com.squareup.pos.TENDER_CARD,' +
@@ -107,12 +109,12 @@ export default {
     <v-form
       ref="form"
       v-model="valid"
-      lazy-validation
+      validate-on="submit"
     >
-      <div class="text-h6">
+      <div class="text-headline-small">
         欲しい商品の数量を指定してください
       </div>
-      <v-row justify="space-around">
+      <v-row class="justify-space-around">
         <v-col
           v-for="card in cards"
           :key="card.id"
@@ -144,7 +146,7 @@ export default {
                   color="red"
                   @click="countDown(card.id)"
                 >
-                  <v-icon dark>
+                  <v-icon theme="dark">
                     mdi-minus
                   </v-icon>
                 </v-btn>
@@ -168,7 +170,7 @@ export default {
                   color="blue"
                   @click="countUp(card.id)"
                 >
-                  <v-icon dark>
+                  <v-icon theme="dark">
                     mdi-plus
                   </v-icon>
                 </v-btn>
@@ -178,7 +180,7 @@ export default {
         </v-col>
       </v-row>
       <v-row
-        justify="space-around"
+        class="justify-space-around"
         row="center"
       >
         <v-col cols="6">

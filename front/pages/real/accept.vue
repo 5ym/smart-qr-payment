@@ -1,10 +1,10 @@
 <template>
   <v-container fill-height>
-    <div class="text-h6">
+    <div class="text-headline-small">
       受け取り用QRコードを読み込ませてください。
     </div>
     <v-row
-      justify="space-around"
+      class="justify-space-around"
       row="center"
     >
       <v-col cols="8">
@@ -15,7 +15,7 @@
       </v-col>
     </v-row>
     <v-row
-      justify="space-around"
+      class="justify-space-around"
       row="center"
     >
       <v-col

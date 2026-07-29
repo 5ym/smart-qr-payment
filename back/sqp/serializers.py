@@ -40,7 +40,7 @@ class UserSerializer(serializers.ModelSerializer):
         fields = ('id', 'email', 'password', 'userproducts')
     # ユーザー作成時にverifyコードの生成,購入商品の登録
     def create(self, validated_data):
-        if len(validated_data['userproducts']) is 0:
+        if len(validated_data['userproducts']) == 0:
             raise serializers.ValidationError()
         user = User.objects.create(email=validated_data['email'], password=make_password(validated_data['password']), is_active=False)
         code = ''.join([random.choice(string.ascii_letters + string.digits) for i in range(16)])
@@ -90,10 +90,10 @@ class PaySerializer(serializers.ModelSerializer):
         http = "http://" if settings.HTTPS == False else "https://"
         try:
             intent = stripe.PaymentIntent.confirm(
-                intentins,
+                intentins.id,
                 return_url=http+settings.ALLOWED_HOSTS[0]+"/pre/pay/secure"
             )
-        except stripe.error.CardError as e:
+        except stripe.CardError as e:
             raise serializers.ValidationError(e.error.message)
         if intent.status == "succeeded":
             code = ''.join([random.choice(string.ascii_letters + string.digits) for i in range(16)])
@@ -172,7 +172,7 @@ class BuySerializer(serializers.ModelSerializer):
         fields = ('id', 'userproducts', 'pay')
     # 商品購入データ、疑似ユーザー情報挿入
     def create(self, validated_data):
-        if len(validated_data['userproducts']) is 0:
+        if len(validated_data['userproducts']) == 0:
             raise serializers.ValidationError()
         code = ''.join([random.choice(string.ascii_letters + string.digits) for i in range(16)])
         user = User.objects.create(email="info+"+str(int(time.time()))+"@daco.dev", password=make_password(code), is_active=True)

@@ -1,9 +1,9 @@
 <template>
   <v-container>
     <v-row
-      v-for="order in orders"
+v-for="order in orders"
       :key="order.email"
-      justify="space-around"
+      class="justify-space-around"
       row="center"
     >
       <v-col>
@@ -48,7 +48,7 @@
       </v-col>
     </v-row>
     <v-row
-      justify="space-around"
+      class="justify-space-around"
       row="center"
     >
       <v-col>
@@ -87,7 +87,6 @@ export default {
       axios.get('/api/orad/list').then((response) => {
         this.loading = false
         this.orders = []
-        const self = this
         response.data.forEach((item) => {
           const desserts = []
           let total = 0
@@ -96,7 +95,7 @@ export default {
             total += i.price * i.count
           })
           desserts.push({ count: '合計', subtotal: total })
-          self.orders.push(
+          this.orders.push(
             { desserts, email: item.user.email }
           )
         })

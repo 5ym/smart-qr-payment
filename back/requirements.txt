@@ -1,10 +1,8 @@
 Django==6.0.7
 django-cors-headers==4.9.0
-django-filter==26.1
 djangorestframework==3.17.1
-djangorestframework-jwt==1.11.0
+djangorestframework-simplejwt==5.5.1
 psycopg2==2.9.12
 PyJWT==2.13.0
-pytz==2026.3.post1
 stripe==15.3.1
 daphne==4.2.3

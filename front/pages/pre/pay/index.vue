@@ -28,11 +28,10 @@ export default {
         displayError.textContent = ''
       }
     })
-    const self = this
-    window.addEventListener('message', function (ev) {
+    window.addEventListener('message', (ev) => {
       if (ev.data === '3DS-authentication-complete') {
-        self.dialog = false
-        self.stripe.retrievePaymentIntent(self.intent).then((result) => {
+        this.dialog = false
+        this.stripe.retrievePaymentIntent(this.intent).then((result) => {
           if (result.paymentIntent.status !== 0 && result.paymentIntent.status === 'succeeded') {
             Swal.fire({
               title: '決済完了',
@@ -56,7 +55,7 @@ export default {
   },
   created () {
     if (useCookie('token').value === '') { useRouter().push('/login') }
-    axios.get('/api/order', { headers: { Authorization: 'JWT ' + useCookie('token').value } }).then((response) => {
+    axios.get('/api/order', { headers: { Authorization: 'Bearer ' + useCookie('token').value } }).then((response) => {
       if (response.data.pay !== null) { useRouter().push('/pre/qr') }
       this.email = response.data.email
       this.desserts = []
@@ -76,7 +75,7 @@ export default {
         type: 'card',
         card: this.card
       }).then((result) => {
-        axios.post('/api/pay', { token: result.paymentMethod.id }, { headers: { Authorization: 'JWT ' + useCookie('token').value } }).then(() => {
+        axios.post('/api/pay', { token: result.paymentMethod.id }, { headers: { Authorization: 'Bearer ' + useCookie('token').value } }).then(() => {
           this.loading = false
           Swal.fire({
             title: '決済完了',
@@ -123,11 +122,11 @@ export default {
         <iframe :src="iframe" />
       </div>
     </v-dialog>
-    <div class="text-h6">
+    <div class="text-headline-small">
       注文内容をご確認ください。
     </div>
     <v-row
-      justify="space-around"
+      class="justify-space-around"
       row="center"
     >
       <v-col
@@ -176,11 +175,11 @@ export default {
         </v-card>
       </v-col>
     </v-row>
-    <div class="text-h6">
+    <div class="text-headline-small">
       注文内容に誤りがなければ支払情報を入力して支払をクリックしてください。
     </div>
     <v-row
-      justify="space-around"
+      class="justify-space-around"
       row="center"
     >
       <v-col

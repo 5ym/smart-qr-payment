@@ -1,7 +1,7 @@
 <template>
   <v-container fill-height>
     <v-row
-      justify="space-around"
+      class="justify-space-around"
       row="center"
     >
       <v-col cols="4">
@@ -37,7 +37,7 @@
         </v-card>
       </v-col>
     </v-row>
-    <v-row justify="space-around">
+    <v-row class="justify-space-around">
       <v-col cols="9">
         <v-card>
           <v-card-text>

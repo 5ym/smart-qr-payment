@@ -24,7 +24,7 @@
 
     "applications": {
         "django": {
-            "type": "python 3.10",
+            "type": "python 3.13",
             "path": "/usr/src/app/",
             "home": "/usr/src/app/",
             "module": "back.asgi"

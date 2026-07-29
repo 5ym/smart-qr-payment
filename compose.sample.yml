@@ -38,7 +38,7 @@ services:
       - "traefik.http.routers.sf.rule=Host(`sqp.localhost`)"
       - "traefik.http.routers.sf.tls=true"
   db:
-    image: postgres:16
+    image: postgres:18
     environment:
       - POSTGRES_PASSWORD=sergtsop
       - POSTGRES_DB=sqp

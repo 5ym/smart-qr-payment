@@ -1,7 +1,7 @@
 <template>
   <v-container fill-height>
     <v-row
-      justify="space-around"
+      class="justify-space-around"
       row="center"
     >
       <v-col

@@ -1,10 +1,10 @@
 <template>
   <v-container>
-    <div class="text-h6">
+    <div class="text-headline-small">
       QRコード
     </div>
     <v-row
-      justify="space-around"
+      class="justify-space-around"
       row="center"
     >
       <v-col
@@ -20,11 +20,11 @@
         </v-card>
       </v-col>
     </v-row>
-    <div class="text-h6">
+    <div class="text-headline-small">
       注文内容
     </div>
     <v-row
-      justify="space-around"
+      class="justify-space-around"
       row="center"
     >
       <v-col
@@ -91,7 +91,7 @@ export default {
   }),
   created () {
     if (useCookie('token').value === '') { useRouter().push('/login') }
-    axios.get('/api/qr', { headers: { Authorization: 'JWT ' + useCookie('token').value } }).then((response) => {
+    axios.get('/api/qr', { headers: { Authorization: 'Bearer ' + useCookie('token').value } }).then((response) => {
       if (response.data.pay === null) { useRouter().push('/pay') }
       this.email = response.data.email
       this.desserts = []

@@ -12,7 +12,7 @@ export default {
     const query = useRoute().query
     if (query['com.squareup.pos.CLIENT_TRANSACTION_ID']) {
       axios.put('/api/orad/receive/' + query['com.squareup.pos.REQUEST_METADATA'],
-        { code: query['com.squareup.pos.REQUEST_METADATA'] }, { headers: { Authorization: 'JWT ' + useCookie('token').value } }
+        { code: query['com.squareup.pos.REQUEST_METADATA'] }, { headers: { Authorization: 'Bearer ' + useCookie('token').value } }
       ).then(() => {
         Swal.fire({
           title: 'Complete',

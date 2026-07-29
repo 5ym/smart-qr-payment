@@ -20,7 +20,7 @@ export default {
     }
     axios
       .get('/api/orad/get/' + useRoute().params.code, {
-        headers: { Authorization: 'JWT ' + useCookie('token').value }
+        headers: { Authorization: 'Bearer ' + useCookie('token').value }
       })
       .then((response) => {
         this.loading = false
@@ -80,7 +80,7 @@ export default {
         .put(
           '/api/orad/receive/' + useRoute().params.code,
           { code: useRoute().params.code },
-          { headers: { Authorization: 'JWT ' + useCookie('token').value } }
+          { headers: { Authorization: 'Bearer ' + useCookie('token').value } }
         )
         .then(() => {
           this.loading = false
@@ -122,11 +122,11 @@ export default {
 </script>
 <template>
   <v-container>
-    <div class="text-h6">
+    <div class="text-headline-small">
       注文内容をご確認ください。
     </div>
     <v-row
-      justify="space-around"
+      class="justify-space-around"
       row="center"
     >
       <v-col
@@ -176,7 +176,7 @@ export default {
       </v-col>
     </v-row>
     <v-row
-      justify="space-around"
+      class="justify-space-around"
       row="center"
     >
       <v-col cols="6">

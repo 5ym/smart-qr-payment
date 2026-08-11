@@ -51,6 +51,10 @@ adapter-node の CSRF 判定のため、リバースプロキシ配下では `OR
 （または `PROTOCOL_HEADER` / `HOST_HEADER`）の設定が必要です。
 サーバーは `bun:sqlite` を使うため、必ず **Bun** で起動してください。
 
+> **実行時依存ゼロ**: すべての依存は `devDependencies` にあり、adapter-node が
+> サーバーバンドルへ固めるため、本番実行に `node_modules` は不要です
+> （`build/` と Bun だけで動きます）。
+
 ### Docker
 
 ```shell
@@ -114,7 +118,7 @@ src/
 | `bun run dev`       | 開発サーバー                     |
 | `bun run build`     | 本番ビルド                       |
 | `bun run start`     | ビルド済みサーバーを起動         |
-| `bun run check`     | 型チェック（svelte-check）       |
+| `bun run check`     | 型チェック（svelte-check + TypeScript 7 / tsgo） |
 | `bun run lint`      | Biome チェック(lint + format)  |
 | `bun run format`    | Biome で整形・自動修正           |
 | `bun run db:seed`   | 初期データ投入                   |

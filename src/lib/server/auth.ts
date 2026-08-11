@@ -1,7 +1,7 @@
-import { eq } from 'drizzle-orm';
 import type { RequestEvent } from '@sveltejs/kit';
+import { eq } from 'drizzle-orm';
 import { db } from './db';
-import { sessions, users, type User } from './db/schema';
+import { sessions, type User, users } from './db/schema';
 
 export const SESSION_COOKIE = 'session';
 const SESSION_TTL_MS = 1000 * 60 * 60 * 24 * 7; // 7 days
@@ -18,7 +18,7 @@ function toSessionUser(user: User): SessionUser {
 		id: user.id,
 		email: user.email,
 		isStaff: user.isStaff,
-		isSuperuser: user.isSuperuser
+		isSuperuser: user.isSuperuser,
 	};
 }
 
@@ -69,7 +69,7 @@ export function setSessionCookie(event: RequestEvent, sessionId: string): void {
 		httpOnly: true,
 		sameSite: 'lax',
 		secure: !import.meta.env.DEV,
-		maxAge: SESSION_TTL_MS / 1000
+		maxAge: SESSION_TTL_MS / 1000,
 	});
 }
 

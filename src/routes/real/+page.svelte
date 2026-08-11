@@ -1,20 +1,20 @@
 <script lang="ts">
-	const options = [
-		{
-			href: '/real/accept',
-			title: '受け取り',
-			subtitle: '事前購入された方はこちら',
-			img: '/img/real0.svg',
-			cls: 'from-primary to-primary/70'
-		},
-		{
-			href: '/real/buy',
-			title: '当日購入',
-			subtitle: '当日お買い求めの方はこちら',
-			img: '/img/real1.svg',
-			cls: 'from-secondary to-secondary/70'
-		}
-	];
+const options = [
+	{
+		href: '/real/accept',
+		title: '受け取り',
+		subtitle: '事前購入された方はこちら',
+		img: '/img/real0.svg',
+		cls: 'from-primary to-primary/70',
+	},
+	{
+		href: '/real/buy',
+		title: '当日購入',
+		subtitle: '当日お買い求めの方はこちら',
+		img: '/img/real1.svg',
+		cls: 'from-secondary to-secondary/70',
+	},
+];
 </script>
 
 <svelte:head>

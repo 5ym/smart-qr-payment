@@ -1,15 +1,15 @@
 <script lang="ts">
-	import { onMount } from 'svelte';
-	import QRCode from 'qrcode';
-	import OrderTable from '$lib/components/OrderTable.svelte';
-	import type { PageData } from './$types';
+import { onMount } from 'svelte';
+import OrderTable from '$lib/components/OrderTable.svelte';
+import type { PageData } from './$types';
 
-	let { data }: { data: PageData } = $props();
-	let dataUrl = $state('');
+let { data }: { data: PageData } = $props();
+let dataUrl = $state('');
 
-	onMount(async () => {
-		dataUrl = await QRCode.toDataURL(data.code, { width: 320, margin: 2 });
-	});
+onMount(async () => {
+	const QRCode = (await import('qrcode')).default;
+	dataUrl = await QRCode.toDataURL(data.code, { width: 320, margin: 2 });
+});
 </script>
 
 <svelte:head>

@@ -1,26 +1,26 @@
 <script lang="ts">
-	import { enhance } from '$app/forms';
-	import ProductPicker from '$lib/components/ProductPicker.svelte';
-	import { toasts } from '$lib/stores/toast.svelte';
-	import type { PageData, ActionData } from './$types';
+import { enhance } from '$app/forms';
+import ProductPicker from '$lib/components/ProductPicker.svelte';
+import { toasts } from '$lib/stores/toast.svelte';
+import type { ActionData, PageData } from './$types';
 
-	let { data, form }: { data: PageData; form: ActionData } = $props();
+let { data, form }: { data: PageData; form: ActionData } = $props();
 
-	let counts = $state<Record<number, number>>({});
-	let email = $state('');
-	let password = $state('');
-	let loading = $state(false);
+let counts = $state<Record<number, number>>({});
+let email = $state('');
+let password = $state('');
+let loading = $state(false);
 
-	const selections = $derived(
-		Object.entries(counts)
-			.map(([id, count]) => ({ product: Number(id), count }))
-			.filter((s) => s.count > 0)
-	);
-	const total = $derived(data.products.reduce((sum, p) => sum + p.price * (counts[p.id] ?? 0), 0));
+const selections = $derived(
+	Object.entries(counts)
+		.map(([id, count]) => ({ product: Number(id), count }))
+		.filter((s) => s.count > 0),
+);
+const total = $derived(data.products.reduce((sum, p) => sum + p.price * (counts[p.id] ?? 0), 0));
 
-	$effect(() => {
-		if (form?.error) toasts.error('エラー', form.error);
-	});
+$effect(() => {
+	if (form?.error) toasts.error('エラー', form.error);
+});
 </script>
 
 <svelte:head>

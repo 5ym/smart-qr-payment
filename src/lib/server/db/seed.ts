@@ -5,12 +5,12 @@
  * `bun run`. Creates the schema, a sample product catalogue and an admin user.
  */
 import { Database } from 'bun:sqlite';
-import { drizzle } from 'drizzle-orm/bun-sqlite';
-import { eq } from 'drizzle-orm';
 import { mkdirSync } from 'node:fs';
 import { dirname } from 'node:path';
+import { eq } from 'drizzle-orm';
+import { drizzle } from 'drizzle-orm/bun-sqlite';
 import { ensureSchema } from './ddl';
-import { users, products } from './schema';
+import { products, users } from './schema';
 
 const url = process.env.DATABASE_URL ?? './data/sqp.db';
 if (url !== ':memory:') mkdirSync(dirname(url), { recursive: true });
@@ -24,7 +24,7 @@ const db = drizzle(sqlite, { schema: { users, products } });
 const sampleProducts = [
 	{ price: 500, image: 'sample.svg', title: 'ブレンドコーヒー', desc: '当店自慢の一杯' },
 	{ price: 800, image: 'sample.svg', title: 'カフェラテ', desc: 'なめらかなミルク' },
-	{ price: 300, image: 'sample.svg', title: '焼き菓子', desc: 'サクサク食感' }
+	{ price: 300, image: 'sample.svg', title: '焼き菓子', desc: 'サクサク食感' },
 ];
 
 const existingProducts = db.select().from(products).all();

@@ -1,9 +1,9 @@
-import { eq } from 'drizzle-orm';
 import { error, fail } from '@sveltejs/kit';
+import { eq } from 'drizzle-orm';
 import { db } from '$lib/server/db';
 import { pays, users } from '$lib/server/db/schema';
-import { getOrderLines } from '$lib/server/orders';
 import { requireStaff } from '$lib/server/guards';
+import { getOrderLines } from '$lib/server/orders';
 import { isValidCode } from '$lib/validation';
 import type { Actions, PageServerLoad } from './$types';
 
@@ -19,7 +19,7 @@ export const load: PageServerLoad = async ({ locals, params }) => {
 		code: params.code,
 		received: pay.receive,
 		email: user?.email ?? '',
-		order: getOrderLines(pay.userId)
+		order: getOrderLines(pay.userId),
 	};
 };
 
@@ -31,5 +31,5 @@ export const actions: Actions = {
 
 		db.update(pays).set({ receive: true }).where(eq(pays.id, pay.id)).run();
 		return { success: true };
-	}
+	},
 };

@@ -33,13 +33,13 @@ export async function sendVerificationEmail(to: string, code: string): Promise<v
 			host,
 			port: Number(env.SMTP_PORT ?? '1025'),
 			secure: env.SMTP_SECURE === 'true',
-			auth: env.SMTP_USER ? { user: env.SMTP_USER, pass: env.SMTP_PASS } : undefined
+			auth: env.SMTP_USER ? { user: env.SMTP_USER, pass: env.SMTP_PASS } : undefined,
 		});
 		await transport.sendMail({
 			from: env.MAIL_FROM ?? 'no-reply@sqp.local',
 			to,
 			subject,
-			text: body
+			text: body,
 		});
 	} catch (err) {
 		console.error('[email] failed to send, falling back to log:', err);

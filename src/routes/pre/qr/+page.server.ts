@@ -13,6 +13,6 @@ export const load: PageServerLoad = async ({ locals }) => {
 	return {
 		email: locals.user.email,
 		code: pay.code,
-		order: getOrderLines(locals.user.id)
+		order: getOrderLines(locals.user.id),
 	};
 };

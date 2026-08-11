@@ -1,9 +1,9 @@
-import { json, error } from '@sveltejs/kit';
+import { error, json } from '@sveltejs/kit';
 import { inArray } from 'drizzle-orm';
-import { db } from '$lib/server/db';
-import { users, userProducts, pays, products as productsTable } from '$lib/server/db/schema';
-import { requireStaff } from '$lib/server/guards';
 import { hashPassword } from '$lib/server/auth';
+import { db } from '$lib/server/db';
+import { pays, products as productsTable, userProducts, users } from '$lib/server/db/schema';
+import { requireStaff } from '$lib/server/guards';
 import { randomCode } from '$lib/server/util';
 import type { RequestHandler } from './$types';
 
@@ -18,7 +18,7 @@ export const POST: RequestHandler = async ({ locals, request }) => {
 
 	const body = (await request.json()) as { userproducts?: Selection[] };
 	const selections = (body.userproducts ?? []).filter(
-		(s) => Number.isInteger(s.product) && Number.isInteger(s.count) && s.count > 0
+		(s) => Number.isInteger(s.product) && Number.isInteger(s.count) && s.count > 0,
 	);
 	if (selections.length === 0) throw error(400, '選択内容をお確かめください');
 
@@ -41,7 +41,7 @@ export const POST: RequestHandler = async ({ locals, request }) => {
 					userId: user.id,
 					productId: s.product,
 					count: s.count,
-					price: priceById.get(s.product)!
+					price: priceById.get(s.product)!,
 				})
 				.run();
 		}

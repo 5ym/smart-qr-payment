@@ -1,8 +1,8 @@
-import { eq } from 'drizzle-orm';
 import { fail, redirect } from '@sveltejs/kit';
+import { eq } from 'drizzle-orm';
+import { createSession, setSessionCookie, verifyPassword } from '$lib/server/auth';
 import { db } from '$lib/server/db';
 import { users } from '$lib/server/db/schema';
-import { createSession, setSessionCookie, verifyPassword } from '$lib/server/auth';
 import type { Actions, PageServerLoad } from './$types';
 
 export const load: PageServerLoad = async ({ locals, url }) => {
@@ -23,10 +23,10 @@ export const actions: Actions = {
 		}
 
 		const user = db.select().from(users).where(eq(users.email, email)).get();
-		if (!user || !user.isActive || !(await verifyPassword(password, user.passwordHash))) {
+		if (!user?.isActive || !(await verifyPassword(password, user.passwordHash))) {
 			return fail(401, {
 				email,
-				error: 'メールアドレスもしくはパスワード、または両方が間違っています'
+				error: 'メールアドレスもしくはパスワード、または両方が間違っています',
 			});
 		}
 
@@ -35,5 +35,5 @@ export const actions: Actions = {
 
 		const redirectTo = event.url.searchParams.get('redirect') ?? '/';
 		throw redirect(303, redirectTo);
-	}
+	},
 };

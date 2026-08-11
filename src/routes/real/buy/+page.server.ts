@@ -10,7 +10,7 @@ export const load: PageServerLoad = async ({ locals }) => {
 		products: db.select().from(productsTable).all(),
 		square: {
 			applicationId: publicEnv.PUBLIC_SQUARE_APPLICATION_ID ?? '',
-			callbackUrl: publicEnv.PUBLIC_SQUARE_CALLBACK_URL ?? ''
-		}
+			callbackUrl: publicEnv.PUBLIC_SQUARE_CALLBACK_URL ?? '',
+		},
 	};
 };

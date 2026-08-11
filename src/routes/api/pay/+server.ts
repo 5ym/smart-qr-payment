@@ -1,8 +1,8 @@
-import { json, error } from '@sveltejs/kit';
+import { error, json } from '@sveltejs/kit';
 import { env } from '$env/dynamic/private';
 import { db } from '$lib/server/db';
 import { pays } from '$lib/server/db/schema';
-import { getPay, calcAmount } from '$lib/server/orders';
+import { calcAmount, getPay } from '$lib/server/orders';
 import { getStripe } from '$lib/server/stripe';
 import { randomCode } from '$lib/server/util';
 import type { RequestHandler } from './$types';
@@ -36,10 +36,10 @@ export const POST: RequestHandler = async ({ locals, request, url }) => {
 			amount,
 			currency: 'jpy',
 			payment_method_types: ['card'],
-			payment_method: token
+			payment_method: token,
 		});
 		intent = await stripe.paymentIntents.confirm(created.id, {
-			return_url: `${base}/pre/pay/secure`
+			return_url: `${base}/pre/pay/secure`,
 		});
 	} catch (err) {
 		const message =

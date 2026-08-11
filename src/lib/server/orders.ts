@@ -1,6 +1,6 @@
 import { eq } from 'drizzle-orm';
 import { db } from './db';
-import { userProducts, products, pays } from './db/schema';
+import { pays, products, userProducts } from './db/schema';
 
 export type OrderLine = {
 	id: number;
@@ -22,7 +22,7 @@ export function getOrderLines(userId: number): Order {
 			id: products.id,
 			title: products.title,
 			price: userProducts.price,
-			count: userProducts.count
+			count: userProducts.count,
 		})
 		.from(userProducts)
 		.innerJoin(products, eq(userProducts.productId, products.id))
@@ -34,7 +34,7 @@ export function getOrderLines(userId: number): Order {
 		title: r.title,
 		price: r.price,
 		count: r.count,
-		subtotal: r.price * r.count
+		subtotal: r.price * r.count,
 	}));
 	const total = lines.reduce((sum, l) => sum + l.subtotal, 0);
 	return { lines, total };

@@ -111,7 +111,7 @@ src/
 | `bun run build`     | 本番ビルド                       |
 | `bun run start`     | ビルド済みサーバーを起動         |
 | `bun run check`     | 型チェック（svelte-check）       |
-| `bun run lint`      | Prettier + ESLint                |
-| `bun run format`    | Prettier で整形                  |
+| `bun run lint`      | Biome チェック(lint + format)  |
+| `bun run format`    | Biome で整形・自動修正           |
 | `bun run db:seed`   | 初期データ投入                   |
 | `bun run db:push`   | スキーマを DB に反映（drizzle）  |

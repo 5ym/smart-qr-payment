@@ -1,7 +1,7 @@
 <script lang="ts">
-	import type { OrderLine } from '$lib/server/orders';
+import type { OrderLine } from '$lib/server/orders';
 
-	let { lines, total }: { lines: OrderLine[]; total: number } = $props();
+let { lines, total }: { lines: OrderLine[]; total: number } = $props();
 </script>
 
 <div class="overflow-x-auto">

@@ -1,16 +1,16 @@
 <script lang="ts">
-	import { invalidateAll } from '$app/navigation';
-	import OrderTable from '$lib/components/OrderTable.svelte';
-	import type { PageData } from './$types';
+import { invalidateAll } from '$app/navigation';
+import OrderTable from '$lib/components/OrderTable.svelte';
+import type { PageData } from './$types';
 
-	let { data }: { data: PageData } = $props();
-	let loading = $state(false);
+let { data }: { data: PageData } = $props();
+let loading = $state(false);
 
-	async function refresh() {
-		loading = true;
-		await invalidateAll();
-		loading = false;
-	}
+async function refresh() {
+	loading = true;
+	await invalidateAll();
+	loading = false;
+}
 </script>
 
 <svelte:head>

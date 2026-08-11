@@ -1,11 +1,11 @@
 <script lang="ts">
-	import '../app.css';
-	import { page } from '$app/state';
-	import { enhance } from '$app/forms';
-	import Toasts from '$lib/components/Toasts.svelte';
+import '../app.css';
+import { enhance } from '$app/forms';
+import { page } from '$app/state';
+import Toasts from '$lib/components/Toasts.svelte';
 
-	let { children } = $props();
-	const user = $derived(page.data.user);
+let { children } = $props();
+const user = $derived(page.data.user);
 </script>
 
 <div class="bg-base-200 flex min-h-dvh flex-col">

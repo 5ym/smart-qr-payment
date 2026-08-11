@@ -1,12 +1,12 @@
 <script lang="ts">
-	import { toasts } from '$lib/stores/toast.svelte';
+import { toasts } from '$lib/stores/toast.svelte';
 
-	const alertClass: Record<string, string> = {
-		info: 'alert-info',
-		success: 'alert-success',
-		warning: 'alert-warning',
-		error: 'alert-error'
-	};
+const alertClass: Record<string, string> = {
+	info: 'alert-info',
+	success: 'alert-success',
+	warning: 'alert-warning',
+	error: 'alert-error',
+};
 </script>
 
 <div class="toast toast-top toast-end z-50 max-w-full">

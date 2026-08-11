@@ -17,6 +17,6 @@ export const load: PageServerLoad = async ({ locals }) => {
 		email: locals.user.email,
 		order,
 		stripeConfigured: isStripeConfigured(),
-		publishableKey: publicEnv.PUBLIC_STRIPE_PUBLISHABLE_KEY ?? ''
+		publishableKey: publicEnv.PUBLIC_STRIPE_PUBLISHABLE_KEY ?? '',
 	};
 };

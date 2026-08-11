@@ -1,10 +1,10 @@
 import { fail } from '@sveltejs/kit';
 import { eq, inArray } from 'drizzle-orm';
-import { db } from '$lib/server/db';
-import { users, verifies, userProducts, products as productsTable } from '$lib/server/db/schema';
 import { hashPassword } from '$lib/server/auth';
-import { randomCode } from '$lib/server/util';
+import { db } from '$lib/server/db';
+import { products as productsTable, userProducts, users, verifies } from '$lib/server/db/schema';
 import { sendVerificationEmail } from '$lib/server/email';
+import { randomCode } from '$lib/server/util';
 import type { Actions, PageServerLoad } from './$types';
 
 export const load: PageServerLoad = async () => {
@@ -66,7 +66,7 @@ export const actions: Actions = {
 						userId: user.id,
 						productId: s.product,
 						count: s.count,
-						price: priceById.get(s.product)!
+						price: priceById.get(s.product)!,
 					})
 					.run();
 			}
@@ -74,5 +74,5 @@ export const actions: Actions = {
 
 		await sendVerificationEmail(email, code);
 		return { success: true };
-	}
+	},
 };

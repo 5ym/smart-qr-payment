@@ -1,27 +1,24 @@
 <script lang="ts">
-	import { onMount } from 'svelte';
-	import { enhance } from '$app/forms';
-	import { goto } from '$app/navigation';
-	import OrderTable from '$lib/components/OrderTable.svelte';
-	import { toasts } from '$lib/stores/toast.svelte';
-	import type { PageData, ActionData } from './$types';
+import { onMount } from 'svelte';
+import { enhance } from '$app/forms';
+import { goto } from '$app/navigation';
+import OrderTable from '$lib/components/OrderTable.svelte';
+import { toasts } from '$lib/stores/toast.svelte';
+import type { ActionData, PageData } from './$types';
 
-	let { data, form }: { data: PageData; form: ActionData } = $props();
-	let loading = $state(false);
+let { data, form }: { data: PageData; form: ActionData } = $props();
+let loading = $state(false);
 
-	onMount(() => {
-		if (data.received) {
-			toasts.warning(
-				'受け取り済み',
-				'受け取り済みのQRコードです。3秒後にQR読み込み画面に戻ります。'
-			);
-			setTimeout(() => goto('/real/accept'), 3000);
-		}
-	});
+onMount(() => {
+	if (data.received) {
+		toasts.warning('受け取り済み', '受け取り済みのQRコードです。3秒後にQR読み込み画面に戻ります。');
+		setTimeout(() => goto('/real/accept'), 3000);
+	}
+});
 
-	$effect(() => {
-		if (form?.error) toasts.error('エラー', form.error);
-	});
+$effect(() => {
+	if (form?.error) toasts.error('エラー', form.error);
+});
 </script>
 
 <svelte:head>

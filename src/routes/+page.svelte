@@ -1,18 +1,18 @@
 <script lang="ts">
-	const options = [
-		{
-			href: '/pre',
-			title: '事前購入',
-			subtitle: '事前購入されたい方はこちら',
-			cls: 'from-primary to-primary/70'
-		},
-		{
-			href: '/real',
-			title: '対面販売',
-			subtitle: '対面販売でのセルフレジを使う場合はこちら',
-			cls: 'from-secondary to-secondary/70'
-		}
-	];
+const options = [
+	{
+		href: '/pre',
+		title: '事前購入',
+		subtitle: '事前購入されたい方はこちら',
+		cls: 'from-primary to-primary/70',
+	},
+	{
+		href: '/real',
+		title: '対面販売',
+		subtitle: '対面販売でのセルフレジを使う場合はこちら',
+		cls: 'from-secondary to-secondary/70',
+	},
+];
 </script>
 
 <svelte:head>

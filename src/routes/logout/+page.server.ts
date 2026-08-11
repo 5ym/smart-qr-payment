@@ -1,5 +1,5 @@
 import { redirect } from '@sveltejs/kit';
-import { SESSION_COOKIE, clearSessionCookie, deleteSession } from '$lib/server/auth';
+import { clearSessionCookie, deleteSession, SESSION_COOKIE } from '$lib/server/auth';
 import type { Actions } from './$types';
 
 export const actions: Actions = {
@@ -8,5 +8,5 @@ export const actions: Actions = {
 		if (sessionId) deleteSession(sessionId);
 		clearSessionCookie(event);
 		throw redirect(303, '/');
-	}
+	},
 };

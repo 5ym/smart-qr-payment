@@ -19,7 +19,7 @@ export const load: PageServerLoad = async ({ locals, url }) => {
 	if (!transactionId) {
 		return {
 			ok: false as const,
-			message: q.get('com.squareup.pos.ERROR_DESCRIPTION') ?? '決済がキャンセルされました'
+			message: q.get('com.squareup.pos.ERROR_DESCRIPTION') ?? '決済がキャンセルされました',
 		};
 	}
 

@@ -1,25 +1,25 @@
 <script lang="ts">
-	import type { Product } from '$lib/server/db/schema';
+import type { Product } from '$lib/server/db/schema';
 
-	let {
-		products,
-		counts = $bindable({}),
-		imageHeight = 'h-56'
-	}: {
-		products: Product[];
-		counts: Record<number, number>;
-		imageHeight?: string;
-	} = $props();
+let {
+	products,
+	counts = $bindable({}),
+	imageHeight = 'h-56',
+}: {
+	products: Product[];
+	counts: Record<number, number>;
+	imageHeight?: string;
+} = $props();
 
-	function change(id: number, delta: number) {
-		const next = Math.max(0, (counts[id] ?? 0) + delta);
-		counts = { ...counts, [id]: next };
-	}
+function change(id: number, delta: number) {
+	const next = Math.max(0, (counts[id] ?? 0) + delta);
+	counts = { ...counts, [id]: next };
+}
 
-	function set(id: number, value: string) {
-		const n = Number(value);
-		counts = { ...counts, [id]: Number.isFinite(n) && n >= 0 ? Math.floor(n) : 0 };
-	}
+function set(id: number, value: string) {
+	const n = Number(value);
+	counts = { ...counts, [id]: Number.isFinite(n) && n >= 0 ? Math.floor(n) : 0 };
+}
 </script>
 
 <div class="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">

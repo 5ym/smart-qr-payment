@@ -1,9 +1,9 @@
 <script lang="ts">
-	import { enhance } from '$app/forms';
-	import type { ActionData } from './$types';
+import { enhance } from '$app/forms';
+import type { ActionData } from './$types';
 
-	let { form }: { form: ActionData } = $props();
-	let loading = $state(false);
+let { form }: { form: ActionData } = $props();
+let loading = $state(false);
 </script>
 
 <svelte:head>

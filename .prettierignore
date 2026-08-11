@@ -1,0 +1,9 @@
+.svelte-kit
+build
+.output
+dist
+node_modules
+data
+package-lock.json
+bun.lock
+bun.lockb

@@ -1,0 +1,42 @@
+@import 'tailwindcss';
+
+@plugin "daisyui" {
+	themes:
+		sqp --default,
+		dark;
+}
+
+/* Brand theme for Smart QR Payment (DaisyUI 5 CSS-based theme). */
+@plugin "daisyui/theme" {
+	name: 'sqp';
+	default: true;
+	prefersdark: false;
+	color-scheme: light;
+	--color-base-100: oklch(100% 0 0);
+	--color-base-200: oklch(96% 0.005 280);
+	--color-base-300: oklch(92% 0.01 280);
+	--color-base-content: oklch(25% 0.02 280);
+	--color-primary: oklch(52% 0.22 285);
+	--color-primary-content: oklch(98% 0.01 285);
+	--color-secondary: oklch(62% 0.18 340);
+	--color-secondary-content: oklch(98% 0.01 340);
+	--color-accent: oklch(70% 0.15 200);
+	--color-accent-content: oklch(20% 0.02 200);
+	--color-neutral: oklch(30% 0.02 280);
+	--color-neutral-content: oklch(96% 0.01 280);
+	--color-info: oklch(70% 0.13 230);
+	--color-success: oklch(70% 0.16 155);
+	--color-warning: oklch(80% 0.16 85);
+	--color-error: oklch(63% 0.22 25);
+	--radius-selector: 0.5rem;
+	--radius-field: 0.5rem;
+	--radius-box: 1rem;
+	--border: 1px;
+	--depth: 1;
+	--noise: 0;
+}
+
+html,
+body {
+	min-height: 100dvh;
+}

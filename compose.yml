@@ -1,0 +1,33 @@
+services:
+  app:
+    build:
+      context: .
+    ports:
+      - '3000:3000'
+    environment:
+      - PORT=3000
+      - ORIGIN=http://localhost:3000
+      - DATABASE_URL=/app/data/sqp.db
+      - PUBLIC_BASE_URL=http://localhost:3000
+      # Email (points at the MailHog container below)
+      - SMTP_HOST=mail
+      - SMTP_PORT=1025
+      - MAIL_FROM=no-reply@sqp.local
+      # Fill these in to enable card / Square payments:
+      # - STRIPE_SECRET_KEY=sk_test_xxx
+      # - PUBLIC_STRIPE_PUBLISHABLE_KEY=pk_test_xxx
+      # - PUBLIC_SQUARE_APPLICATION_ID=sq0idp-xxx
+      # - PUBLIC_SQUARE_CALLBACK_URL=http://localhost:3000/real/square
+    volumes:
+      - db:/app/data
+    depends_on:
+      - mail
+
+  # Catches outgoing verification mail during local development.
+  mail:
+    image: mailhog/mailhog
+    ports:
+      - '8025:8025' # web UI
+
+volumes:
+  db:

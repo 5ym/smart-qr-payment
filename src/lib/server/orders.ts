@@ -1,6 +1,5 @@
-import { eq } from 'drizzle-orm';
 import { db } from './db';
-import { pays, products, userProducts } from './db/schema';
+import { getPayByUser } from './db/repo';
 
 export type OrderLine = {
 	id: number;
@@ -18,16 +17,12 @@ export type Order = {
 /** Load a user's ordered line items joined with product info. */
 export function getOrderLines(userId: number): Order {
 	const rows = db
-		.select({
-			id: products.id,
-			title: products.title,
-			price: userProducts.price,
-			count: userProducts.count,
-		})
-		.from(userProducts)
-		.innerJoin(products, eq(userProducts.productId, products.id))
-		.where(eq(userProducts.userId, userId))
-		.all();
+		.query(
+			`SELECT p.id AS id, p.title AS title, up.price AS price, up.count AS count
+			 FROM user_products up JOIN products p ON p.id = up.product_id
+			 WHERE up.user_id = ?`,
+		)
+		.all(userId) as { id: number; title: string; price: number; count: number }[];
 
 	const lines: OrderLine[] = rows.map((r) => ({
 		id: r.id,
@@ -41,7 +36,7 @@ export function getOrderLines(userId: number): Order {
 }
 
 export function getPay(userId: number) {
-	return db.select().from(pays).where(eq(pays.userId, userId)).get() ?? null;
+	return getPayByUser(userId);
 }
 
 export function calcAmount(userId: number): number {

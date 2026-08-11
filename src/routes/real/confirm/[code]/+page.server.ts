@@ -1,7 +1,5 @@
 import { error, fail } from '@sveltejs/kit';
-import { eq } from 'drizzle-orm';
-import { db } from '$lib/server/db';
-import { pays, users } from '$lib/server/db/schema';
+import { getPayByCode, getUserById, setPayReceived } from '$lib/server/db/repo';
 import { requireStaff } from '$lib/server/guards';
 import { getOrderLines } from '$lib/server/orders';
 import { isValidCode } from '$lib/validation';
@@ -11,10 +9,10 @@ export const load: PageServerLoad = async ({ locals, params }) => {
 	requireStaff(locals.user, `/real/confirm/${params.code}`);
 	if (!isValidCode(params.code)) throw error(404, 'invalid code');
 
-	const pay = db.select().from(pays).where(eq(pays.code, params.code)).get();
+	const pay = getPayByCode(params.code);
 	if (!pay) throw error(404, 'order not found');
 
-	const user = db.select().from(users).where(eq(users.id, pay.userId)).get();
+	const user = getUserById(pay.userId);
 	return {
 		code: params.code,
 		received: pay.receive,
@@ -26,10 +24,10 @@ export const load: PageServerLoad = async ({ locals, params }) => {
 export const actions: Actions = {
 	confirm: async ({ locals, params }) => {
 		requireStaff(locals.user, `/real/confirm/${params.code}`);
-		const pay = db.select().from(pays).where(eq(pays.code, params.code)).get();
+		const pay = getPayByCode(params.code);
 		if (!pay) return fail(404, { error: '不正なQRコードです' });
 
-		db.update(pays).set({ receive: true }).where(eq(pays.id, pay.id)).run();
+		setPayReceived(pay.id);
 		return { success: true };
 	},
 };

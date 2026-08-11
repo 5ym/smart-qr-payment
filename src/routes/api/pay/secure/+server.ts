@@ -1,6 +1,5 @@
 import { error, json } from '@sveltejs/kit';
-import { db } from '$lib/server/db';
-import { pays } from '$lib/server/db/schema';
+import { createPay } from '$lib/server/db/repo';
 import { getPay } from '$lib/server/orders';
 import { getStripe } from '$lib/server/stripe';
 import { randomCode } from '$lib/server/util';
@@ -25,8 +24,6 @@ export const POST: RequestHandler = async ({ locals, request }) => {
 		throw error(400, '決済が完了していません');
 	}
 
-	db.insert(pays)
-		.values({ userId: locals.user.id, token: intent.id, code: randomCode(16) })
-		.run();
+	createPay({ userId: locals.user.id, token: intent.id, code: randomCode(16) });
 	return json({ ok: true }, { status: 201 });
 };

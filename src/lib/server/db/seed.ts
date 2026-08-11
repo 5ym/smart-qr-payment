@@ -7,18 +7,14 @@
 import { Database } from 'bun:sqlite';
 import { mkdirSync } from 'node:fs';
 import { dirname } from 'node:path';
-import { eq } from 'drizzle-orm';
-import { drizzle } from 'drizzle-orm/bun-sqlite';
 import { ensureSchema } from './ddl';
-import { products, users } from './schema';
 
 const url = process.env.DATABASE_URL ?? './data/sqp.db';
 if (url !== ':memory:') mkdirSync(dirname(url), { recursive: true });
 
-const sqlite = new Database(url, { create: true });
-sqlite.exec('PRAGMA foreign_keys = ON;');
-ensureSchema(sqlite);
-const db = drizzle(sqlite, { schema: { users, products } });
+const db = new Database(url, { create: true });
+db.exec('PRAGMA foreign_keys = ON;');
+ensureSchema(db);
 
 // --- Products -------------------------------------------------------------
 const sampleProducts = [
@@ -27,24 +23,26 @@ const sampleProducts = [
 	{ price: 300, image: 'sample.svg', title: '焼き菓子', desc: 'サクサク食感' },
 ];
 
-const existingProducts = db.select().from(products).all();
-if (existingProducts.length === 0) {
-	db.insert(products).values(sampleProducts).run();
+const productCount = (db.query('SELECT COUNT(*) AS n FROM products').get() as { n: number }).n;
+if (productCount === 0) {
+	const insert = db.query('INSERT INTO products (price, image, title, desc) VALUES (?, ?, ?, ?)');
+	for (const p of sampleProducts) insert.run(p.price, p.image, p.title, p.desc);
 	console.info(`[seed] inserted ${sampleProducts.length} products`);
 } else {
-	console.info(`[seed] products already present (${existingProducts.length}), skipping`);
+	console.info(`[seed] products already present (${productCount}), skipping`);
 }
 
 // --- Admin user -----------------------------------------------------------
 const adminEmail = process.env.ADMIN_EMAIL ?? 'admin@sqp.local';
 const adminPassword = process.env.ADMIN_PASSWORD ?? 'adminpassword';
 
-const existingAdmin = db.select().from(users).where(eq(users.email, adminEmail)).get();
+const existingAdmin = db.query('SELECT id FROM users WHERE email = ?').get(adminEmail);
 if (!existingAdmin) {
 	const passwordHash = await Bun.password.hash(adminPassword, 'argon2id');
-	db.insert(users)
-		.values({ email: adminEmail, passwordHash, isActive: true, isStaff: true, isSuperuser: true })
-		.run();
+	db.query(
+		`INSERT INTO users (email, password_hash, is_active, is_staff, is_superuser)
+		 VALUES (?, ?, 1, 1, 1)`,
+	).run(adminEmail, passwordHash);
 	console.info(`[seed] created admin user: ${adminEmail} / ${adminPassword}`);
 } else {
 	console.info(`[seed] admin user already exists: ${adminEmail}`);

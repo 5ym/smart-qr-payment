@@ -1,7 +1,6 @@
 import { error, json } from '@sveltejs/kit';
 import { env } from '$env/dynamic/private';
-import { db } from '$lib/server/db';
-import { pays } from '$lib/server/db/schema';
+import { createPay } from '$lib/server/db/repo';
 import { calcAmount, getPay } from '$lib/server/orders';
 import { getStripe } from '$lib/server/stripe';
 import { randomCode } from '$lib/server/util';
@@ -50,9 +49,7 @@ export const POST: RequestHandler = async ({ locals, request, url }) => {
 	}
 
 	if (intent.status === 'succeeded') {
-		db.insert(pays)
-			.values({ userId: locals.user.id, token: intent.id, code: randomCode(16) })
-			.run();
+		createPay({ userId: locals.user.id, token: intent.id, code: randomCode(16) });
 		return json({ ok: true }, { status: 201 });
 	}
 

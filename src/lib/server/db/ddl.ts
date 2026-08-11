@@ -1,10 +1,9 @@
 import type { Database } from 'bun:sqlite';
 
 /**
- * Idempotent schema bootstrap. Kept in sync with `schema.ts` (the Drizzle ORM
- * source of truth). Running it on startup means the app works with a fresh
- * SQLite file without a separate migration step; `drizzle-kit push` remains
- * available for those who prefer a migration workflow.
+ * Idempotent schema bootstrap — the single source of truth for the table
+ * layout (the row types in `schema.ts` mirror it). Running it on startup means
+ * the app works with a fresh SQLite file without a separate migration step.
  */
 export const DDL = `
 CREATE TABLE IF NOT EXISTS users (

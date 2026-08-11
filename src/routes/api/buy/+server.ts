@@ -1,8 +1,12 @@
 import { error, json } from '@sveltejs/kit';
-import { inArray } from 'drizzle-orm';
 import { hashPassword } from '$lib/server/auth';
-import { db } from '$lib/server/db';
-import { pays, products as productsTable, userProducts, users } from '$lib/server/db/schema';
+import {
+	createPay,
+	createUser,
+	createUserProduct,
+	getProductsByIds,
+	transaction,
+} from '$lib/server/db/repo';
 import { requireStaff } from '$lib/server/guards';
 import { randomCode } from '$lib/server/util';
 import type { RequestHandler } from './$types';
@@ -23,8 +27,7 @@ export const POST: RequestHandler = async ({ locals, request }) => {
 	if (selections.length === 0) throw error(400, '選択内容をお確かめください');
 
 	const ids = selections.map((s) => s.product);
-	const found = db.select().from(productsTable).where(inArray(productsTable.id, ids)).all();
-	const priceById = new Map(found.map((p) => [p.id, p.price]));
+	const priceById = new Map(getProductsByIds(ids).map((p) => [p.id, p.price]));
 	if (selections.some((s) => !priceById.has(s.product))) {
 		throw error(400, '選択内容をお確かめください');
 	}
@@ -33,19 +36,17 @@ export const POST: RequestHandler = async ({ locals, request }) => {
 	const passwordHash = await hashPassword(randomCode(16));
 	const code = randomCode(16);
 
-	db.transaction((tx) => {
-		const user = tx.insert(users).values({ email, passwordHash, isActive: true }).returning().get();
+	transaction(() => {
+		const user = createUser({ email, passwordHash, isActive: true });
 		for (const s of selections) {
-			tx.insert(userProducts)
-				.values({
-					userId: user.id,
-					productId: s.product,
-					count: s.count,
-					price: priceById.get(s.product)!,
-				})
-				.run();
+			createUserProduct({
+				userId: user.id,
+				productId: s.product,
+				count: s.count,
+				price: priceById.get(s.product) as number,
+			});
 		}
-		tx.insert(pays).values({ userId: user.id, code, token: code, receive: false }).run();
+		createPay({ userId: user.id, code, token: code, receive: false });
 	});
 
 	return json({ code }, { status: 201 });

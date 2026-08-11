@@ -1,10 +1,8 @@
 import { Database } from 'bun:sqlite';
 import { mkdirSync } from 'node:fs';
 import { dirname } from 'node:path';
-import { drizzle } from 'drizzle-orm/bun-sqlite';
 import { env } from '$env/dynamic/private';
 import { ensureSchema } from './ddl';
-import * as schema from './schema';
 
 const url = env.DATABASE_URL ?? './data/sqp.db';
 
@@ -13,10 +11,7 @@ if (url !== ':memory:') {
 	mkdirSync(dirname(url), { recursive: true });
 }
 
-const sqlite = new Database(url, { create: true });
-sqlite.exec('PRAGMA journal_mode = WAL;');
-sqlite.exec('PRAGMA foreign_keys = ON;');
-ensureSchema(sqlite);
-
-export const db = drizzle(sqlite, { schema });
-export { schema };
+export const db = new Database(url, { create: true });
+db.exec('PRAGMA journal_mode = WAL;');
+db.exec('PRAGMA foreign_keys = ON;');
+ensureSchema(db);

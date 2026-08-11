@@ -1,6 +1,4 @@
-import { eq } from 'drizzle-orm';
-import { db } from '$lib/server/db';
-import { pays } from '$lib/server/db/schema';
+import { getPayByCode, setPayReceived } from '$lib/server/db/repo';
 import { requireStaff } from '$lib/server/guards';
 import { isValidCode } from '$lib/validation';
 import type { PageServerLoad } from './$types';
@@ -27,11 +25,11 @@ export const load: PageServerLoad = async ({ locals, url }) => {
 		return { ok: false as const, message: '不正なリクエストです' };
 	}
 
-	const pay = db.select().from(pays).where(eq(pays.code, code)).get();
+	const pay = getPayByCode(code);
 	if (!pay) {
 		return { ok: false as const, message: '該当する注文が見つかりません' };
 	}
 
-	db.update(pays).set({ receive: true }).where(eq(pays.id, pay.id)).run();
+	setPayReceived(pay.id);
 	return { ok: true as const, message: '' };
 };

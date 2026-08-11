@@ -1,8 +1,6 @@
 import { fail, redirect } from '@sveltejs/kit';
-import { eq } from 'drizzle-orm';
 import { createSession, setSessionCookie, verifyPassword } from '$lib/server/auth';
-import { db } from '$lib/server/db';
-import { users } from '$lib/server/db/schema';
+import { getUserByEmail } from '$lib/server/db/repo';
 import type { Actions, PageServerLoad } from './$types';
 
 export const load: PageServerLoad = async ({ locals, url }) => {
@@ -22,7 +20,7 @@ export const actions: Actions = {
 			return fail(400, { email, error: 'メールアドレスとパスワードを入力してください' });
 		}
 
-		const user = db.select().from(users).where(eq(users.email, email)).get();
+		const user = getUserByEmail(email);
 		if (!user?.isActive || !(await verifyPassword(password, user.passwordHash))) {
 			return fail(401, {
 				email,

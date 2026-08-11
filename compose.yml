@@ -9,10 +9,9 @@ services:
       - ORIGIN=http://localhost:3000
       - DATABASE_URL=/app/data/sqp.db
       - PUBLIC_BASE_URL=http://localhost:3000
-      # Email (points at the MailHog container below)
-      - SMTP_HOST=mail
-      - SMTP_PORT=1025
-      - MAIL_FROM=no-reply@sqp.local
+      # Email via Azure Communication Services (leave unset to log links instead):
+      # - ACS_CONNECTION_STRING=endpoint=https://<res>.communication.azure.com/;accesskey=<key>
+      # - ACS_SENDER_ADDRESS=DoNotReply@<guid>.azurecomm.net
       # Fill these in to enable card / Square payments:
       # - STRIPE_SECRET_KEY=sk_test_xxx
       # - PUBLIC_STRIPE_PUBLISHABLE_KEY=pk_test_xxx
@@ -20,14 +19,6 @@ services:
       # - PUBLIC_SQUARE_CALLBACK_URL=http://localhost:3000/real/square
     volumes:
       - db:/app/data
-    depends_on:
-      - mail
-
-  # Catches outgoing verification mail during local development.
-  mail:
-    image: mailhog/mailhog
-    ports:
-      - '8025:8025' # web UI
 
 volumes:
   db:

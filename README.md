@@ -12,11 +12,13 @@ QRコードを使ったセルフレジ / 事前購入システム。
 | -------------- | --------------------------------------------------------------- |
 | ランタイム     | [Bun](https://bun.sh) 1.3+                                       |
 | フレームワーク | [SvelteKit](https://kit.svelte.dev)（Svelte 5 / runes）+ adapter-node |
-| データベース   | SQLite（`bun:sqlite`）+ [Drizzle ORM](https://orm.drizzle.team)  |
+| データベース   | SQLite（`bun:sqlite`、生SQLの薄いクエリ層）                    |
 | UI             | [Tailwind CSS v4](https://tailwindcss.com) + [DaisyUI v5](https://daisyui.com) |
 | 認証           | サーバーサイドセッション（Cookie）+ `Bun.password`（argon2id）  |
+| メール         | Azure Communication Services（Email REST API / 依存ゼロ）       |
 | 決済           | Stripe（カード / 3-D セキュア）, Square POS（当日購入）         |
 | QR             | 生成: `qrcode` / 読み取り: `html5-qrcode`                       |
+| Lint/Format    | [Biome](https://biomejs.dev)                                    |
 
 ## セットアップ
 
@@ -36,7 +38,7 @@ bun run dev
 （`ADMIN_EMAIL` / `ADMIN_PASSWORD` で変更可）。
 
 > データベースのテーブルは初回接続時に自動作成されます（`src/lib/server/db/ddl.ts`）。
-> マイグレーション運用をしたい場合は `bun run db:push`（drizzle-kit）も利用できます。
+> ORM は使わず、`bun:sqlite` の上に薄い型付きクエリ層（`src/lib/server/db/repo.ts`）を置いています。
 
 ## 本番ビルド / 起動
 
@@ -53,7 +55,7 @@ adapter-node の CSRF 判定のため、リバースプロキシ配下では `OR
 
 ```shell
 docker compose up --build
-# アプリ: http://localhost:3000  /  MailHog: http://localhost:8025
+# アプリ: http://localhost:3000
 ```
 
 ## 環境変数
@@ -62,11 +64,12 @@ docker compose up --build
 
 - `DATABASE_URL` — SQLite ファイルのパス（既定 `./data/sqp.db`）
 - `PUBLIC_BASE_URL` — メール確認リンク等に使う公開 URL
-- `SMTP_*` / `MAIL_FROM` — メール送信設定（未設定時はリンクをログ出力）
+- `ACS_CONNECTION_STRING`（または `ACS_ENDPOINT` + `ACS_ACCESS_KEY`）/ `ACS_SENDER_ADDRESS`
+  — Azure Communication Services のメール送信設定（未設定時はリンクをログ出力）
 - `STRIPE_SECRET_KEY` / `PUBLIC_STRIPE_PUBLISHABLE_KEY` — カード決済
 - `PUBLIC_SQUARE_APPLICATION_ID` / `PUBLIC_SQUARE_CALLBACK_URL` — 当日購入(Square)
 
-Stripe / Square が未設定でもアプリは起動し、該当機能のみ無効化されます。
+ACS / Stripe / Square が未設定でもアプリは起動し、該当機能のみ無効化（メールはログ出力）されます。
 
 ## 画面フロー
 
@@ -95,11 +98,12 @@ src/
 │   ├── stores/toast.svelte.ts
 │   ├── validation.ts        # 共有バリデーション（ブラウザ可）
 │   └── server/              # サーバー専用
-│       ├── db/              # schema / 接続 / DDL / seed
+│       ├── db/              # index(接続) / schema(型) / ddl / repo(クエリ) / seed
 │       ├── auth.ts          # セッション・パスワード
 │       ├── orders.ts        # 注文集計
 │       ├── guards.ts        # 認可ヘルパー
-│       ├── email.ts stripe.ts util.ts
+│       ├── acs.ts email.ts  # Azure Communication Services メール送信
+│       ├── stripe.ts util.ts
 └── routes/                  # ページ + /api エンドポイント
 ```
 
@@ -114,4 +118,3 @@ src/
 | `bun run lint`      | Biome チェック(lint + format)  |
 | `bun run format`    | Biome で整形・自動修正           |
 | `bun run db:seed`   | 初期データ投入                   |
-| `bun run db:push`   | スキーマを DB に反映（drizzle）  |

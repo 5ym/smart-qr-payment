@@ -80,7 +80,7 @@ $effect(() => {
 						maxlength="70"
 						required
 						class="input input-bordered w-full"
-					/>
+					>
 				</label>
 				<label class="form-control w-full">
 					<span class="label-text mb-1">パスワード</span>
@@ -92,10 +92,12 @@ $effect(() => {
 						maxlength="20"
 						required
 						class="input input-bordered w-full"
-					/>
+					>
 				</label>
-				<button class="btn btn-primary" disabled={loading}>
-					{#if loading}<span class="loading loading-spinner"></span>{/if}
+				<button type="submit" class="btn btn-primary" disabled={loading}>
+					{#if loading}
+						<span class="loading loading-spinner"></span>
+					{/if}
 					送信
 				</button>
 			</div>

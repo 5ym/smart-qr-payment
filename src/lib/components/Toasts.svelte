@@ -22,7 +22,12 @@ const alertClass: Record<string, string> = {
 					<div class="text-sm whitespace-pre-line">{@html t.message}</div>
 				{/if}
 			</div>
-			<button class="btn btn-ghost btn-xs" onclick={() => toasts.dismiss(t.id)} aria-label="閉じる">
+			<button
+				type="button"
+				class="btn btn-ghost btn-xs"
+				onclick={() => toasts.dismiss(t.id)}
+				aria-label="閉じる"
+			>
 				✕
 			</button>
 		</div>

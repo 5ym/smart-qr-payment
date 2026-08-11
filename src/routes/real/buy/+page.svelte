@@ -79,8 +79,10 @@ async function submit() {
 
 	<div class="flex gap-4">
 		<a href="/real" class="btn btn-outline btn-lg flex-1">戻る</a>
-		<button class="btn btn-primary btn-lg flex-1" disabled={loading} onclick={submit}>
-			{#if loading}<span class="loading loading-spinner"></span>{/if}
+		<button type="button" class="btn btn-primary btn-lg flex-1" disabled={loading} onclick={submit}>
+			{#if loading}
+				<span class="loading loading-spinner"></span>
+			{/if}
 			確定
 		</button>
 	</div>

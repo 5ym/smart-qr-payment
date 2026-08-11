@@ -57,8 +57,10 @@ $effect(() => {
 				};
 			}}
 		>
-			<button class="btn btn-primary btn-block" disabled={loading || data.received}>
-				{#if loading}<span class="loading loading-spinner"></span>{/if}
+			<button type="submit" class="btn btn-primary btn-block" disabled={loading || data.received}>
+				{#if loading}
+					<span class="loading loading-spinner"></span>
+				{/if}
 				確定
 			</button>
 		</form>

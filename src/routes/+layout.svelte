@@ -21,7 +21,7 @@ const user = $derived(page.data.user);
 					<a href="/real/admin" class="btn btn-ghost btn-sm">管理</a>
 				{/if}
 				<form method="POST" action="/logout" use:enhance class="inline">
-					<button class="btn btn-outline btn-sm">ログアウト</button>
+					<button type="submit" class="btn btn-outline btn-sm">ログアウト</button>
 				</form>
 			{:else}
 				<a href="/login" class="btn btn-primary btn-sm">ログイン</a>

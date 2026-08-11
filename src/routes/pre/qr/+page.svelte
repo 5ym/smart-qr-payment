@@ -22,7 +22,7 @@ onMount(async () => {
 		<div class="card bg-base-100 shadow-md">
 			<div class="card-body items-center">
 				{#if dataUrl}
-					<img src={dataUrl} alt="受け取り用QRコード" width="320" height="320" />
+					<img src={dataUrl} alt="受け取り用QRコード" width="320" height="320">
 				{:else}
 					<div class="skeleton h-80 w-80"></div>
 				{/if}

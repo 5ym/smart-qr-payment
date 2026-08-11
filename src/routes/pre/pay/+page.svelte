@@ -115,16 +115,20 @@ async function submit() {
 			<div class="card-body gap-4">
 				{#if !data.stripeConfigured}
 					<div class="alert alert-warning text-sm">
-						Stripe が設定されていません。<code>STRIPE_SECRET_KEY</code> と
-						<code>PUBLIC_STRIPE_PUBLISHABLE_KEY</code> を設定してください。
+						Stripe が設定されていません。<code>STRIPE_SECRET_KEY</code>
+						と
+						<code>PUBLIC_STRIPE_PUBLISHABLE_KEY</code>
+						を設定してください。
 					</div>
 				{:else}
 					<div id="card-element" class="border-base-300 rounded-lg border p-3"></div>
 					{#if cardError}
 						<p class="text-error text-sm" role="alert">{cardError}</p>
 					{/if}
-					<button class="btn btn-primary" disabled={loading} onclick={submit}>
-						{#if loading}<span class="loading loading-spinner"></span>{/if}
+					<button type="button" class="btn btn-primary" disabled={loading} onclick={submit}>
+						{#if loading}
+							<span class="loading loading-spinner"></span>
+						{/if}
 						支払
 					</button>
 				{/if}

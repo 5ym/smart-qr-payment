@@ -40,7 +40,7 @@ let loading = $state(false);
 						value={form?.email ?? ''}
 						class="input input-bordered w-full"
 						placeholder="you@example.com"
-					/>
+					>
 				</label>
 				<label class="form-control w-full">
 					<span class="label-text mb-1">パスワード</span>
@@ -52,10 +52,12 @@ let loading = $state(false);
 						maxlength="20"
 						class="input input-bordered w-full"
 						placeholder="8文字以上"
-					/>
+					>
 				</label>
-				<button class="btn btn-primary mt-2" disabled={loading}>
-					{#if loading}<span class="loading loading-spinner"></span>{/if}
+				<button type="submit" class="btn btn-primary mt-2" disabled={loading}>
+					{#if loading}
+						<span class="loading loading-spinner"></span>
+					{/if}
 					Login
 				</button>
 			</form>

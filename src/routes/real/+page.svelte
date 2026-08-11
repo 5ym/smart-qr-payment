@@ -25,7 +25,7 @@ const options = [
 	{#each options as opt (opt.href)}
 		<a href={opt.href} class="card image-full shadow-lg transition-transform hover:scale-[1.02]">
 			<figure>
-				<img src={opt.img} alt={opt.title} class="h-96 w-full object-cover" />
+				<img src={opt.img} alt={opt.title} class="h-96 w-full object-cover">
 			</figure>
 			<div class="card-body justify-end bg-gradient-to-t {opt.cls} opacity-90">
 				<h2 class="card-title text-2xl text-white">{opt.title}</h2>

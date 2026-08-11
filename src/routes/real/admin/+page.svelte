@@ -20,8 +20,10 @@ async function refresh() {
 <div class="flex flex-col gap-6">
 	<div class="flex items-center justify-between">
 		<h1 class="text-2xl font-bold">最近の受け取り</h1>
-		<button class="btn btn-primary btn-sm" disabled={loading} onclick={refresh}>
-			{#if loading}<span class="loading loading-spinner loading-sm"></span>{/if}
+		<button type="button" class="btn btn-primary btn-sm" disabled={loading} onclick={refresh}>
+			{#if loading}
+				<span class="loading loading-spinner loading-sm"></span>
+			{/if}
 			更新
 		</button>
 	</div>

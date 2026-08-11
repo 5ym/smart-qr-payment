@@ -27,11 +27,7 @@ function set(id: number, value: string) {
 		<div class="card bg-base-100 shadow-md">
 			<figure class="relative {imageHeight} overflow-hidden">
 				{#if product.image}
-					<img
-						src={'/img/' + product.image}
-						alt={product.title}
-						class="h-full w-full object-cover"
-					/>
+					<img src={`/img/${product.image}`} alt={product.title} class="h-full w-full object-cover">
 				{:else}
 					<div class="bg-base-300 h-full w-full"></div>
 				{/if}
@@ -60,7 +56,7 @@ function set(id: number, value: string) {
 						class="input input-bordered join-item w-20 text-center"
 						value={counts[product.id] ?? 0}
 						oninput={(e) => set(product.id, e.currentTarget.value)}
-					/>
+					>
 					<button
 						type="button"
 						class="btn btn-primary join-item"

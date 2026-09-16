@@ -98,49 +98,116 @@ async function submit() {
 	<title>お支払い · Smart QR Payment</title>
 </svelte:head>
 
-<div class="flex flex-col items-center gap-8">
-	<section class="w-full max-w-xl">
-		<h1 class="mb-4 text-2xl font-bold">注文内容をご確認ください</h1>
-		<div class="card bg-base-100 shadow-md">
-			<div class="card-body">
-				<h2 class="card-title text-base">{data.email}</h2>
-				<OrderTable lines={data.order.lines} total={data.order.total} />
-			</div>
+<div class="wrap">
+	<section class="col wide">
+		<h1>注文内容をご確認ください</h1>
+		<div class="panel body box">
+			<h2 class="who">{data.email}</h2>
+			<OrderTable lines={data.order.lines} total={data.order.total} />
 		</div>
 	</section>
 
-	<section class="w-full max-w-md">
-		<h2 class="mb-4 text-xl font-semibold">お支払い情報</h2>
-		<div class="card bg-base-100 shadow-md">
-			<div class="card-body gap-4">
-				{#if !data.stripeConfigured}
-					<div class="alert alert-warning text-sm">
-						Stripe が設定されていません。<code>STRIPE_SECRET_KEY</code>
-						と
-						<code>PUBLIC_STRIPE_PUBLISHABLE_KEY</code>
-						を設定してください。
-					</div>
-				{:else}
-					<div id="card-element" class="border-base-300 rounded-lg border p-3"></div>
-					{#if cardError}
-						<p class="text-error text-sm" role="alert">{cardError}</p>
-					{/if}
-					<button type="button" class="btn btn-primary" disabled={loading} onclick={submit}>
-						{#if loading}
-							<span class="loading loading-spinner"></span>
-						{/if}
-						支払
-					</button>
+	<section class="col narrow">
+		<h2 class="head">お支払い情報</h2>
+		<div class="panel body box">
+			{#if !data.stripeConfigured}
+				<div class="note warn">
+					Stripe が設定されていません。<code>STRIPE_SECRET_KEY</code>
+					と
+					<code>PUBLIC_STRIPE_PUBLISHABLE_KEY</code>
+					を設定してください。
+				</div>
+			{:else}
+				<div id="card-element"></div>
+				{#if cardError}
+					<p class="fail small" role="alert">{cardError}</p>
 				{/if}
-			</div>
+				<button type="button" class="block" disabled={loading} onclick={submit}>
+					{#if loading}
+						<span class="spin"></span>
+					{/if}
+					支払
+				</button>
+			{/if}
 		</div>
 	</section>
 </div>
 
 {#if show3ds}
-	<div class="modal modal-open">
-		<div class="modal-box h-[90vh] max-w-4xl p-0">
-			<iframe src={iframeUrl} title="3D Secure" class="h-full w-full border-0"></iframe>
+	<div class="overlay">
+		<div class="frame">
+			<iframe src={iframeUrl} title="3D Secure"></iframe>
 		</div>
 	</div>
 {/if}
+
+<style>
+.wrap {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	gap: 2rem;
+}
+.col {
+	display: flex;
+	flex-direction: column;
+	gap: 1rem;
+	width: 100%;
+}
+.wide {
+	max-width: 36rem;
+}
+.narrow {
+	max-width: 28rem;
+}
+h1 {
+	font-size: 1.5rem;
+}
+.head {
+	font-size: 1.25rem;
+	font-weight: 600;
+}
+.who {
+	font-size: 1rem;
+}
+.panel.box {
+	gap: 1rem;
+	padding: 1.5rem;
+}
+
+/* Stripe が iframe を差し込む枠。枠線を自分で描く */
+#card-element {
+	border: 1px solid var(--ui-base-300);
+	border-radius: var(--pico-border-radius);
+	padding: 0.75rem;
+}
+.fail {
+	color: var(--ui-err);
+}
+
+/* 3D セキュアの画面。カード会社のページをそのまま重ねて出す */
+.overlay {
+	position: fixed;
+	inset: 0;
+	z-index: 40;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	background: var(--ui-scrim-weak);
+	padding: 1rem;
+}
+.frame {
+	width: 100%;
+	max-width: 56rem;
+	height: 90vh;
+	overflow: hidden;
+	border-radius: var(--pico-border-radius);
+	background: var(--ui-surface);
+}
+.frame iframe {
+	display: block;
+	width: 100%;
+	height: 100%;
+	border: 0;
+}
+</style>

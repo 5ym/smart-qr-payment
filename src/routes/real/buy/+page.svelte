@@ -68,22 +68,42 @@ async function submit() {
 	<title>当日購入 · Smart QR Payment</title>
 </svelte:head>
 
-<div class="flex flex-col gap-6 select-none">
-	<h1 class="text-2xl font-bold">欲しい商品の数量を指定してください</h1>
-	<ProductPicker products={data.products} bind:counts imageHeight="h-64" />
+<div class="stack wrap">
+	<h1>欲しい商品の数量を指定してください</h1>
+	<ProductPicker products={data.products} bind:counts imageHeight="16rem" />
 
-	<div class="stat">
-		<div class="stat-title">合計</div>
-		<div class="stat-value text-primary">{total.toLocaleString()}円</div>
+	<div>
+		<div class="sum-label">合計</div>
+		<div class="sum-value">{total.toLocaleString()}円</div>
 	</div>
 
-	<div class="flex gap-4">
-		<a href="/real" class="btn btn-outline btn-lg flex-1">戻る</a>
-		<button type="button" class="btn btn-primary btn-lg flex-1" disabled={loading} onclick={submit}>
+	<div class="actions">
+		<a href="/real" class="button outline big">戻る</a>
+		<button type="button" class="big" disabled={loading} onclick={submit}>
 			{#if loading}
-				<span class="loading loading-spinner"></span>
+				<span class="spin"></span>
 			{/if}
 			確定
 		</button>
 	</div>
 </div>
+
+<style>
+.wrap {
+	gap: 1.5rem;
+	user-select: none;
+}
+h1 {
+	font-size: 1.5rem;
+}
+
+.actions {
+	display: flex;
+	gap: 1rem;
+}
+/* 「戻る」と「確定」を同じ幅にする */
+.actions > a,
+.actions > button {
+	flex: 1 1 0;
+}
+</style>

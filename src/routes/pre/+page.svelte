@@ -44,7 +44,7 @@ $effect(() => {
 			if (result.type === 'success') {
 				toasts.success(
 					'送信完了',
-					"メールを送信いたしました。メールをご確認ください。<br><a class='link' href='https://mail.google.com/'>Gmail</a>",
+					"メールを送信いたしました。メールをご確認ください。<br><a href='https://mail.google.com/'>Gmail</a>",
 					8000
 				);
 				counts = {};
@@ -53,54 +53,66 @@ $effect(() => {
 			}
 		};
 	}}
-	class="flex flex-col gap-8"
+	class="stack outer"
 >
-	<section class="flex flex-col gap-4">
-		<h1 class="text-2xl font-bold">欲しい商品の数量を指定してください</h1>
+	<section class="stack">
+		<h1>欲しい商品の数量を指定してください</h1>
 		<ProductPicker products={data.products} bind:counts />
 	</section>
 
-	<section class="flex flex-col items-center gap-4">
-		<div class="card bg-base-100 w-full max-w-md shadow-md">
-			<div class="card-body gap-4">
-				<h2 class="card-title">お客様情報</h2>
-				<p class="text-base-content/70 text-sm">
-					メールアドレスとパスワードを入力し、注文内容に誤りがなければ送信してください。
-				</p>
-				<div class="stat px-0">
-					<div class="stat-title">合計</div>
-					<div class="stat-value text-primary">{total.toLocaleString()}円</div>
-				</div>
-				<label class="form-control w-full">
-					<span class="label-text mb-1">メールアドレス</span>
-					<input
-						name="email"
-						type="email"
-						bind:value={email}
-						maxlength="70"
-						required
-						class="input input-bordered w-full"
-					>
-				</label>
-				<label class="form-control w-full">
-					<span class="label-text mb-1">パスワード</span>
-					<input
-						name="password"
-						type="password"
-						bind:value={password}
-						minlength="8"
-						maxlength="20"
-						required
-						class="input input-bordered w-full"
-					>
-				</label>
-				<button type="submit" class="btn btn-primary" disabled={loading}>
-					{#if loading}
-						<span class="loading loading-spinner"></span>
-					{/if}
-					送信
-				</button>
+	<section class="center">
+		<div class="panel body box">
+			<h2>お客様情報</h2>
+			<p class="muted small">
+				メールアドレスとパスワードを入力し、注文内容に誤りがなければ送信してください。
+			</p>
+			<div>
+				<div class="sum-label">合計</div>
+				<div class="sum-value">{total.toLocaleString()}円</div>
 			</div>
+			<label class="field">
+				<span class="lab">メールアドレス</span>
+				<input name="email" type="email" bind:value={email} maxlength="70" required>
+			</label>
+			<label class="field">
+				<span class="lab">パスワード</span>
+				<input
+					name="password"
+					type="password"
+					bind:value={password}
+					minlength="8"
+					maxlength="20"
+					required
+				>
+			</label>
+			<button type="submit" class="block" disabled={loading}>
+				{#if loading}
+					<span class="spin"></span>
+				{/if}
+				送信
+			</button>
 		</div>
 	</section>
 </form>
+
+<style>
+.outer {
+	gap: 2rem;
+}
+h1 {
+	font-size: 1.5rem;
+}
+
+.center {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	gap: 1rem;
+}
+.panel.box {
+	width: 100%;
+	max-width: 28rem;
+	gap: 1rem;
+	padding: 1.5rem;
+}
+</style>

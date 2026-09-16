@@ -55,14 +55,43 @@ onDestroy(stop);
 	<title>受け取り · Smart QR Payment</title>
 </svelte:head>
 
-<div class="flex flex-col items-center gap-6 select-none">
-	<h1 class="text-2xl font-bold">受け取り用QRコードを読み込ませてください</h1>
+<div class="wrap">
+	<h1>受け取り用QRコードを読み込ませてください</h1>
 
-	<div id="qr-reader" class="w-full max-w-md overflow-hidden rounded-lg shadow-md"></div>
+	<div id="qr-reader"></div>
 
 	{#if error}
-		<div class="alert alert-warning max-w-md text-sm">{error}</div>
+		<div class="note warn msg">{error}</div>
 	{/if}
 
-	<a href="/real" class="btn btn-outline btn-block max-w-md">戻る</a>
+	<a href="/real" class="button outline back">戻る</a>
 </div>
+
+<style>
+.wrap {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	gap: 1.5rem;
+	user-select: none;
+}
+h1 {
+	font-size: 1.5rem;
+}
+
+/* html5-qrcode が中に video を差し込む枠 */
+#qr-reader {
+	width: 100%;
+	max-width: 28rem;
+	overflow: hidden;
+	border-radius: var(--pico-border-radius);
+	box-shadow: var(--ui-shadow);
+}
+.msg {
+	max-width: 28rem;
+}
+.back {
+	width: 100%;
+	max-width: 28rem;
+}
+</style>

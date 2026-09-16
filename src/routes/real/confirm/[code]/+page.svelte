@@ -25,22 +25,19 @@ $effect(() => {
 	<title>受け取り確認 · Smart QR Payment</title>
 </svelte:head>
 
-<div class="flex flex-col items-center gap-6 select-none">
-	<h1 class="text-2xl font-bold">注文内容をご確認ください</h1>
+<div class="wrap">
+	<h1>注文内容をご確認ください</h1>
 
-	<div class="card bg-base-100 w-full max-w-xl shadow-md">
-		<div class="card-body">
-			<h2 class="card-title text-base">{data.email}</h2>
-			<OrderTable lines={data.order.lines} total={data.order.total} />
-		</div>
+	<div class="panel body box">
+		<h2 class="who">{data.email}</h2>
+		<OrderTable lines={data.order.lines} total={data.order.total} />
 	</div>
 
-	<div class="flex w-full max-w-xl gap-4">
-		<a href="/real/accept" class="btn btn-outline flex-1">戻る</a>
+	<div class="actions">
+		<a href="/real/accept" class="button outline">戻る</a>
 		<form
 			method="POST"
 			action="?/confirm"
-			class="flex-1"
 			use:enhance={() => {
 				loading = true;
 				return async ({ update, result }) => {
@@ -57,12 +54,45 @@ $effect(() => {
 				};
 			}}
 		>
-			<button type="submit" class="btn btn-primary btn-block" disabled={loading || data.received}>
+			<button type="submit" class="block" disabled={loading || data.received}>
 				{#if loading}
-					<span class="loading loading-spinner"></span>
+					<span class="spin"></span>
 				{/if}
 				確定
 			</button>
 		</form>
 	</div>
 </div>
+
+<style>
+.wrap {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	gap: 1.5rem;
+	user-select: none;
+}
+h1 {
+	font-size: 1.5rem;
+}
+.panel.box {
+	width: 100%;
+	max-width: 36rem;
+	padding: 1.5rem;
+}
+.who {
+	font-size: 1rem;
+}
+
+.actions {
+	display: flex;
+	gap: 1rem;
+	width: 100%;
+	max-width: 36rem;
+}
+/* 「戻る」と「確定」を同じ幅にする。確定はフォームに包まれているので中身も広げる */
+.actions > a,
+.actions > form {
+	flex: 1 1 0;
+}
+</style>

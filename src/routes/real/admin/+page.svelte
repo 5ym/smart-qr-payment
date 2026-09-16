@@ -17,27 +17,46 @@ async function refresh() {
 	<title>管理 · Smart QR Payment</title>
 </svelte:head>
 
-<div class="flex flex-col gap-6">
-	<div class="flex items-center justify-between">
-		<h1 class="text-2xl font-bold">最近の受け取り</h1>
-		<button type="button" class="btn btn-primary btn-sm" disabled={loading} onclick={refresh}>
+<div class="stack list">
+	<div class="head">
+		<h1>最近の受け取り</h1>
+		<button type="button" class="mini" disabled={loading} onclick={refresh}>
 			{#if loading}
-				<span class="loading loading-spinner loading-sm"></span>
+				<span class="spin"></span>
 			{/if}
 			更新
 		</button>
 	</div>
 
 	{#if data.orders.length === 0}
-		<div class="alert">受け取り済みの注文はありません。</div>
+		<div class="note">受け取り済みの注文はありません。</div>
 	{/if}
 
 	{#each data.orders as order (order.email)}
-		<div class="card bg-base-100 shadow-md">
-			<div class="card-body">
-				<h2 class="card-title text-base">{order.email}</h2>
-				<OrderTable lines={order.lines} total={order.total} />
-			</div>
+		<div class="panel body box">
+			<h2 class="who">{order.email}</h2>
+			<OrderTable lines={order.lines} total={order.total} />
 		</div>
 	{/each}
 </div>
+
+<style>
+.list {
+	gap: 1.5rem;
+}
+.head {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	gap: 1rem;
+}
+.head h1 {
+	font-size: 1.5rem;
+}
+.who {
+	font-size: 1rem;
+}
+.panel.box {
+	padding: 1.5rem;
+}
+</style>

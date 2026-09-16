@@ -57,6 +57,11 @@
 	--ui-accent: var(--pico-primary);
 	--ui-ok: var(--pico-ins-color);
 	--ui-err: var(--pico-del-color);
+	/*
+	 * 注意の色だけは Pico に相当する変数が無いので自前で持つ。
+	 * **明暗で持ち替える。** 固定値だと暗いほうでコントラストが落ちて、
+	 * .note.warn / .tag.warn だけ沈んで見えなくなる
+	 */
 	--ui-warn: #a45a06;
 	--ui-info: var(--pico-primary);
 	/* 注意書きと札の地。地の色に混ぜるので、明暗どちらでも浮かない */
@@ -72,6 +77,16 @@
 	--ui-scrim: rgb(0 0 0 / 0.7);
 	--ui-scrim-weak: rgb(0 0 0 / 0.4);
 	--ui-scrim-color: #fff;
+}
+
+/* 暗いほうの注意の色(Pico が色を切り替える選択子に合わせる) */
+@media (prefers-color-scheme: dark) {
+	:root:not([data-theme="light"]) {
+		--ui-warn: #f0b429;
+	}
+}
+[data-theme="dark"] {
+	--ui-warn: #f0b429;
 }
 
 html {

@@ -1,11 +1,28 @@
 import { fail, redirect } from '@sveltejs/kit';
-import { createSession, setSessionCookie, verifyPassword } from '$lib/server/auth';
-import { getUserByEmail } from '$lib/server/db/repo';
+import { createSession, setSessionCookie, verifyPassword } from '#lib/server/auth.js';
+import { getUserByEmail } from '#lib/server/db/repo.js';
 import type { Actions, PageServerLoad } from './$types';
+
+/**
+ * `?redirect=` の行き先。自分の origin に解決される道だけ通し、ほかは `/` にする。
+ * SvelteKit 3 の `redirect()` は外への転送を明示しないと投げる (500 になる) ので、
+ * 外を指す値はここで落とす。`//evil.com` や `/\t/evil.com` のような紛らわしい形も
+ * `URL` に解かせて origin で判定し、正規化した道を返す。
+ */
+function redirectTarget(url: URL): string {
+	const to = url.searchParams.get('redirect');
+	if (!to?.startsWith('/')) return '/';
+	try {
+		const target = new URL(to, url.origin);
+		return target.origin === url.origin ? target.pathname + target.search + target.hash : '/';
+	} catch {
+		return '/';
+	}
+}
 
 export const load: PageServerLoad = async ({ locals, url }) => {
 	if (locals.user) {
-		throw redirect(303, url.searchParams.get('redirect') ?? '/');
+		throw redirect(303, redirectTarget(url));
 	}
 	return {};
 };
@@ -31,7 +48,6 @@ export const actions: Actions = {
 		const sessionId = createSession(user.id);
 		setSessionCookie(event, sessionId);
 
-		const redirectTo = event.url.searchParams.get('redirect') ?? '/';
-		throw redirect(303, redirectTo);
+		throw redirect(303, redirectTarget(event.url));
 	},
 };

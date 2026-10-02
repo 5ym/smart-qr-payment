@@ -1,7 +1,7 @@
 /**
  * Seed script — run with `bun run db:seed`.
  *
- * Self-contained (no SvelteKit `$lib`/`$env` aliases) so it works under a plain
+ * Self-contained (no SvelteKit `$env` or other virtual modules) so it works under a plain
  * `bun run`. Creates the schema, a sample product catalogue and an admin user.
  */
 import { Database } from 'bun:sqlite';

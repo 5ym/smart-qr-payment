@@ -1,8 +1,8 @@
 import { error, fail } from '@sveltejs/kit';
-import { getPayByCode, getUserById, setPayReceived } from '$lib/server/db/repo';
-import { requireStaff } from '$lib/server/guards';
-import { getOrderLines } from '$lib/server/orders';
-import { isValidCode } from '$lib/validation';
+import { getPayByCode, getUserById, setPayReceived } from '#lib/server/db/repo.js';
+import { requireStaff } from '#lib/server/guards.js';
+import { getOrderLines } from '#lib/server/orders.js';
+import { isValidCode } from '#lib/validation.js';
 import type { Actions, PageServerLoad } from './$types';
 
 export const load: PageServerLoad = async ({ locals, params }) => {

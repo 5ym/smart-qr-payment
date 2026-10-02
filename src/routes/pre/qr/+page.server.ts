@@ -1,5 +1,5 @@
 import { redirect } from '@sveltejs/kit';
-import { getOrderLines, getPay } from '$lib/server/orders';
+import { getOrderLines, getPay } from '#lib/server/orders.js';
 import type { PageServerLoad } from './$types';
 
 export const load: PageServerLoad = async ({ locals }) => {

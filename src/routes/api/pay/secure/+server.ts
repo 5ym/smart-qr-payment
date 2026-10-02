@@ -1,8 +1,8 @@
 import { error, json } from '@sveltejs/kit';
-import { createPay } from '$lib/server/db/repo';
-import { getPay } from '$lib/server/orders';
-import { getStripe } from '$lib/server/stripe';
-import { randomCode } from '$lib/server/util';
+import { createPay } from '#lib/server/db/repo.js';
+import { getPay } from '#lib/server/orders.js';
+import { getStripe } from '#lib/server/stripe.js';
+import { randomCode } from '#lib/server/util.js';
 import type { RequestHandler } from './$types';
 
 /** Finalise a payment after a 3DS challenge (mirrors SecurePaySerializer). */

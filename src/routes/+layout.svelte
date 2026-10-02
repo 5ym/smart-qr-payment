@@ -1,8 +1,8 @@
 <script lang="ts">
 import '../app.scss';
+import Toasts from '#lib/components/Toasts.svelte';
 import { enhance } from '$app/forms';
 import { page } from '$app/state';
-import Toasts from '$lib/components/Toasts.svelte';
 
 let { children } = $props();
 const user = $derived(page.data.user);

@@ -1,6 +1,6 @@
 <script lang="ts">
-import { invalidateAll } from '$app/navigation';
-import OrderTable from '$lib/components/OrderTable.svelte';
+import OrderTable from '#lib/components/OrderTable.svelte';
+import { refreshAll } from '$app/navigation';
 import type { PageData } from './$types';
 
 let { data }: { data: PageData } = $props();
@@ -8,7 +8,7 @@ let loading = $state(false);
 
 async function refresh() {
 	loading = true;
-	await invalidateAll();
+	await refreshAll();
 	loading = false;
 }
 </script>

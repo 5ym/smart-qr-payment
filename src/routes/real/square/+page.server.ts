@@ -1,6 +1,6 @@
-import { getPayByCode, setPayReceived } from '$lib/server/db/repo';
-import { requireStaff } from '$lib/server/guards';
-import { isValidCode } from '$lib/validation';
+import { getPayByCode, setPayReceived } from '#lib/server/db/repo.js';
+import { requireStaff } from '#lib/server/guards.js';
+import { isValidCode } from '#lib/validation.js';
 import type { PageServerLoad } from './$types';
 
 /**

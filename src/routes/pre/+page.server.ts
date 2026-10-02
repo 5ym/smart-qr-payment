@@ -1,5 +1,5 @@
 import { fail } from '@sveltejs/kit';
-import { hashPassword } from '$lib/server/auth';
+import { hashPassword } from '#lib/server/auth.js';
 import {
 	createUser,
 	createUserProduct,
@@ -8,9 +8,9 @@ import {
 	getProductsByIds,
 	getUserByEmail,
 	transaction,
-} from '$lib/server/db/repo';
-import { sendVerificationEmail } from '$lib/server/email';
-import { randomCode } from '$lib/server/util';
+} from '#lib/server/db/repo.js';
+import { sendVerificationEmail } from '#lib/server/email.js';
+import { randomCode } from '#lib/server/util.js';
 import type { Actions, PageServerLoad } from './$types';
 
 export const load: PageServerLoad = async () => {

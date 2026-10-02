@@ -1,4 +1,4 @@
-import { activateUser, deleteVerify, getVerifyByCode, transaction } from '$lib/server/db/repo';
+import { activateUser, deleteVerify, getVerifyByCode, transaction } from '#lib/server/db/repo.js';
 import type { PageServerLoad } from './$types';
 
 export const load: PageServerLoad = async ({ params }) => {

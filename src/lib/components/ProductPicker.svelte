@@ -1,5 +1,5 @@
 <script lang="ts">
-import type { Product } from '$lib/server/db/schema';
+import type { Product } from '#lib/server/db/schema.js';
 
 let {
 	products,

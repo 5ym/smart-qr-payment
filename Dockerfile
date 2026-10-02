@@ -6,7 +6,11 @@ COPY package.json bun.lock ./
 RUN bun install --frozen-lockfile
 
 COPY . .
-RUN bun run build
+# 公開 URL の origin (例: https://your-domain)。SvelteKit の `paths.origin` として
+# ビルド時に埋め込む (adapter-node 6 で実行時の ORIGIN は無くなった)。空なら
+# リクエストの Host から求める (vite.config.ts)。
+ARG ORIGIN=
+RUN ORIGIN=$ORIGIN bun run build
 
 # --- Runtime stage --------------------------------------------------------
 # All dependencies are bundled into build/ (devDependencies are bundled by

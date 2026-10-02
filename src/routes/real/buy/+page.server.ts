@@ -1,6 +1,6 @@
-import { env as publicEnv } from '$env/dynamic/public';
-import { getAllProducts } from '$lib/server/db/repo';
-import { requireStaff } from '$lib/server/guards';
+import { getAllProducts } from '#lib/server/db/repo.js';
+import { requireStaff } from '#lib/server/guards.js';
+import { PUBLIC_SQUARE_APPLICATION_ID, PUBLIC_SQUARE_CALLBACK_URL } from '$app/env/public';
 import type { PageServerLoad } from './$types';
 
 export const load: PageServerLoad = async ({ locals }) => {
@@ -8,8 +8,8 @@ export const load: PageServerLoad = async ({ locals }) => {
 	return {
 		products: getAllProducts(),
 		square: {
-			applicationId: publicEnv.PUBLIC_SQUARE_APPLICATION_ID ?? '',
-			callbackUrl: publicEnv.PUBLIC_SQUARE_CALLBACK_URL ?? '',
+			applicationId: PUBLIC_SQUARE_APPLICATION_ID ?? '',
+			callbackUrl: PUBLIC_SQUARE_CALLBACK_URL ?? '',
 		},
 	};
 };

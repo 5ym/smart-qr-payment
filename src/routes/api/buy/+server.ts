@@ -1,14 +1,14 @@
 import { error, json } from '@sveltejs/kit';
-import { hashPassword } from '$lib/server/auth';
+import { hashPassword } from '#lib/server/auth.js';
 import {
 	createPay,
 	createUser,
 	createUserProduct,
 	getProductsByIds,
 	transaction,
-} from '$lib/server/db/repo';
-import { requireStaff } from '$lib/server/guards';
-import { randomCode } from '$lib/server/util';
+} from '#lib/server/db/repo.js';
+import { requireStaff } from '#lib/server/guards.js';
+import { randomCode } from '#lib/server/util.js';
 import type { RequestHandler } from './$types';
 
 type Selection = { product: number; count: number };

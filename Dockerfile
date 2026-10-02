@@ -1,5 +1,5 @@
 # --- Build stage ----------------------------------------------------------
-FROM oven/bun:1.3 AS build
+FROM oven/bun:1.4 AS build
 WORKDIR /app
 
 COPY package.json bun.lock ./
@@ -16,7 +16,7 @@ RUN ORIGIN=$ORIGIN bun run build
 # All dependencies are bundled into build/ (devDependencies are bundled by
 # adapter-node; the runtime dependencies list is empty), so the runtime image
 # needs no node_modules — just Bun and the build output.
-FROM oven/bun:1.3-slim AS runtime
+FROM oven/bun:1.4-slim AS runtime
 WORKDIR /app
 ENV NODE_ENV=production
 ENV PORT=3000

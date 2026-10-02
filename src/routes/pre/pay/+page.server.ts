@@ -1,7 +1,7 @@
 import { redirect } from '@sveltejs/kit';
-import { env as publicEnv } from '$env/dynamic/public';
-import { getOrderLines, getPay } from '$lib/server/orders';
-import { isStripeConfigured } from '$lib/server/stripe';
+import { getOrderLines, getPay } from '#lib/server/orders.js';
+import { isStripeConfigured } from '#lib/server/stripe.js';
+import { PUBLIC_STRIPE_PUBLISHABLE_KEY } from '$app/env/public';
 import type { PageServerLoad } from './$types';
 
 export const load: PageServerLoad = async ({ locals }) => {
@@ -17,6 +17,6 @@ export const load: PageServerLoad = async ({ locals }) => {
 		email: locals.user.email,
 		order,
 		stripeConfigured: isStripeConfigured(),
-		publishableKey: publicEnv.PUBLIC_STRIPE_PUBLISHABLE_KEY ?? '',
+		publishableKey: PUBLIC_STRIPE_PUBLISHABLE_KEY ?? '',
 	};
 };

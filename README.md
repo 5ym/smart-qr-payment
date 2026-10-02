@@ -11,7 +11,7 @@ QRコードを使ったセルフレジ / 事前購入システム。
 | 領域           | 使用技術                                                        |
 | -------------- | --------------------------------------------------------------- |
 | ランタイム     | [Bun](https://bun.sh) 1.3+                                       |
-| フレームワーク | [SvelteKit](https://kit.svelte.dev)（Svelte 5 / runes）+ adapter-node |
+| フレームワーク | [SvelteKit 3](https://svelte.dev/docs/kit)（Svelte 5 / runes）+ adapter-node |
 | データベース   | SQLite（`bun:sqlite`、生SQLの薄いクエリ層）                    |
 | UI             | [Pico CSS v2](https://picocss.com)（SCSS）+ 自前スタイル         |
 | 認証           | サーバーサイドセッション（Cookie）+ `Bun.password`（argon2id）  |
@@ -43,12 +43,16 @@ bun run dev
 ## 本番ビルド / 起動
 
 ```shell
-bun run build
-DATABASE_URL=./data/sqp.db ORIGIN=https://your-domain bun ./build/index.js
+ORIGIN=https://your-domain bun run build
+DATABASE_URL=./data/sqp.db bun ./build/index.js
 ```
 
-adapter-node の CSRF 判定のため、リバースプロキシ配下では `ORIGIN`
-（または `PROTOCOL_HEADER` / `HOST_HEADER`）の設定が必要です。
+SvelteKit の CSRF 判定は、自分の origin とフォーム送信の `Origin` を突き合わせます。
+自分の origin は既定ではリクエストの `Host` と `https` から求めるので、
+TLS を終端するリバースプロキシが `Host` をそのまま渡すなら設定は要りません。
+それ以外（平文 http で直に開く、`Host` を書き換える等）は、**ビルド時**に `ORIGIN`
+を渡して `paths.origin` に埋め込むか、実行時に `PROTOCOL_HEADER` / `HOST_HEADER`
+を設定してください（adapter-node 6 で実行時の `ORIGIN` は無くなりました）。
 サーバーは `bun:sqlite` を使うため、必ず **Bun** で起動してください。
 
 > **実行時依存ゼロ**: すべての依存は `devDependencies` にあり、adapter-node が
@@ -64,7 +68,7 @@ docker compose up --build
 
 ## 環境変数
 
-`.env.example` を参照してください。主なもの:
+`.env.example` を参照してください。アプリが読む変数は `src/env.ts` で宣言します（SvelteKit 3 は宣言したものしか読めません）。主なもの:
 
 - `DATABASE_URL` — SQLite ファイルのパス（既定 `./data/sqp.db`）
 - `PUBLIC_BASE_URL` — メール確認リンク等に使う公開 URL
@@ -96,6 +100,7 @@ ACS / Stripe / Square が未設定でもアプリは起動し、該当機能の�
 ```
 src/
 ├── app.scss                 # Pico CSS の読み込みと共通クラス
+├── env.ts                   # 読む環境変数の宣言（`$app/env/private` / `$app/env/public`）
 ├── hooks.server.ts          # セッションから locals.user を復元
 ├── lib/
 │   ├── components/          # OrderTable / ProductPicker / Toasts

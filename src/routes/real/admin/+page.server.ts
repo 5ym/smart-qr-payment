@@ -1,6 +1,6 @@
-import { getRecentReceivedPays } from '$lib/server/db/repo';
-import { requireStaff } from '$lib/server/guards';
-import { getOrderLines } from '$lib/server/orders';
+import { getRecentReceivedPays } from '#lib/server/db/repo.js';
+import { requireStaff } from '#lib/server/guards.js';
+import { getOrderLines } from '#lib/server/orders.js';
 import type { PageServerLoad } from './$types';
 
 export const load: PageServerLoad = async ({ locals }) => {

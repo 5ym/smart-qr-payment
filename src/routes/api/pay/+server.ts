@@ -1,9 +1,9 @@
 import { error, json } from '@sveltejs/kit';
-import { env } from '$env/dynamic/private';
-import { createPay } from '$lib/server/db/repo';
-import { calcAmount, getPay } from '$lib/server/orders';
-import { getStripe } from '$lib/server/stripe';
-import { randomCode } from '$lib/server/util';
+import { createPay } from '#lib/server/db/repo.js';
+import { calcAmount, getPay } from '#lib/server/orders.js';
+import { getStripe } from '#lib/server/stripe.js';
+import { randomCode } from '#lib/server/util.js';
+import { PUBLIC_BASE_URL } from '$app/env/public';
 import type { RequestHandler } from './$types';
 
 /**
@@ -27,7 +27,7 @@ export const POST: RequestHandler = async ({ locals, request, url }) => {
 	const amount = calcAmount(locals.user.id);
 	if (amount <= 0) throw error(400, '注文内容が空です');
 
-	const base = env.PUBLIC_BASE_URL ?? url.origin;
+	const base = PUBLIC_BASE_URL ?? url.origin;
 
 	let intent: import('stripe').Stripe.PaymentIntent;
 	try {

@@ -1,9 +1,9 @@
 <script lang="ts">
 import { onMount } from 'svelte';
+import OrderTable from '#lib/components/OrderTable.svelte';
+import { toasts } from '#lib/stores/toast.svelte.js';
 import { enhance } from '$app/forms';
 import { goto } from '$app/navigation';
-import OrderTable from '$lib/components/OrderTable.svelte';
-import { toasts } from '$lib/stores/toast.svelte';
 import type { ActionData, PageData } from './$types';
 
 let { data, form }: { data: PageData; form: ActionData } = $props();

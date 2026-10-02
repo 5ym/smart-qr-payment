@@ -1,7 +1,7 @@
 <script lang="ts">
 import { onMount } from 'svelte';
+import { toasts } from '#lib/stores/toast.svelte.js';
 import { goto } from '$app/navigation';
-import { toasts } from '$lib/stores/toast.svelte';
 import type { PageData } from './$types';
 
 let { data }: { data: PageData } = $props();

@@ -1,9 +1,9 @@
 <script lang="ts">
 import type { Stripe, StripeCardElement } from '@stripe/stripe-js';
 import { onMount } from 'svelte';
+import OrderTable from '#lib/components/OrderTable.svelte';
+import { toasts } from '#lib/stores/toast.svelte.js';
 import { goto } from '$app/navigation';
-import OrderTable from '$lib/components/OrderTable.svelte';
-import { toasts } from '$lib/stores/toast.svelte';
 import type { PageData } from './$types';
 
 let { data }: { data: PageData } = $props();

@@ -1,5 +1,5 @@
 <script lang="ts">
-import type { OrderLine } from '$lib/server/orders';
+import type { OrderLine } from '#lib/server/orders.js';
 
 let { lines, total }: { lines: OrderLine[]; total: number } = $props();
 </script>

@@ -1,5 +1,5 @@
 <script lang="ts">
-import { toasts } from '$lib/stores/toast.svelte';
+import { toasts } from '#lib/stores/toast.svelte.js';
 
 const noteClass: Record<string, string> = {
 	info: 'info',

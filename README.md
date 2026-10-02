@@ -53,6 +53,7 @@ TLS を終端するリバースプロキシが `Host` をそのまま渡すな�
 それ以外（平文 http で直に開く、`Host` を書き換える等）は、**ビルド時**に `ORIGIN`
 を渡して `paths.origin` に埋め込むか、実行時に `PROTOCOL_HEADER` / `HOST_HEADER`
 を設定してください（adapter-node 6 で実行時の `ORIGIN` は無くなりました）。
+`ORIGIN` はビルド成果物に埋め込まれるため、公開ドメインを変えたら再ビルドが必要です。
 サーバーは `bun:sqlite` を使うため、必ず **Bun** で起動してください。
 
 > **実行時依存ゼロ**: すべての依存は `devDependencies` にあり、adapter-node が

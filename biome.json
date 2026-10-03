@@ -14,8 +14,7 @@
 			"!**/data",
 			"!**/bun.lock",
 			"!static",
-			"!**/*.svg",
-			"!src/app.scss"
+			"!**/*.svg"
 		]
 	},
 	"formatter": {
@@ -59,6 +58,9 @@
 					"correctness": {
 						"noUnusedImports": "off",
 						"noUnusedVariables": "off"
+					},
+					"a11y": {
+						"useSemanticElements": "off"
 					}
 				}
 			}

@@ -33,125 +33,66 @@ const submitHandler: SubmitFunction = () => {
 </svelte:head>
 
 {#if form?.secret}
-	<div class="center">
-		<div class="panel body ticket">
-			<h1>あなたのシークレット</h1>
-			<p class="secret mono">{form.secret}</p>
-			{#if qrDataUrl}
-				<img src={qrDataUrl} alt="入場用QRコード" width="280" height="280">
-			{:else}
-				<div class="qr-wait"></div>
-			{/if}
-			<p class="small muted">
+	<article>
+		<h1>あなたのシークレット</h1>
+		<h2><code>{form.secret}</code></h2>
+		{#if qrDataUrl}
+			<img src={qrDataUrl} alt="入場用QRコード" width="280" height="280">
+		{:else}
+			<p aria-busy="true">QRコードを作っています</p>
+		{/if}
+		<p>
+			<small>
 				このQRコードを受付でご提示ください。シークレットは再発行に必要なので控えてください。
-			</p>
-		</div>
-	</div>
+			</small>
+		</p>
+	</article>
 {:else}
-	<div class="center">
-		<section class="col">
+	<div class="grid">
+		<article>
 			<h1>入場登録</h1>
-			<div class="panel body">
-				{#if form?.error}
-					<div class="note err">{form.error}</div>
-				{/if}
-				<form method="POST" action="?/register" use:enhance={submitHandler} class="stack">
-					<label class="field">
-						<span class="lab">名前</span>
-						<input name="name" type="text" required maxlength="255">
-					</label>
-					<label class="field">
-						<span class="lab">連絡先</span>
-						<input name="contact" type="text" required maxlength="255">
-					</label>
-					<label class="field">
-						<span class="lab">住所</span>
-						<input name="address" type="text" required maxlength="255">
-					</label>
-					<button type="submit" disabled={loading}>
-						{#if loading}
-							<span class="spin"></span>
-						{/if}
-						登録
-					</button>
-				</form>
-			</div>
-		</section>
+			{#if form?.error}
+				<p><mark>{form.error}</mark></p>
+			{/if}
+			<form method="POST" action="?/register" use:enhance={submitHandler}>
+				<label>
+					名前
+					<input name="name" type="text" required maxlength="255">
+				</label>
+				<label>
+					連絡先
+					<input name="contact" type="text" required maxlength="255">
+				</label>
+				<label>
+					住所
+					<input name="address" type="text" required maxlength="255">
+				</label>
+				<button type="submit" disabled={loading} aria-busy={loading}>登録</button>
+			</form>
+		</article>
 
-		<section class="col">
+		<article>
 			<h2>QRチケットの再表示</h2>
-			<div class="panel body">
-				{#if form?.reissueError}
-					<div class="note warn">{form.reissueError}</div>
-				{/if}
-				<form method="POST" action="?/reissue" use:enhance={submitHandler} class="stack">
-					<label class="field">
-						<span class="lab">シークレット</span>
-						<input
-							name="secret"
-							type="text"
-							required
-							inputmode="numeric"
-							class="mono"
-							placeholder="9桁の数字"
-						>
-					</label>
-					<button type="submit" class="secondary" disabled={loading}>
-						{#if loading}
-							<span class="spin"></span>
-						{/if}
-						再表示
-					</button>
-				</form>
-			</div>
-		</section>
+			<form method="POST" action="?/reissue" use:enhance={submitHandler}>
+				<label>
+					シークレット
+					<input
+						name="secret"
+						type="text"
+						required
+						inputmode="numeric"
+						placeholder="9桁の数字"
+						aria-invalid={form?.reissueError ? 'true' : undefined}
+						aria-describedby={form?.reissueError ? 'reissue-error' : undefined}
+					>
+					{#if form?.reissueError}
+						<small id="reissue-error">{form.reissueError}</small>
+					{/if}
+				</label>
+				<button type="submit" class="secondary" disabled={loading} aria-busy={loading}>
+					再表示
+				</button>
+			</form>
+		</article>
 	</div>
 {/if}
-
-<style>
-.center {
-	display: flex;
-	flex-direction: column;
-	align-items: center;
-	gap: 2rem;
-}
-/* 画面が広くても読みやすい幅で止める */
-.col,
-.ticket {
-	width: 100%;
-	max-width: 28rem;
-}
-.col {
-	display: flex;
-	flex-direction: column;
-	gap: 1rem;
-}
-.ticket {
-	align-items: center;
-	text-align: center;
-}
-.secret {
-	font-size: 1.875rem;
-	font-weight: 700;
-	letter-spacing: 0.05em;
-}
-/* QR を描き終えるまでの場所取り。出来上がりと同じ 280px 角にして跳ねさせない */
-.qr-wait {
-	width: 280px;
-	height: 280px;
-	max-width: 100%;
-	border-radius: var(--pico-border-radius);
-	background: var(--ui-base-200);
-	animation: qr-wait-pulse 1.5s ease-in-out infinite;
-}
-@keyframes qr-wait-pulse {
-	50% {
-		opacity: 0.5;
-	}
-}
-@media (prefers-reduced-motion: reduce) {
-	.qr-wait {
-		animation: none;
-	}
-}
-</style>

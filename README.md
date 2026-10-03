@@ -14,7 +14,7 @@
 | ランタイム     | [Bun](https://bun.sh) 1.3+                                       |
 | フレームワーク | [SvelteKit 3](https://svelte.dev/docs/kit)（Svelte 5 / runes）+ adapter-node |
 | データベース   | SQLite（`bun:sqlite`、生SQLの薄いクエリ層）                    |
-| UI             | [Pico CSS v2](https://picocss.com)（SCSS）+ 自前スタイル         |
+| UI             | [Blades](https://blades.ninja/) の Pico（Pico CSS v2 の後継、素の CSS）。自前のクラスは持たず Pico の書き方に寄せる |
 | 認証           | サーバーサイドセッション（Cookie）+ `Bun.password`（argon2id）  |
 | メール         | Azure Communication Services（Email REST API / 依存ゼロ）       |
 | 決済           | Stripe（カード / 3-D セキュア）, Square POS（当日購入）         |
@@ -116,11 +116,11 @@ ACS / Stripe / Square が未設定でもアプリは起動し、該当機能の�
 
 ```
 src/
-├── app.scss                 # Pico CSS の読み込みと共通クラス
+├── app.css                  # Blades の Pico の読み込みと日本語向けの指定
 ├── env.ts                   # 読む環境変数の宣言（`$app/env/private` / `$app/env/public`）
 ├── hooks.server.ts          # セッションから locals.user を復元
 ├── lib/
-│   ├── components/          # OrderTable / ProductPicker / Toasts
+│   ├── components/          # OrderTable / ProductPicker / Toasts / EntryLabel
 │   ├── stores/toast.svelte.ts
 │   ├── validation.ts        # 共有バリデーション・入場 QR の判定（ブラウザ可）
 │   └── server/              # サーバー専用

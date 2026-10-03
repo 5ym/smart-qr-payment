@@ -1,0 +1,26 @@
+/*
+ * 見た目は Blades の Pico(Pico CSS v2 の後継。素の CSS)に任せる。
+ * 自前のクラスや色は持たず、マークアップを Pico の書き方(article・role="button"・
+ * role="group"・.grid・aria-busy など)に寄せる。ここに足すのは日本語向けの指定だけ。
+ *
+ * Pico は `pico` の層(@layer)に入れる。層の外にある各画面の <style> は、詳細度に関係なく
+ * 必ず Pico に勝つ。
+ */
+@import "@anyblades/blades/pico" layer(pico);
+
+:root {
+	/* Web フォントは束ねない(OS のフォントに任せる) */
+	--pico-font-family-sans-serif:
+		"BIZ UDPGothic", "Hiragino Sans", "Yu Gothic UI", "Noto Sans JP", system-ui, sans-serif;
+}
+
+body {
+	/* 日本語を文節で折り返す */
+	word-break: auto-phrase;
+	line-break: strict;
+}
+
+/* 横に流す表は列を潰させない(狭い画面で1文字ずつ折り返すのを防ぐ) */
+.overflow-auto > table {
+	white-space: nowrap;
+}

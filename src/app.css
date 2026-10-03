@@ -16,8 +16,8 @@
 
 :root {
 	/* Web フォントは束ねない(OS のフォントに任せる) */
-	--pico-font-family-sans-serif: "BIZ UDPGothic", "Hiragino Sans", "Yu Gothic UI", "Noto Sans JP",
-		system-ui, sans-serif;
+	--pico-font-family-sans-serif:
+		"BIZ UDPGothic", "Hiragino Sans", "Yu Gothic UI", "Noto Sans JP", system-ui, sans-serif;
 	--pico-font-size: 16px;
 	--pico-line-height: 1.7;
 	--pico-spacing: 1rem;

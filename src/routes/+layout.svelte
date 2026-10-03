@@ -12,12 +12,13 @@ const user = $derived(page.data.user);
 	<header class="bar">
 		<div class="page inner">
 			<a href="/" class="button ghost brand">
-				<span class="mark">Smart</span>QR<span class="mark alt">Pay</span>
+				<span class="mark">mogiri</span><span class="muted small">もぎり</span>
 			</a>
 			<div class="grow"></div>
 			{#if user}
 				<span class="who muted small">{user.email}</span>
 				{#if user.isStaff}
+					<a href="/entry/list" class="button ghost mini">入場一覧</a>
 					<a href="/real/admin" class="button ghost mini">管理</a>
 				{/if}
 				<form method="POST" action="/logout" use:enhance>
@@ -35,7 +36,7 @@ const user = $derived(page.data.user);
 
 	<footer class="foot muted small">
 		<aside>
-			<p>Smart QR Payment · Bun + SvelteKit + SQLite + Pico CSS</p>
+			<p>mogiri · Bun + SvelteKit + SQLite + Pico CSS</p>
 		</aside>
 	</footer>
 </div>
@@ -67,9 +68,6 @@ const user = $derived(page.data.user);
 }
 .mark {
 	color: var(--pico-primary);
-}
-.mark.alt {
-	color: var(--pico-secondary);
 }
 /* 狭い画面ではメールアドレスを隠す(ボタンを押せる幅を優先する) */
 .who {

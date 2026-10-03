@@ -22,7 +22,7 @@ onMount(() => {
 </script>
 
 <svelte:head>
-	<title>決済処理 · Smart QR Payment</title>
+	<title>決済処理 · mogiri</title>
 </svelte:head>
 
 <div class="wrap">

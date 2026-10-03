@@ -1,5 +1,5 @@
 import { db } from './index';
-import type { Pay, Product, User } from './schema';
+import type { Entry, Pay, Product, User } from './schema';
 
 /**
  * Typed data-access helpers over raw `bun:sqlite`. SELECTs alias snake_case
@@ -154,6 +154,82 @@ export function getRecentReceivedPays(limit: number): { email: string; userId: n
 			 WHERE p.receive = 1 ORDER BY p.updated_at DESC LIMIT ?`,
 		)
 		.all(limit) as { email: string; userId: number }[];
+}
+
+// --- Entries (入場受付) ----------------------------------------------------
+
+const ENTRY_COLS = 'id, name, contact, address, secret, status, created_at AS createdAt';
+
+/** ステータスのビットフラグ (統合前の入場受付と同じ値)。 */
+export const STATUS_ENTRY = 1;
+export const STATUS_PAID = 2;
+
+/** 入場受付のステータス操作。pay / entry はトグル、pe は両方を立てる。 */
+export type EntryAction = 'pay' | 'entry' | 'pe';
+
+/** ステータス値を画面表示用のラベルにする。 */
+export function statusLabel(status: number): string {
+	switch (status) {
+		case 0:
+			return '未払い・未入場';
+		case STATUS_ENTRY:
+			return '未払い・入場済';
+		case STATUS_PAID:
+			return '支払済・未入場';
+		case STATUS_PAID | STATUS_ENTRY:
+			return '支払済・入場済';
+		default:
+			return '不明';
+	}
+}
+
+/** 重複しない 9 桁のシークレットを作る。 */
+function generateSecret(): string {
+	while (true) {
+		const [n] = crypto.getRandomValues(new Uint32Array(1));
+		const secret = String(100000000 + (n % 900000000));
+		if (!getEntryBySecret(secret)) return secret;
+	}
+}
+
+export function createEntry(input: { name: string; contact: string; address: string }): Entry {
+	return db
+		.query(
+			`INSERT INTO entries (name, contact, address, secret, status)
+			 VALUES (?, ?, ?, ?, 0) RETURNING ${ENTRY_COLS}`,
+		)
+		.get(input.name, input.contact, input.address, generateSecret()) as Entry;
+}
+
+export function getEntryBySecret(secret: string): Entry | null {
+	return (
+		(db.query(`SELECT ${ENTRY_COLS} FROM entries WHERE secret = ?`).get(secret) as Entry | null) ??
+		null
+	);
+}
+
+export function getAllEntries(): Entry[] {
+	return db.query(`SELECT ${ENTRY_COLS} FROM entries ORDER BY id`).all() as Entry[];
+}
+
+/**
+ * pay / entry は該当ビットを反転、pe は両方を立てる。
+ * 読んでから書くと同時押しで片方が消えるので、ビット演算は SQL の中で行う。
+ */
+export function updateEntryStatus(secret: string, action: EntryAction): Entry | null {
+	// SQLite に XOR 演算子は無いので `(s | b) - (s & b)` で反転する
+	const flip = (bit: number) => `(status | ${bit}) - (status & ${bit})`;
+	const expr =
+		action === 'pay'
+			? flip(STATUS_PAID)
+			: action === 'entry'
+				? flip(STATUS_ENTRY)
+				: String(STATUS_PAID | STATUS_ENTRY);
+	return (
+		(db
+			.query(`UPDATE entries SET status = ${expr} WHERE secret = ? RETURNING ${ENTRY_COLS}`)
+			.get(secret) as Entry | null) ?? null
+	);
 }
 
 /** Run a set of writes in a single transaction. */

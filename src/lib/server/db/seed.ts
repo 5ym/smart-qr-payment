@@ -9,7 +9,7 @@ import { mkdirSync } from 'node:fs';
 import { dirname } from 'node:path';
 import { ensureSchema } from './ddl';
 
-const url = process.env.DATABASE_URL ?? './data/sqp.db';
+const url = process.env.DATABASE_URL ?? './data/mogiri.db';
 if (url !== ':memory:') mkdirSync(dirname(url), { recursive: true });
 
 const db = new Database(url, { create: true });
@@ -33,7 +33,7 @@ if (productCount === 0) {
 }
 
 // --- Admin user -----------------------------------------------------------
-const adminEmail = process.env.ADMIN_EMAIL ?? 'admin@sqp.local';
+const adminEmail = process.env.ADMIN_EMAIL ?? 'admin@mogiri.local';
 const adminPassword = process.env.ADMIN_PASSWORD ?? 'adminpassword';
 
 const existingAdmin = db.query('SELECT id FROM users WHERE email = ?').get(adminEmail);

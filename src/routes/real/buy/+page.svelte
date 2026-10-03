@@ -65,7 +65,7 @@ async function submit() {
 </script>
 
 <svelte:head>
-	<title>当日購入 · Smart QR Payment</title>
+	<title>当日購入 · mogiri</title>
 </svelte:head>
 
 <div class="stack wrap">

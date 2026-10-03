@@ -3,7 +3,7 @@
   "configVersion": 1,
   "workspaces": {
     "": {
-      "name": "smart-qr-payment",
+      "name": "mogiri",
       "devDependencies": {
         "@biomejs/biome": "^2.5.15",
         "@picocss/pico": "^2.1.1",

@@ -15,7 +15,7 @@ import { parseAcsConfig, sendMailAcs } from './acs';
 export async function sendVerificationEmail(to: string, code: string): Promise<void> {
 	const base = PUBLIC_BASE_URL ?? 'http://localhost:5173';
 	const link = `${base}/pre/verify/${code}`;
-	const subject = 'メールアドレスの確認<SQP>';
+	const subject = 'メールアドレスの確認<mogiri>';
 	const body =
 		'この度はご注文ありがとうございます。\n' +
 		'下記よりメールアドレスの確認をお願いいたします。確認完了後、支払画面に遷移いたします。\n' +

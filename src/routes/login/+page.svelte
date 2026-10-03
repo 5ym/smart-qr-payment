@@ -7,12 +7,12 @@ let loading = $state(false);
 </script>
 
 <svelte:head>
-	<title>ログイン · Smart QR Payment</title>
+	<title>ログイン · mogiri</title>
 </svelte:head>
 
 <div class="wrap">
 	<div class="panel body box">
-		<h1>Login to SQP</h1>
+		<h1>mogiri にログイン</h1>
 
 		{#if form?.error}
 			<div class="note err">{form.error}</div>

@@ -1,10 +1,11 @@
-# Smart QR Payment
+# mogiri / もぎり
 
-QRコードを使ったセルフレジ / 事前購入システム。
+もぎり。QR で入場受付と物販(事前購入・当日販売・受け取り)をまとめて回すイベント用システム。
 
-このリポジトリは、元の **Django REST Framework + Nuxt(Vuetify)** 構成から
-**Bun + SvelteKit + SQLite + Pico CSS** へ全面的に書き換えたものです。バックエンドと
-フロントエンドは 1 つの SvelteKit アプリに統合されています。
+物販は旧 Smart QR Payment(**Django REST Framework + Nuxt(Vuetify)** から
+**Bun + SvelteKit + SQLite + Pico CSS** へ書き換えたもの)、入場受付は旧 QRcode Entry System(qes、
+**Laravel + jQuery** から同じ構成へ書き換えたもの)で、2 つを 1 つの SvelteKit アプリに統合しました。
+スタッフのアカウントとログインは物販側の仕組み(`users.is_staff`)に揃えています。
 
 ## 技術スタック
 
@@ -34,8 +35,9 @@ bun run db:seed
 bun run dev
 ```
 
-`db:seed` は既定で管理者ユーザー `admin@sqp.local` / `adminpassword` を作成します
-（`ADMIN_EMAIL` / `ADMIN_PASSWORD` で変更可）。
+`db:seed` は既定で管理者ユーザー `admin@mogiri.local` / `adminpassword` を作成します
+（`ADMIN_EMAIL` / `ADMIN_PASSWORD` で変更可）。このユーザーはスタッフ権限を持ち、
+対面販売(`/real`)と入場受付のスタッフ画面(`/entry/status` / `/entry/list`)の両方に使えます。
 
 > データベースのテーブルは初回接続時に自動作成されます（`src/lib/server/db/ddl.ts`）。
 > ORM は使わず、`bun:sqlite` の上に薄い型付きクエリ層（`src/lib/server/db/repo.ts`）を置いています。
@@ -44,7 +46,7 @@ bun run dev
 
 ```shell
 ORIGIN=https://your-domain bun run build
-DATABASE_URL=./data/sqp.db bun ./build/index.js
+DATABASE_URL=./data/mogiri.db bun ./build/index.js
 ```
 
 SvelteKit の CSRF 判定は、自分の origin とフォーム送信の `Origin` を突き合わせます。
@@ -71,7 +73,7 @@ docker compose up --build
 
 `.env.example` を参照してください。アプリが読む変数は `src/env.ts` で宣言します（SvelteKit 3 は宣言したものしか読めません）。主なもの:
 
-- `DATABASE_URL` — SQLite ファイルのパス（既定 `./data/sqp.db`）
+- `DATABASE_URL` — SQLite ファイルのパス（既定 `./data/mogiri.db`）
 - `PUBLIC_BASE_URL` — メール確認リンク等に使う公開 URL
 - `ACS_CONNECTION_STRING`（または `ACS_ENDPOINT` + `ACS_ACCESS_KEY`）/ `ACS_SENDER_ADDRESS`
   — Azure Communication Services のメール送信設定（未設定時はリンクをログ出力）
@@ -92,9 +94,23 @@ ACS / Stripe / Square が未設定でもアプリは起動し、該当機能の�
 ### 対面販売 `/real`（要スタッフ権限）
 
 - `/real/accept` — カメラで受け取り QR を読み取り → `/real/confirm/[code]`
+  (入場 QR を読んだときは `/entry/status?secret=…` へ)
 - `/real/confirm/[code]` — 注文内容を確認し受け取り確定
 - `/real/buy` — 当日購入（Square POS を起動）→ `/real/square` コールバック
 - `/real/admin` — 直近の受け取り済み注文一覧
+
+### 入場受付 `/entry`
+
+1. `/entry` — 来場者が名前・連絡先・住所を登録 → 9 桁のシークレットと入場用 QR コードを発行
+   (アカウントは作らない)。シークレットを入れれば QR を再表示できる
+2. 受付でスタッフが QR を読み取る(`/real/accept` のカメラでも、端末の QR リーダーでも可)。
+   QR の中身は `<origin>/entry/status?secret=…` の URL
+3. `/entry/status?secret=…`(要スタッフ権限)— 登録内容とステータスを表示。
+   「支払切替」「入場切替」はそれぞれを反転、「支払+入場」は両方を済みにする
+4. `/entry/list`(要スタッフ権限)— 全登録の一覧
+
+ステータスは `entries.status` のビットフラグ(1 = 入場済, 2 = 支払済)で、qes と同じ値です。
+未ログインでスタッフ画面を開くと `/login?redirect=…` へ送られ、ログイン後に元の画面へ戻ります。
 
 ## ディレクトリ構成
 
@@ -106,7 +122,7 @@ src/
 ├── lib/
 │   ├── components/          # OrderTable / ProductPicker / Toasts
 │   ├── stores/toast.svelte.ts
-│   ├── validation.ts        # 共有バリデーション（ブラウザ可）
+│   ├── validation.ts        # 共有バリデーション・入場 QR の判定（ブラウザ可）
 │   └── server/              # サーバー専用
 │       ├── db/              # index(接続) / schema(型) / ddl / repo(クエリ) / seed
 │       ├── auth.ts          # セッション・パスワード

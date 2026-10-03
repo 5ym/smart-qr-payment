@@ -36,3 +36,14 @@ export interface Pay {
 	receive: boolean;
 	updatedAt: string;
 }
+
+/** 入場受付の登録。`status` はビットフラグ (`STATUS_ENTRY` / `STATUS_PAID`、repo.ts)。 */
+export interface Entry {
+	id: number;
+	name: string;
+	contact: string;
+	address: string;
+	secret: string;
+	status: number;
+	createdAt: string;
+}

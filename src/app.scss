@@ -273,6 +273,10 @@ textarea {
 	background: var(--ui-surface);
 	box-shadow: var(--ui-shadow);
 }
+/* 中身をそのまま置く箱(表など) */
+.panel.pad {
+	padding: 1rem;
+}
 /* 中身を縦に積む箱。**同じ要素に付ける**ので子孫ではなく複合で書く */
 .panel.body {
 	display: flex;
@@ -311,6 +315,31 @@ textarea {
 	border-color: var(--ui-info-bg);
 	border-left-color: var(--ui-info);
 	background: var(--ui-info-bg);
+}
+
+/* ---- 札(入場受付のステータスなど) ---- */
+.tag {
+	display: inline-flex;
+	align-items: center;
+	gap: 0.25rem;
+	border: 1px solid var(--ui-base-300);
+	border-radius: 999px;
+	background: var(--ui-surface);
+	padding: 0.1rem 0.6rem;
+	color: var(--ui-muted);
+	font-size: 0.78rem;
+	font-weight: 700;
+	white-space: nowrap;
+}
+.tag.ok {
+	border-color: transparent;
+	background: var(--ui-ok-bg);
+	color: var(--ui-ok);
+}
+.tag.warn {
+	border-color: transparent;
+	background: var(--ui-warn-bg);
+	color: var(--ui-warn);
 }
 
 /* ---- 表 ---- */

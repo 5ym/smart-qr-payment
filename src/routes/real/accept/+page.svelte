@@ -1,7 +1,7 @@
 <script lang="ts">
 import type { Html5Qrcode } from 'html5-qrcode';
 import { onDestroy, onMount } from 'svelte';
-import { isValidCode } from '#lib/validation.js';
+import { entryStatusPath, isValidCode } from '#lib/validation.js';
 import { goto } from '$app/navigation';
 
 let scanner: Html5Qrcode | null = null;
@@ -28,7 +28,13 @@ onMount(async () => {
 
 async function onScan(text: string) {
 	if (handled) return;
-	if (isValidCode(text)) {
+	// 入場 QR (`/entry/status?secret=…` の URL) なら入場受付の画面へ
+	const entryPath = entryStatusPath(text);
+	if (entryPath) {
+		handled = true;
+		await stop();
+		goto(entryPath);
+	} else if (isValidCode(text)) {
 		handled = true;
 		await stop();
 		goto(`/real/confirm/${text}`);
@@ -52,11 +58,11 @@ onDestroy(stop);
 </script>
 
 <svelte:head>
-	<title>受け取り · Smart QR Payment</title>
+	<title>QR読み取り · mogiri</title>
 </svelte:head>
 
 <div class="wrap">
-	<h1>受け取り用QRコードを読み込ませてください</h1>
+	<h1>受け取り用・入場用のQRコードを読み込ませてください</h1>
 
 	<div id="qr-reader"></div>
 

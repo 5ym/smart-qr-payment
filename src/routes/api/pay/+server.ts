@@ -17,7 +17,9 @@ export const POST: RequestHandler = async ({ locals, request, url }) => {
 	const stripe = getStripe();
 	if (!stripe) throw error(503, 'Stripe is not configured');
 
-	if (getPay(locals.user.id)) {
+	// 支払い済みなら何もしない。当日現金払いで未払いの注文 (別のタブで選んだ等) は
+	// カード決済に進め、通ったら createPay がカード決済で上書きする
+	if (getPay(locals.user.id)?.paid) {
 		return json({ ok: true });
 	}
 
@@ -50,7 +52,13 @@ export const POST: RequestHandler = async ({ locals, request, url }) => {
 	}
 
 	if (intent.status === 'succeeded') {
-		createPay({ userId: locals.user.id, token: intent.id, code: randomCode(16) });
+		createPay({
+			userId: locals.user.id,
+			token: intent.id,
+			code: randomCode(16),
+			method: 'stripe',
+			paid: true,
+		});
 		return json({ ok: true }, { status: 201 });
 	}
 

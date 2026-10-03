@@ -1,5 +1,5 @@
 import { db } from './index';
-import type { Entry, Pay, Product, User } from './schema';
+import type { CatalogProduct, Entry, Pay, PayMethod, Product, User } from './schema';
 
 /**
  * Typed data-access helpers over raw `bun:sqlite`. SELECTs alias snake_case
@@ -11,11 +11,12 @@ type UserRow = Omit<User, 'isActive' | 'isStaff' | 'isSuperuser'> & {
 	isStaff: number;
 	isSuperuser: number;
 };
-type PayRow = Omit<Pay, 'receive'> & { receive: number };
+type PayRow = Omit<Pay, 'receive' | 'paid'> & { receive: number; paid: number };
 
 const USER_COLS =
 	'id, email, password_hash AS passwordHash, is_active AS isActive, is_staff AS isStaff, is_superuser AS isSuperuser, created_at AS createdAt';
-const PAY_COLS = 'id, user_id AS userId, token, code, receive, updated_at AS updatedAt';
+const PAY_COLS =
+	'id, user_id AS userId, token, code, receive, updated_at AS updatedAt, method, paid';
 
 function toUser(row: UserRow | null): User | null {
 	if (!row) return null;
@@ -29,7 +30,7 @@ function toUser(row: UserRow | null): User | null {
 
 function toPay(row: PayRow | null): Pay | null {
 	if (!row) return null;
-	return { ...row, receive: Boolean(row.receive) };
+	return { ...row, receive: Boolean(row.receive), paid: Boolean(row.paid) };
 }
 
 // --- Users ----------------------------------------------------------------
@@ -89,32 +90,48 @@ export function deleteVerify(id: number): void {
 
 // --- Products -------------------------------------------------------------
 
-export function getAllProducts(): Product[] {
-	return db
-		.query('SELECT id, price, image, title, desc FROM products ORDER BY id')
-		.all() as Product[];
+/** 商品に種類をつける。 */
+function withVariants(products: Product[]): CatalogProduct[] {
+	if (products.length === 0) return [];
+	const placeholders = products.map(() => '?').join(', ');
+	const variants = db
+		.query(
+			`SELECT id, product_id AS productId, name FROM product_variants
+			 WHERE product_id IN (${placeholders}) ORDER BY sort, id`,
+		)
+		.all(...products.map((p) => p.id)) as { id: number; productId: number; name: string }[];
+	return products.map((p) => ({
+		...p,
+		variants: variants.filter((v) => v.productId === p.id).map((v) => ({ id: v.id, name: v.name })),
+	}));
 }
 
-export function getProductsByIds(ids: number[]): Product[] {
+export function getAllProducts(): CatalogProduct[] {
+	return withVariants(
+		db.query('SELECT id, price, image, title, desc FROM products ORDER BY id').all() as Product[],
+	);
+}
+
+export function getProductsByIds(ids: number[]): CatalogProduct[] {
 	if (ids.length === 0) return [];
 	const placeholders = ids.map(() => '?').join(', ');
-	return db
-		.query(`SELECT id, price, image, title, desc FROM products WHERE id IN (${placeholders})`)
-		.all(...ids) as Product[];
+	return withVariants(
+		db
+			.query(`SELECT id, price, image, title, desc FROM products WHERE id IN (${placeholders})`)
+			.all(...ids) as Product[],
+	);
 }
 
 export function createUserProduct(input: {
 	userId: number;
 	productId: number;
+	variantId: number | null;
 	count: number;
 	price: number;
 }): void {
-	db.query('INSERT INTO user_products (user_id, product_id, count, price) VALUES (?, ?, ?, ?)').run(
-		input.userId,
-		input.productId,
-		input.count,
-		input.price,
-	);
+	db.query(
+		'INSERT INTO user_products (user_id, product_id, variant_id, count, price) VALUES (?, ?, ?, ?, ?)',
+	).run(input.userId, input.productId, input.variantId, input.count, input.price);
 }
 
 // --- Pays -----------------------------------------------------------------
@@ -127,33 +144,83 @@ export function getPayByCode(code: string): Pay | null {
 	return toPay(db.query(`SELECT ${PAY_COLS} FROM pays WHERE code = ?`).get(code) as PayRow);
 }
 
+/**
+ * 支払いを記録して受け取り QR のコードを発行する。既に記録があれば (二重送信や別のタブ)
+ * 新しく作らない。ただし未払いの記録 (当日現金払い) に支払い済みの記録 (カード決済) が
+ * 来たときだけは、カード決済で上書きする (支払い済みが未払いに戻ることは無い)。
+ */
 export function createPay(input: {
 	userId: number;
 	token: string;
 	code: string;
-	receive?: boolean;
+	method: PayMethod;
+	paid: boolean;
 }): void {
-	db.query('INSERT INTO pays (user_id, token, code, receive) VALUES (?, ?, ?, ?)').run(
-		input.userId,
-		input.token,
-		input.code,
-		input.receive ? 1 : 0,
+	db.query(
+		`INSERT INTO pays (user_id, token, code, method, paid) VALUES (?, ?, ?, ?, ?)
+		 ON CONFLICT(user_id) DO UPDATE
+		 SET token = excluded.token, method = excluded.method, paid = 1, updated_at = CURRENT_TIMESTAMP
+		 WHERE pays.paid = 0 AND excluded.paid = 1 AND pays.receive = 0`,
+	).run(input.userId, input.token, input.code, input.method, input.paid ? 1 : 0);
+}
+
+/**
+ * 受け取り済みにする。`pay` を立てると同時に支払い済みにもする (当日現金払い・当日購入)。
+ * まだ受け取っていない注文だけを書き換え、書き換えたかを返す (同時に読み取られたときに
+ * 片方だけが通るように)。
+ */
+export function setPayReceived(id: number, options: { pay?: boolean } = {}): boolean {
+	const paid = options.pay ? ', paid = 1' : '';
+	return (
+		db
+			.query(
+				`UPDATE pays SET receive = 1${paid}, updated_at = CURRENT_TIMESTAMP
+				 WHERE id = ? AND receive = 0`,
+			)
+			.run(id).changes > 0
 	);
 }
 
-export function setPayReceived(id: number): void {
-	db.query('UPDATE pays SET receive = 1, updated_at = CURRENT_TIMESTAMP WHERE id = ?').run(id);
-}
+/** 管理画面の一覧に出す注文 (支払い方法・支払い状態つき)。 */
+export type PaySummary = {
+	email: string;
+	userId: number;
+	method: PayMethod;
+	paid: boolean;
+	updatedAt: string;
+};
+
+type PaySummaryRow = Omit<PaySummary, 'paid'> & { paid: number };
 
 /** Most-recently received orders with the buyer's email (admin list). */
-export function getRecentReceivedPays(limit: number): { email: string; userId: number }[] {
-	return db
-		.query(
-			`SELECT u.email AS email, p.user_id AS userId
-			 FROM pays p JOIN users u ON u.id = p.user_id
-			 WHERE p.receive = 1 ORDER BY p.updated_at DESC LIMIT ?`,
-		)
-		.all(limit) as { email: string; userId: number }[];
+export function getRecentReceivedPays(limit: number): PaySummary[] {
+	return (
+		db
+			.query(
+				`SELECT u.email AS email, p.user_id AS userId, p.method AS method, p.paid AS paid,
+				 p.updated_at AS updatedAt
+				 FROM pays p JOIN users u ON u.id = p.user_id
+				 WHERE p.receive = 1 ORDER BY p.updated_at DESC, p.id DESC LIMIT ?`,
+			)
+			.all(limit) as PaySummaryRow[]
+	).map((r) => ({ ...r, paid: Boolean(r.paid) }));
+}
+
+/**
+ * 受け取り待ちの事前購入 (古い順)。当日購入 (square) は Square の画面で取りやめると
+ * 未受け取りのまま残るだけなので含めない。
+ */
+export function getPendingPays(): PaySummary[] {
+	return (
+		db
+			.query(
+				`SELECT u.email AS email, p.user_id AS userId, p.method AS method, p.paid AS paid,
+				 p.updated_at AS updatedAt
+				 FROM pays p JOIN users u ON u.id = p.user_id
+				 WHERE p.receive = 0 AND p.method != 'square' ORDER BY p.id`,
+			)
+			.all() as PaySummaryRow[]
+	).map((r) => ({ ...r, paid: Boolean(r.paid) }));
 }
 
 // --- Entries (入場受付) ----------------------------------------------------

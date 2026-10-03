@@ -1,4 +1,5 @@
 import { error, json } from '@sveltejs/kit';
+import { parseSelections, priceSelections } from '#lib/order.js';
 import { hashPassword } from '#lib/server/auth.js';
 import {
 	createPay,
@@ -11,8 +12,6 @@ import { requireStaff } from '#lib/server/guards.js';
 import { randomCode } from '#lib/server/util.js';
 import type { RequestHandler } from './$types';
 
-type Selection = { product: number; count: number };
-
 /**
  * Create a pseudo order for an in-person same-day purchase (mirrors the DRF
  * BuySerializer). Returns the QR/receipt code used as Square's request metadata.
@@ -20,17 +19,13 @@ type Selection = { product: number; count: number };
 export const POST: RequestHandler = async ({ locals, request }) => {
 	requireStaff(locals.user, '/real/buy');
 
-	const body = (await request.json()) as { userproducts?: Selection[] };
-	const selections = (body.userproducts ?? []).filter(
-		(s) => Number.isInteger(s.product) && Number.isInteger(s.count) && s.count > 0,
-	);
-	if (selections.length === 0) throw error(400, '選択内容をお確かめください');
+	const body = (await request.json().catch(() => null)) as { userproducts?: unknown } | null;
+	const selections = parseSelections(body?.userproducts);
+	if (!selections || selections.length === 0) throw error(400, '選択内容をお確かめください');
 
-	const ids = selections.map((s) => s.product);
-	const priceById = new Map(getProductsByIds(ids).map((p) => [p.id, p.price]));
-	if (selections.some((s) => !priceById.has(s.product))) {
-		throw error(400, '選択内容をお確かめください');
-	}
+	// 商品と種類が揃っているかを確かめ、今の価格をつける
+	const priced = priceSelections(selections, getProductsByIds(selections.map((s) => s.product)));
+	if (!priced) throw error(400, '選択内容をお確かめください');
 
 	const email = `info+${Date.now()}@mogiri.local`;
 	const passwordHash = await hashPassword(randomCode(16));
@@ -38,15 +33,17 @@ export const POST: RequestHandler = async ({ locals, request }) => {
 
 	transaction(() => {
 		const user = createUser({ email, passwordHash, isActive: true });
-		for (const s of selections) {
+		for (const s of priced) {
 			createUserProduct({
 				userId: user.id,
 				productId: s.product,
+				variantId: s.variant,
 				count: s.count,
-				price: priceById.get(s.product) as number,
+				price: s.price,
 			});
 		}
-		createPay({ userId: user.id, code, token: code, receive: false });
+		// Square で支払われると /real/square で支払い済み・受け取り済みになる
+		createPay({ userId: user.id, code, token: code, method: 'square', paid: false });
 	});
 
 	return json({ code }, { status: 201 });

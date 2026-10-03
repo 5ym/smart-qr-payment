@@ -6,6 +6,7 @@
 **Bun + SvelteKit + SQLite + Pico CSS** へ書き換えたもの)、入場受付は旧 QRcode Entry System(qes、
 **Laravel + jQuery** から同じ構成へ書き換えたもの)で、2 つを 1 つの SvelteKit アプリに統合しました。
 スタッフのアカウントとログインは物販側の仕組み(`users.is_staff`)に揃えています。
+当日現金払いと商品の種類(サイズ等)は、文化祭の T シャツ注文フォーム easy-order から汎用の機能として取り込みました。
 
 ## 技術スタック
 
@@ -17,7 +18,7 @@
 | UI             | [Blades](https://blades.ninja/) の Pico（Pico CSS v2 の後継、素の CSS）。自前のクラスは持たず Pico の書き方に寄せる |
 | 認証           | サーバーサイドセッション（Cookie）+ `Bun.password`（argon2id）  |
 | メール         | Azure Communication Services（Email REST API / 依存ゼロ）       |
-| 決済           | Stripe（カード / 3-D セキュア）, Square POS（当日購入）         |
+| 決済           | Stripe（カード / 3-D セキュア）, 当日現金払い, Square POS（当日購入） |
 | QR             | 生成: `qrcode` / 読み取り: `html5-qrcode`                       |
 | Lint/Format    | [Biome](https://biomejs.dev)                                    |
 
@@ -40,6 +41,7 @@ bun run dev
 対面販売(`/real`)と入場受付のスタッフ画面(`/entry/status` / `/entry/list`)の両方に使えます。
 
 > データベースのテーブルは初回接続時に自動作成されます（`src/lib/server/db/ddl.ts`）。
+> 後から足した列は、既存の DB にも起動時に `ALTER TABLE … ADD COLUMN` で足します。
 > ORM は使わず、`bun:sqlite` の上に薄い型付きクエリ層（`src/lib/server/db/repo.ts`）を置いています。
 
 ## 本番ビルド / 起動
@@ -88,16 +90,31 @@ ACS / Stripe / Square が未設定でもアプリは起動し、該当機能の�
 
 1. `/pre` — 商品選択・メール / パスワード登録 → 確認メール送信
 2. `/pre/verify/[code]` — メール確認 → アカウント有効化
-3. `/pre/pay` — Stripe カード決済（3-D セキュア対応）
-4. `/pre/qr` — 受け取り用 QR コードを表示
+3. `/pre/pay` — 支払い方法を選ぶ
+   - カード決済 — Stripe（3-D セキュア対応）。Stripe が未設定なら選択肢に出ない
+   - 当日現金払い — Stripe を通さずにそのまま受け取り QR を発行する(未払いの注文になる)
+4. `/pre/qr` — 受け取り用 QR コードを表示。当日現金払いなら「当日、受け取り時に現金でお支払いください」と金額を出す
 
 ### 対面販売 `/real`（要スタッフ権限）
 
 - `/real/accept` — カメラで受け取り QR を読み取り → `/real/confirm/[code]`
   (入場 QR を読んだときは `/entry/status?secret=…` へ)
-- `/real/confirm/[code]` — 注文内容を確認し受け取り確定
+- `/real/confirm/[code]` — 注文内容を確認し受け取り確定。当日現金払いで未払いの注文は金額を大きく出し、
+  「支払いを受けて受け渡す」で支払い済みと受け取り済みを一度に記録する
 - `/real/buy` — 当日購入（Square POS を起動）→ `/real/square` コールバック
-- `/real/admin` — 直近の受け取り済み注文一覧
+- `/real/admin` — 直近の受け取り済み注文と、受け取り待ちの事前購入の一覧(支払い方法・支払い状態・
+  当日現金払いの未払い合計つき)
+
+### 商品の種類
+
+商品にはサイズ・色などの種類(`product_variants`)を持たせられます(例: T シャツの SS / S / M / L / LL / 3L)。
+種類のある商品は種類ごとに数量を選び、注文明細(`user_products.variant_id`)と各画面の注文内容に種類名が出ます。
+価格は商品単位です。種類の無い商品はこれまでどおり商品ごとに数量を選びます。
+管理画面は無いので、種類は SQL で入れてください(`db:seed` に T シャツの例があります)。
+
+```sql
+INSERT INTO product_variants (product_id, name, sort) VALUES (4, 'S', 0), (4, 'M', 1), (4, 'L', 2);
+```
 
 ### 入場受付 `/entry`
 
@@ -120,8 +137,9 @@ src/
 ├── env.ts                   # 読む環境変数の宣言（`$app/env/private` / `$app/env/public`）
 ├── hooks.server.ts          # セッションから locals.user を復元
 ├── lib/
-│   ├── components/          # OrderTable / ProductPicker / Toasts / EntryLabel
+│   ├── components/          # OrderTable / ProductPicker / PayStatus / Toasts / EntryLabel
 │   ├── stores/toast.svelte.ts
+│   ├── order.ts             # 注文の選択内容(商品・種類・数量)の検証・支払い方法の表示名（ブラウザ可）
 │   ├── validation.ts        # 共有バリデーション・入場 QR の判定（ブラウザ可）
 │   └── server/              # サーバー専用
 │       ├── db/              # index(接続) / schema(型) / ddl / repo(クエリ) / seed

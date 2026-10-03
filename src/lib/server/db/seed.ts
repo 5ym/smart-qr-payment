@@ -17,16 +17,42 @@ db.exec('PRAGMA foreign_keys = ON;');
 ensureSchema(db);
 
 // --- Products -------------------------------------------------------------
-const sampleProducts = [
+// `variants` は種類 (サイズ等)。種類のある商品は、注文のときに種類ごとに数量を選ぶ
+const sampleProducts: {
+	price: number;
+	image: string;
+	title: string;
+	desc: string;
+	variants?: string[];
+}[] = [
 	{ price: 500, image: 'sample.svg', title: 'ブレンドコーヒー', desc: '当店自慢の一杯' },
 	{ price: 800, image: 'sample.svg', title: 'カフェラテ', desc: 'なめらかなミルク' },
 	{ price: 300, image: 'sample.svg', title: '焼き菓子', desc: 'サクサク食感' },
+	{
+		price: 2000,
+		image: 'sample.svg',
+		title: 'Tシャツ',
+		desc: 'サイズをお選びください',
+		variants: ['SS', 'S', 'M', 'L', 'LL', '3L'],
+	},
 ];
 
 const productCount = (db.query('SELECT COUNT(*) AS n FROM products').get() as { n: number }).n;
 if (productCount === 0) {
-	const insert = db.query('INSERT INTO products (price, image, title, desc) VALUES (?, ?, ?, ?)');
-	for (const p of sampleProducts) insert.run(p.price, p.image, p.title, p.desc);
+	const insert = db.query(
+		'INSERT INTO products (price, image, title, desc) VALUES (?, ?, ?, ?) RETURNING id',
+	);
+	const insertVariant = db.query(
+		'INSERT INTO product_variants (product_id, name, sort) VALUES (?, ?, ?)',
+	);
+	db.transaction(() => {
+		for (const p of sampleProducts) {
+			const { id } = insert.get(p.price, p.image, p.title, p.desc) as { id: number };
+			p.variants?.forEach((name, i) => {
+				insertVariant.run(id, name, i);
+			});
+		}
+	})();
 	console.info(`[seed] inserted ${sampleProducts.length} products`);
 } else {
 	console.info(`[seed] products already present (${productCount}), skipping`);

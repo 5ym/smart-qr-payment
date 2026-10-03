@@ -2,11 +2,18 @@
 import type { Stripe, StripeCardElement } from '@stripe/stripe-js';
 import { onMount } from 'svelte';
 import OrderTable from '#lib/components/OrderTable.svelte';
+import { PAY_METHOD_LABELS } from '#lib/order.js';
 import { toasts } from '#lib/stores/toast.svelte.js';
+import { enhance } from '$app/forms';
 import { goto } from '$app/navigation';
-import type { PageData } from './$types';
+import type { ActionData, PageData } from './$types';
 
-let { data }: { data: PageData } = $props();
+let { data, form }: { data: PageData; form: ActionData } = $props();
+
+// カード決済が使えるときはカードを先に選んでおく。使えないときは当日現金払いだけ
+const cardAvailable = $derived(data.stripeConfigured && Boolean(data.publishableKey));
+let method = $state<'stripe' | 'cash'>();
+const selected = $derived(method ?? (cardAvailable ? 'stripe' : 'cash'));
 
 let stripe: Stripe | null = null;
 let card: StripeCardElement | null = null;
@@ -15,6 +22,10 @@ let loading = $state(false);
 let show3ds = $state(false);
 let iframeUrl = $state('');
 let intentSecret = '';
+
+$effect(() => {
+	if (form?.error) toasts.error('エラー', form.error);
+});
 
 async function onSucceeded() {
 	toasts.success('決済完了', 'カード決済が完了しました。3秒後にQRコード画面に移動します。');
@@ -105,22 +116,62 @@ async function submit() {
 </article>
 
 <article>
-	<h2>お支払い情報</h2>
-	{#if !data.stripeConfigured}
-		<p>
-			<mark>
-				Stripe が設定されていません。<code>STRIPE_SECRET_KEY</code>
-				と
-				<code>PUBLIC_STRIPE_PUBLISHABLE_KEY</code>
-				を設定してください。
-			</mark>
-		</p>
-	{:else}
+	<h2>お支払い方法</h2>
+	<fieldset>
+		{#if cardAvailable}
+			<label>
+				<input
+					type="radio"
+					name="method"
+					value="stripe"
+					checked={selected === 'stripe'}
+					onchange={() => (method = 'stripe')}
+				>
+				{PAY_METHOD_LABELS.stripe}
+			</label>
+		{/if}
+		<label>
+			<input
+				type="radio"
+				name="method"
+				value="cash"
+				checked={selected === 'cash'}
+				onchange={() => (method = 'cash')}
+			>
+			{PAY_METHOD_LABELS.cash}
+		</label>
+	</fieldset>
+
+	<!-- Stripe はページを開いたときにカード欄を差し込むので、選んでいないときも消さずに隠す -->
+	<div hidden={selected !== 'stripe'}>
 		<div id="card-element"></div>
 		{#if cardError}
 			<p role="alert"><mark>{cardError}</mark></p>
 		{/if}
-		<button type="button" disabled={loading} aria-busy={loading} onclick={submit}>支払</button>
+		<button type="button" disabled={loading || !cardAvailable} aria-busy={loading} onclick={submit}>
+			支払
+		</button>
+	</div>
+
+	{#if selected === 'cash'}
+		<form
+			method="POST"
+			action="?/cash"
+			use:enhance={() => {
+				loading = true;
+				return async ({ update }) => {
+					await update();
+					loading = false;
+				};
+			}}
+		>
+			<p>
+				受け取りのときに、現金で
+				<strong>{data.order.total.toLocaleString()}円</strong>
+				をお支払いください。注文を確定すると受け取り用のQRコードが表示されます。
+			</p>
+			<button type="submit" disabled={loading} aria-busy={loading}>当日現金払いで注文する</button>
+		</form>
 	{/if}
 </article>
 

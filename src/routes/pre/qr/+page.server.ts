@@ -13,6 +13,9 @@ export const load: PageServerLoad = async ({ locals }) => {
 	return {
 		email: locals.user.email,
 		code: pay.code,
+		method: pay.method,
+		paid: pay.paid,
+		received: pay.receive,
 		order: getOrderLines(locals.user.id),
 	};
 };

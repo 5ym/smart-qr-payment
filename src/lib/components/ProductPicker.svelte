@@ -1,24 +1,48 @@
 <script lang="ts">
-import type { Product } from '#lib/server/db/schema.js';
+import { MAX_COUNT, selectionKey } from '#lib/order.js';
+import type { CatalogProduct } from '#lib/server/db/schema.js';
 
 let {
 	products,
 	counts = $bindable({}),
 }: {
-	products: Product[];
-	counts: Record<number, number>;
+	products: CatalogProduct[];
+	/** `selectionKey(商品, 種類)` → 数量 */
+	counts: Record<string, number>;
 } = $props();
 
-function change(id: number, delta: number) {
-	const next = Math.max(0, (counts[id] ?? 0) + delta);
-	counts = { ...counts, [id]: next };
+const clamp = (n: number) => Math.min(MAX_COUNT, Math.max(0, n));
+
+function change(key: string, delta: number) {
+	counts = { ...counts, [key]: clamp((counts[key] ?? 0) + delta) };
 }
 
-function set(id: number, value: string) {
+function set(key: string, value: string) {
 	const n = Number(value);
-	counts = { ...counts, [id]: Number.isFinite(n) && n >= 0 ? Math.floor(n) : 0 };
+	counts = { ...counts, [key]: Number.isFinite(n) ? clamp(Math.floor(n)) : 0 };
 }
 </script>
+
+{#snippet stepper(
+	key: string,
+	label: string,
+)}
+	<div role="group">
+		<button type="button" class="secondary" aria-label="減らす" onclick={() => change(key, -1)}>
+			−
+		</button>
+		<input
+			type="number"
+			min="0"
+			max={MAX_COUNT}
+			inputmode="numeric"
+			aria-label="{label}の数量"
+			value={counts[key] ?? 0}
+			oninput={(e) => set(key, e.currentTarget.value)}
+		>
+		<button type="button" aria-label="増やす" onclick={() => change(key, 1)}>＋</button>
+	</div>
+{/snippet}
 
 <div class="lineup">
 	{#each products as product (product.id)}
@@ -33,25 +57,19 @@ function set(id: number, value: string) {
 					<br><small>{product.desc}</small>
 				{/if}
 			</p>
-			<div role="group">
-				<button
-					type="button"
-					class="secondary"
-					aria-label="減らす"
-					onclick={() => change(product.id, -1)}
-				>
-					−
-				</button>
-				<input
-					type="number"
-					min="0"
-					inputmode="numeric"
-					aria-label="{product.title}の数量"
-					value={counts[product.id] ?? 0}
-					oninput={(e) => set(product.id, e.currentTarget.value)}
-				>
-				<button type="button" aria-label="増やす" onclick={() => change(product.id, 1)}>＋</button>
-			</div>
+			{#if product.variants.length === 0}
+				{@render stepper(selectionKey(product.id, null), product.title)}
+			{:else}
+				{#each product.variants as variant (variant.id)}
+					<div class="variant">
+						<span>{variant.name}</span>
+						{@render stepper(
+							selectionKey(product.id, variant.id),
+							`${product.title} (${variant.name})`,
+						)}
+					</div>
+				{/each}
+			{/if}
 		</article>
 	{/each}
 </div>
@@ -68,5 +86,11 @@ img {
 	width: 100%;
 	aspect-ratio: 3 / 2;
 	object-fit: cover;
+}
+/* 種類ごとの数量。種類の名前を左に、増減のボタンを右に並べる */
+.variant {
+	display: grid;
+	grid-template-columns: 4rem 1fr;
+	align-items: baseline;
 }
 </style>

@@ -1,4 +1,5 @@
 import { fail } from '@sveltejs/kit';
+import { parseSelections, priceSelections } from '#lib/order.js';
 import { hashPassword } from '#lib/server/auth.js';
 import {
 	createUser,
@@ -17,18 +18,13 @@ export const load: PageServerLoad = async () => {
 	return { products: getAllProducts() };
 };
 
-type Selection = { product: number; count: number };
-
-function parseSelections(raw: FormDataEntryValue | null): Selection[] {
-	if (typeof raw !== 'string') return [];
+/** フォームの `products` (JSON) を選択内容にする。形が崩れていれば null。 */
+function readSelections(raw: FormDataEntryValue | null) {
+	if (typeof raw !== 'string') return null;
 	try {
-		const parsed = JSON.parse(raw);
-		if (!Array.isArray(parsed)) return [];
-		return parsed
-			.map((s) => ({ product: Number(s.product), count: Number(s.count) }))
-			.filter((s) => Number.isInteger(s.product) && Number.isInteger(s.count) && s.count > 0);
+		return parseSelections(JSON.parse(raw));
 	} catch {
-		return [];
+		return null;
 	}
 }
 
@@ -37,23 +33,21 @@ export const actions: Actions = {
 		const form = await request.formData();
 		const email = String(form.get('email') ?? '').trim();
 		const password = String(form.get('password') ?? '');
-		const selections = parseSelections(form.get('products'));
+		const selections = readSelections(form.get('products'));
 
 		if (!email) return fail(400, { error: 'メールアドレスは必須です' });
 		if (password.length < 8)
 			return fail(400, { error: 'パスワードは8文字以上でなければなりません' });
+		if (!selections) return fail(400, { error: '選択内容をお確かめください' });
 		if (selections.length === 0) return fail(400, { error: '商品を1つ以上選択してください' });
 
 		if (getUserByEmail(email)) {
 			return fail(400, { error: 'このメールアドレスは既に登録されています' });
 		}
 
-		// Validate the selected products exist and capture their current price.
-		const ids = selections.map((s) => s.product);
-		const priceById = new Map(getProductsByIds(ids).map((p) => [p.id, p.price]));
-		if (selections.some((s) => !priceById.has(s.product))) {
-			return fail(400, { error: '選択内容をお確かめください' });
-		}
+		// 商品と種類が揃っているかを確かめ、今の価格をつける
+		const priced = priceSelections(selections, getProductsByIds(selections.map((s) => s.product)));
+		if (!priced) return fail(400, { error: '選択内容をお確かめください' });
 
 		const passwordHash = await hashPassword(password);
 		const code = randomCode(16);
@@ -61,12 +55,13 @@ export const actions: Actions = {
 		transaction(() => {
 			const user = createUser({ email, passwordHash, isActive: false });
 			createVerify(user.id, code);
-			for (const s of selections) {
+			for (const s of priced) {
 				createUserProduct({
 					userId: user.id,
 					productId: s.product,
+					variantId: s.variant,
 					count: s.count,
-					price: priceById.get(s.product) as number,
+					price: s.price,
 				});
 			}
 		});

@@ -1,22 +1,19 @@
 <script lang="ts">
 import ProductPicker from '#lib/components/ProductPicker.svelte';
+import { countsToSelections, countsTotal } from '#lib/order.js';
 import { toasts } from '#lib/stores/toast.svelte.js';
 import { enhance } from '$app/forms';
 import type { ActionData, PageData } from './$types';
 
 let { data, form }: { data: PageData; form: ActionData } = $props();
 
-let counts = $state<Record<number, number>>({});
+let counts = $state<Record<string, number>>({});
 let email = $state('');
 let password = $state('');
 let loading = $state(false);
 
-const selections = $derived(
-	Object.entries(counts)
-		.map(([id, count]) => ({ product: Number(id), count }))
-		.filter((s) => s.count > 0),
-);
-const total = $derived(data.products.reduce((sum, p) => sum + p.price * (counts[p.id] ?? 0), 0));
+const selections = $derived(countsToSelections(counts));
+const total = $derived(countsTotal(data.products, counts));
 
 $effect(() => {
 	if (form?.error) toasts.error('エラー', form.error);
@@ -60,6 +57,11 @@ $effect(() => {
 	<article>
 		<h2>お客様情報</h2>
 		<p>メールアドレスとパスワードを入力し、注文内容に誤りがなければ送信してください。</p>
+		<p>
+			<small>
+				お支払い方法(カード決済・当日現金払い)は、メールアドレスの確認の後に選べます。
+			</small>
+		</p>
 		<p>合計 <strong>{total.toLocaleString()}円</strong></p>
 		<label>
 			メールアドレス

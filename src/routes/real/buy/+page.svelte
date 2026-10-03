@@ -1,20 +1,17 @@
 <script lang="ts">
 import ProductPicker from '#lib/components/ProductPicker.svelte';
+import { countsToSelections, countsTotal } from '#lib/order.js';
 import { toasts } from '#lib/stores/toast.svelte.js';
 import { goto } from '$app/navigation';
 import type { PageData } from './$types';
 
 let { data }: { data: PageData } = $props();
 
-let counts = $state<Record<number, number>>({});
+let counts = $state<Record<string, number>>({});
 let loading = $state(false);
 
-const total = $derived(data.products.reduce((sum, p) => sum + p.price * (counts[p.id] ?? 0), 0));
-const selections = $derived(
-	Object.entries(counts)
-		.map(([id, count]) => ({ product: Number(id), count }))
-		.filter((s) => s.count > 0),
-);
+const total = $derived(countsTotal(data.products, counts));
+const selections = $derived(countsToSelections(counts));
 
 function buildSquareUrl(code: string): string {
 	const tenderTypes = 'com.squareup.pos.TENDER_CARD,com.squareup.pos.TENDER_CASH';

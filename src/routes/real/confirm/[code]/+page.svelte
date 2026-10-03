@@ -1,6 +1,7 @@
 <script lang="ts">
 import { onMount } from 'svelte';
 import OrderTable from '#lib/components/OrderTable.svelte';
+import PayStatus from '#lib/components/PayStatus.svelte';
 import { toasts } from '#lib/stores/toast.svelte.js';
 import { enhance } from '$app/forms';
 import { goto } from '$app/navigation';
@@ -8,6 +9,9 @@ import type { ActionData, PageData } from './$types';
 
 let { data, form }: { data: PageData; form: ActionData } = $props();
 let loading = $state(false);
+
+// 当日現金払いでまだ払われていない注文は、代金を受けてから渡す
+const cashDue = $derived(data.method === 'cash' && !data.paid);
 
 onMount(() => {
 	if (data.received) {
@@ -27,8 +31,24 @@ $effect(() => {
 
 <h1>注文内容をご確認ください</h1>
 
+{#if cashDue && !data.received}
+	<article>
+		<header>当日現金払い・未払い</header>
+		<p>お客様から現金で代金を受け取ってください。</p>
+		<p class="amount"><strong>{data.order.total.toLocaleString()}円</strong></p>
+	</article>
+{:else if !data.paid && !data.received}
+	<p><mark>支払いが済んでいない注文です。</mark></p>
+{/if}
+
 <article>
 	<h2>{data.email}</h2>
+	<p>
+		<PayStatus method={data.method} paid={data.paid} />
+		{#if data.received}
+			<ins>受け取り済み</ins>
+		{/if}
+	</p>
 	<OrderTable lines={data.order.lines} total={data.order.total} />
 </article>
 
@@ -36,7 +56,7 @@ $effect(() => {
 	<a href="/real/accept" role="button" class="outline">戻る</a>
 	<form
 		method="POST"
-		action="?/confirm"
+		action={cashDue ? '?/cash' : '?/confirm'}
 		use:enhance={() => {
 			loading = true;
 			return async ({ update, result }) => {
@@ -53,6 +73,19 @@ $effect(() => {
 			};
 		}}
 	>
-		<button type="submit" disabled={loading || data.received} aria-busy={loading}>確定</button>
+		<button
+			type="submit"
+			disabled={loading || data.received || (!data.paid && !cashDue)}
+			aria-busy={loading}
+		>
+			{cashDue ? '支払いを受けて受け渡す' : '確定'}
+		</button>
 	</form>
 </div>
+
+<style>
+/* 現金で受け取る金額。離れていても読めるように大きく出す */
+.amount {
+	font-size: 3rem;
+}
+</style>

@@ -30,6 +30,7 @@ export const load: PageServerLoad = async ({ locals, url }) => {
 		return { ok: false as const, message: '該当する注文が見つかりません' };
 	}
 
-	setPayReceived(pay.id);
+	// Square で支払われたので、支払い済み・受け取り済みにする
+	setPayReceived(pay.id, { pay: true });
 	return { ok: true as const, message: '' };
 };

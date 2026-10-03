@@ -25,25 +25,4 @@ onMount(() => {
 	<title>決済処理 · mogiri</title>
 </svelte:head>
 
-<div class="wrap">
-	<div class="panel body box">
-		<span class="spin lg"></span>
-		<h1>処理中...</h1>
-	</div>
-</div>
-
-<style>
-.wrap {
-	display: flex;
-	justify-content: center;
-}
-.panel.box {
-	align-items: center;
-	gap: 1rem;
-	padding: 1.5rem;
-	text-align: center;
-}
-.box h1 {
-	font-size: 1rem;
-}
-</style>
+<p aria-busy="true">処理中...</p>

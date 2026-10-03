@@ -58,6 +58,9 @@
 					"correctness": {
 						"noUnusedImports": "off",
 						"noUnusedVariables": "off"
+					},
+					"a11y": {
+						"useSemanticElements": "off"
 					}
 				}
 			}

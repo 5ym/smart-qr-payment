@@ -17,46 +17,18 @@ async function refresh() {
 	<title>管理 · mogiri</title>
 </svelte:head>
 
-<div class="stack list">
-	<div class="head">
-		<h1>最近の受け取り</h1>
-		<button type="button" class="mini" disabled={loading} onclick={refresh}>
-			{#if loading}
-				<span class="spin"></span>
-			{/if}
-			更新
-		</button>
-	</div>
+<h1>最近の受け取り</h1>
+<button type="button" class="outline" disabled={loading} aria-busy={loading} onclick={refresh}>
+	更新
+</button>
 
-	{#if data.orders.length === 0}
-		<div class="note">受け取り済みの注文はありません。</div>
-	{/if}
+{#if data.orders.length === 0}
+	<p>受け取り済みの注文はありません。</p>
+{/if}
 
-	{#each data.orders as order (order.email)}
-		<div class="panel body box">
-			<h2 class="who">{order.email}</h2>
-			<OrderTable lines={order.lines} total={order.total} />
-		</div>
-	{/each}
-</div>
-
-<style>
-.list {
-	gap: 1.5rem;
-}
-.head {
-	display: flex;
-	align-items: center;
-	justify-content: space-between;
-	gap: 1rem;
-}
-.head h1 {
-	font-size: 1.5rem;
-}
-.who {
-	font-size: 1rem;
-}
-.panel.box {
-	padding: 1.5rem;
-}
-</style>
+{#each data.orders as order (order.email)}
+	<article>
+		<h2>{order.email}</h2>
+		<OrderTable lines={order.lines} total={order.total} />
+	</article>
+{/each}

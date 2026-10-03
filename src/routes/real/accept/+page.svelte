@@ -61,43 +61,20 @@ onDestroy(stop);
 	<title>QR読み取り · mogiri</title>
 </svelte:head>
 
-<div class="wrap">
-	<h1>受け取り用・入場用のQRコードを読み込ませてください</h1>
+<h1>受け取り用・入場用のQRコードを読み込ませてください</h1>
 
-	<div id="qr-reader"></div>
+<div id="qr-reader"></div>
 
-	{#if error}
-		<div class="note warn msg">{error}</div>
-	{/if}
+{#if error}
+	<p><mark>{error}</mark></p>
+{/if}
 
-	<a href="/real" class="button outline back">戻る</a>
-</div>
+<a href="/real" role="button" class="outline">戻る</a>
 
 <style>
-.wrap {
-	display: flex;
-	flex-direction: column;
-	align-items: center;
-	gap: 1.5rem;
-	user-select: none;
-}
-h1 {
-	font-size: 1.5rem;
-}
-
-/* html5-qrcode が中に video を差し込む枠 */
+/* html5-qrcode が中に video を差し込む枠。広い画面でもカメラ映像を大きくしすぎない */
 #qr-reader {
-	width: 100%;
 	max-width: 28rem;
-	overflow: hidden;
-	border-radius: var(--pico-border-radius);
-	box-shadow: var(--ui-shadow);
-}
-.msg {
-	max-width: 28rem;
-}
-.back {
-	width: 100%;
-	max-width: 28rem;
+	margin-bottom: var(--pico-spacing);
 }
 </style>

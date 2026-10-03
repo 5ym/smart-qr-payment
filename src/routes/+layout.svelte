@@ -8,84 +8,43 @@ let { children } = $props();
 const user = $derived(page.data.user);
 </script>
 
-<div class="shell">
-	<header class="bar">
-		<div class="page inner">
-			<a href="/" class="button ghost brand">
-				<span class="mark">mogiri</span><span class="muted small">もぎり</span>
-			</a>
-			<div class="grow"></div>
+<header class="container">
+	<nav>
+		<ul>
+			<li>
+				<a href="/"><strong>mogiri</strong></a>
+			</li>
+		</ul>
+		<ul>
 			{#if user}
-				<span class="who muted small">{user.email}</span>
 				{#if user.isStaff}
-					<a href="/entry/list" class="button ghost mini">入場一覧</a>
-					<a href="/real/admin" class="button ghost mini">管理</a>
+					<li><a href="/entry/list">入場一覧</a></li>
+					<li><a href="/real/admin">管理</a></li>
 				{/if}
-				<form method="POST" action="/logout" use:enhance>
-					<button type="submit" class="outline mini">ログアウト</button>
-				</form>
+				<li>
+					<form method="POST" action="/logout" use:enhance>
+						<button type="submit" class="outline secondary">ログアウト</button>
+					</form>
+				</li>
 			{:else}
-				<a href="/login" class="button mini">ログイン</a>
+				<li><a href="/login" role="button">ログイン</a></li>
 			{/if}
-		</div>
-	</header>
+		</ul>
+	</nav>
+</header>
 
-	<main class="page main">
-		{@render children()}
-	</main>
+<main class="container">
+	{@render children()}
+</main>
 
-	<footer class="foot muted small">
-		<aside>
-			<p>mogiri · Bun + SvelteKit + SQLite + Blades</p>
-		</aside>
-	</footer>
-</div>
+<footer class="container">
+	<small>
+		{#if user}
+			{user.email}
+			でログイン中 ·
+		{/if}
+		mogiri · Bun + SvelteKit + SQLite + Blades
+	</small>
+</footer>
 
 <Toasts />
-
-<style>
-/* 画面の高さいっぱいに広げて、足元を下に押し付ける */
-.shell {
-	display: flex;
-	flex-direction: column;
-	min-height: 100dvh;
-}
-
-.bar {
-	border-bottom: 1px solid var(--ui-base-300);
-	background: var(--ui-surface);
-	box-shadow: var(--ui-shadow);
-}
-.inner {
-	display: flex;
-	align-items: center;
-	gap: 0.5rem;
-	min-height: 4rem;
-	padding-block: 0.5rem;
-}
-.brand {
-	font-size: 1.25rem;
-}
-.mark {
-	color: var(--pico-primary);
-}
-/* 狭い画面ではメールアドレスを隠す(ボタンを押せる幅を優先する) */
-.who {
-	display: none;
-}
-@media (min-width: 640px) {
-	.who {
-		display: inline;
-	}
-}
-
-.main {
-	flex: 1 1 auto;
-	padding-block: 2rem;
-}
-
-.foot {
-	padding: 1rem;
-	text-align: center;
-}
-</style>

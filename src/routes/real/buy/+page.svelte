@@ -68,42 +68,12 @@ async function submit() {
 	<title>当日購入 · mogiri</title>
 </svelte:head>
 
-<div class="stack wrap">
-	<h1>欲しい商品の数量を指定してください</h1>
-	<ProductPicker products={data.products} bind:counts imageHeight="16rem" />
+<h1>欲しい商品の数量を指定してください</h1>
+<ProductPicker products={data.products} bind:counts />
 
-	<div>
-		<div class="sum-label">合計</div>
-		<div class="sum-value">{total.toLocaleString()}円</div>
-	</div>
+<h2>合計 {total.toLocaleString()}円</h2>
 
-	<div class="actions">
-		<a href="/real" class="button outline big">戻る</a>
-		<button type="button" class="big" disabled={loading} onclick={submit}>
-			{#if loading}
-				<span class="spin"></span>
-			{/if}
-			確定
-		</button>
-	</div>
+<div class="grid">
+	<a href="/real" role="button" class="outline">戻る</a>
+	<button type="button" disabled={loading} aria-busy={loading} onclick={submit}>確定</button>
 </div>
-
-<style>
-.wrap {
-	gap: 1.5rem;
-	user-select: none;
-}
-h1 {
-	font-size: 1.5rem;
-}
-
-.actions {
-	display: flex;
-	gap: 1rem;
-}
-/* 「戻る」と「確定」を同じ幅にする */
-.actions > a,
-.actions > button {
-	flex: 1 1 0;
-}
-</style>

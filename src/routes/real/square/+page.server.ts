@@ -25,8 +25,10 @@ export const load: PageServerLoad = async ({ locals, url }) => {
 		return { ok: false as const, message: '不正なリクエストです' };
 	}
 
+	// 当日購入 (/api/buy) で作った注文だけを受け付ける。事前購入のコード (当日現金払いの
+	// 未払い等) を渡されても、Square の決済と結びつかないので支払い済みにはしない
 	const pay = getPayByCode(code);
-	if (!pay) {
+	if (!pay || pay.method !== 'square') {
 		return { ok: false as const, message: '該当する注文が見つかりません' };
 	}
 

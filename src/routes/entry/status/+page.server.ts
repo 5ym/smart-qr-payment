@@ -4,8 +4,9 @@ import { requireStaff } from '#lib/server/guards.js';
 import type { Actions, PageServerLoad } from './$types';
 
 /**
- * ログイン後に戻す先。action の `?/toggle` は付けず、シークレットだけ残す
+ * ログイン後に戻す先。action の `/toggle` は付けず、シークレットだけ残す
  * (付けたまま戻すと、ログイン直後の画面の URL に `/toggle` が残る)。
+ * フォームは `?secret=…&/toggle` に送るので、action でも URL から secret が取れる。
  */
 function backTo(url: URL): string {
 	const secret = url.searchParams.get('secret');

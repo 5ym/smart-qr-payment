@@ -58,7 +58,14 @@ const toggleHandler: SubmitFunction = () => {
 				{ action: 'entry', label: '入場切替', cls: 'secondary' },
 				{ action: 'pe', label: '支払+入場', cls: 'contrast' },
 			] as b (b.action)}
-				<form method="POST" action="?/toggle" use:enhance={toggleHandler} class="act">
+				<!-- `?/toggle` だけだとクエリが置き換わって secret が落ち、送信後の画面 (JS 無しのとき) と
+				     ログインからの戻り先が secret 無しになる。secret も付けたまま送る -->
+				<form
+					method="POST"
+					action={`?secret=${encodeURIComponent(data.entry.secret)}&/toggle`}
+					use:enhance={toggleHandler}
+					class="act"
+				>
 					<input type="hidden" name="secret" value={data.entry.secret}>
 					<input type="hidden" name="action" value={b.action}>
 					<button type="submit" class={b.cls} disabled={loading}>

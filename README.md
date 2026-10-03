@@ -143,4 +143,5 @@ src/
 | `bun run check`     | 型チェック（svelte-check + TypeScript 7 / tsgo） |
 | `bun run lint`      | Biome チェック(lint + format)  |
 | `bun run format`    | Biome で整形・自動修正           |
+| `bun run test`      | 単体テスト(`bun test`)        |
 | `bun run db:seed`   | 初期データ投入                   |

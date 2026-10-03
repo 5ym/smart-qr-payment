@@ -73,39 +73,6 @@
 	--ui-warn: #f0b429;
 }
 
-/*
- * **Blades で増えた・変わったところを Pico の頃に戻す。** Blades の Pico は部品を選べず丸ごと1枚で来る
- * (部品ごとに読めるようにする話は anyblades/blades#169)。Pico の Sass で外していた部品
- * (nav・dropdown・tooltip・accordion・figure・色/範囲/ファイルの入力欄・body 直下の余白)は
- * こちらの要素に当たらないか、こちらの規則が上書きするので戻すものは無い。Blades で既定の値が
- * 変わったもののうち、こちらの要素に当たるものだけをここで戻す。部品ごとに読めるようになったら、
- * この塊ごと消す
- */
-/*
- * 影。Blades は 1 枚の影に簡単にしていて、Pico の頃(7 枚重ね)より濃く見える。
- * .panel と上の帯の影(--ui-shadow → --pico-card-box-shadow → --pico-box-shadow)が変わるので、
- * Pico の Sass が出していた値をそのまま書く。色だけ明暗で持ち替える
- */
-:root {
-	--ui-shadow-color: 129 145 181;
-	--pico-box-shadow:
-		0.0145rem 0.029rem 0.174rem rgb(var(--ui-shadow-color) / 0.01698),
-		0.0335rem 0.067rem 0.402rem rgb(var(--ui-shadow-color) / 0.024),
-		0.0625rem 0.125rem 0.75rem rgb(var(--ui-shadow-color) / 0.03),
-		0.1125rem 0.225rem 1.35rem rgb(var(--ui-shadow-color) / 0.036),
-		0.2085rem 0.417rem 2.502rem rgb(var(--ui-shadow-color) / 0.04302),
-		0.5rem 1rem 6rem rgb(var(--ui-shadow-color) / 0.06),
-		0 0 0 0.0625rem rgb(var(--ui-shadow-color) / 0.015);
-}
-@media (prefers-color-scheme: dark) {
-	:root:not([data-theme="light"]) {
-		--ui-shadow-color: 7 8.5 12;
-	}
-}
-[data-theme="dark"] {
-	--ui-shadow-color: 7 8.5 12;
-}
-
 html {
 	font-size: var(--pico-font-size);
 }

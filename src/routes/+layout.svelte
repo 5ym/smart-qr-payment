@@ -36,7 +36,7 @@ const user = $derived(page.data.user);
 
 	<footer class="foot muted small">
 		<aside>
-			<p>mogiri · Bun + SvelteKit + SQLite + Pico CSS</p>
+			<p>mogiri · Bun + SvelteKit + SQLite + Blades</p>
 		</aside>
 	</footer>
 </div>

@@ -12,8 +12,8 @@ const optional = (value: string | undefined) => value || undefined;
 
 export const variables = defineEnvVars({
 	DATABASE_URL: {
-		description: 'SQLite ファイルのパス (既定 `./data/sqp.db`)',
-		schema: (value) => value || './data/sqp.db',
+		description: 'SQLite ファイルのパス (既定 `./data/mogiri.db`)',
+		schema: (value) => value || './data/mogiri.db',
 	},
 	ACS_CONNECTION_STRING: {
 		description: 'Azure Communication Services の接続文字列 (endpoint + accesskey)',

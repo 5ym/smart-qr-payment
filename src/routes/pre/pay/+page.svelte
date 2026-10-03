@@ -95,7 +95,7 @@ async function submit() {
 </script>
 
 <svelte:head>
-	<title>お支払い · Smart QR Payment</title>
+	<title>お支払い · mogiri</title>
 </svelte:head>
 
 <div class="wrap">

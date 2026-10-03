@@ -12,11 +12,17 @@ const options = [
 		subtitle: '対面販売でのセルフレジを使う場合はこちら',
 		cls: 'secondary',
 	},
+	{
+		href: '/entry',
+		title: '入場受付',
+		subtitle: '入場登録と入場用QRコードの表示はこちら',
+		cls: 'contrast',
+	},
 ];
 </script>
 
 <svelte:head>
-	<title>Smart QR Payment</title>
+	<title>mogiri</title>
 </svelte:head>
 
 <div class="tiles">
@@ -38,7 +44,7 @@ const options = [
 }
 @media (min-width: 640px) {
 	.tiles {
-		grid-template-columns: 1fr 1fr;
+		grid-template-columns: repeat(3, 1fr);
 	}
 }
 
@@ -68,6 +74,14 @@ const options = [
 		color-mix(in srgb, var(--pico-secondary-background) 70%, transparent)
 	);
 	color: var(--pico-secondary-inverse);
+}
+.tile.contrast {
+	background-image: linear-gradient(
+		to bottom right,
+		var(--pico-contrast-background),
+		color-mix(in srgb, var(--pico-contrast-background) 70%, transparent)
+	);
+	color: var(--pico-contrast-inverse);
 }
 
 .body {

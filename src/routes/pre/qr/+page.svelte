@@ -13,7 +13,7 @@ onMount(async () => {
 </script>
 
 <svelte:head>
-	<title>QRコード · Smart QR Payment</title>
+	<title>QRコード · mogiri</title>
 </svelte:head>
 
 <div class="wrap">

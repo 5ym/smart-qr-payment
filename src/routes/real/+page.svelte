@@ -18,7 +18,7 @@ const options = [
 </script>
 
 <svelte:head>
-	<title>対面販売 · Smart QR Payment</title>
+	<title>対面販売 · mogiri</title>
 </svelte:head>
 
 <div class="tiles">

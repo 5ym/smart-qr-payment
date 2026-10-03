@@ -34,7 +34,8 @@ export const POST: RequestHandler = async ({ locals, request, url }) => {
 		const created = await stripe.paymentIntents.create({
 			amount,
 			currency: 'jpy',
-			payment_method_types: ['card'],
+			// stripe 23 (API 2026-09-30 系) で payment_method_types から改名された
+			allowed_payment_method_types: ['card'],
 			payment_method: token,
 		});
 		intent = await stripe.paymentIntents.confirm(created.id, {

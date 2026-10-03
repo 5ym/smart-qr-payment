@@ -54,6 +54,18 @@ CREATE TABLE IF NOT EXISTS sessions (
 );
 
 CREATE UNIQUE INDEX IF NOT EXISTS sessions_user_idx ON sessions(user_id, id);
+
+-- 入場受付 (/entry)。来場者はアカウントを持たず、secret (9 桁) で本人を引く。
+-- status はビットフラグ (1 = 入場済, 2 = 支払済)。
+CREATE TABLE IF NOT EXISTS entries (
+	id INTEGER PRIMARY KEY AUTOINCREMENT,
+	name TEXT NOT NULL,
+	contact TEXT NOT NULL,
+	address TEXT NOT NULL,
+	secret TEXT NOT NULL UNIQUE,
+	status INTEGER NOT NULL DEFAULT 0,
+	created_at TEXT NOT NULL DEFAULT (CURRENT_TIMESTAMP)
+);
 `;
 
 export function ensureSchema(sqlite: Database): void {

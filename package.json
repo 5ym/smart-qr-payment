@@ -1,5 +1,5 @@
 {
-	"name": "smart-qr-payment",
+	"name": "mogiri",
 	"version": "2.0.0",
 	"private": true,
 	"type": "module",
@@ -12,6 +12,7 @@
 		"check:watch": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json --tsgo --watch",
 		"lint": "biome check .",
 		"format": "biome check --write .",
+		"test": "bun test src",
 		"db:seed": "bun run src/lib/server/db/seed.ts"
 	},
 	"devDependencies": {
@@ -30,7 +31,7 @@
 		"stripe": "^23.0.0",
 		"svelte": "^5.57.1",
 		"svelte-check": "^4.7.6",
-		"typescript": "~7.0.0",
+		"typescript": "~6.0.3",
 		"vite": "^8.3.2"
 	},
 	"imports": {

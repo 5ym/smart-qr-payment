@@ -22,7 +22,7 @@ $effect(() => {
 </script>
 
 <svelte:head>
-	<title>受け取り確認 · Smart QR Payment</title>
+	<title>受け取り確認 · mogiri</title>
 </svelte:head>
 
 <div class="wrap">
@@ -47,7 +47,7 @@ $effect(() => {
 						toasts.success(
 							'Complete',
 							'お買い上げありがとうございます。商品をお渡しします。5秒後にトップに戻ります。',
-							5000
+							5000,
 						);
 						setTimeout(() => goto('/real'), 5000);
 					}

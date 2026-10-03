@@ -16,7 +16,7 @@ onMount(() => {
 </script>
 
 <svelte:head>
-	<title>メール確認 · Smart QR Payment</title>
+	<title>メール確認 · mogiri</title>
 </svelte:head>
 
 <div class="wrap">

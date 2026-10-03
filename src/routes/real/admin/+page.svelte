@@ -14,7 +14,7 @@ async function refresh() {
 </script>
 
 <svelte:head>
-	<title>管理 · Smart QR Payment</title>
+	<title>管理 · mogiri</title>
 </svelte:head>
 
 <div class="stack list">

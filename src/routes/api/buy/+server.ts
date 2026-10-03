@@ -32,7 +32,7 @@ export const POST: RequestHandler = async ({ locals, request }) => {
 		throw error(400, '選択内容をお確かめください');
 	}
 
-	const email = `info+${Date.now()}@sqp.local`;
+	const email = `info+${Date.now()}@mogiri.local`;
 	const passwordHash = await hashPassword(randomCode(16));
 	const code = randomCode(16);
 

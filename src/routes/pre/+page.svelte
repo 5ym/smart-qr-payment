@@ -24,7 +24,7 @@ $effect(() => {
 </script>
 
 <svelte:head>
-	<title>事前購入 · Smart QR Payment</title>
+	<title>事前購入 · mogiri</title>
 </svelte:head>
 
 <form
@@ -45,7 +45,7 @@ $effect(() => {
 				toasts.success(
 					'送信完了',
 					"メールを送信いたしました。メールをご確認ください。<br><a href='https://mail.google.com/'>Gmail</a>",
-					8000
+					8000,
 				);
 				counts = {};
 				email = '';

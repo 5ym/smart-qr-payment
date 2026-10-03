@@ -20,7 +20,7 @@ FROM oven/bun:1.4-slim AS runtime
 WORKDIR /app
 ENV NODE_ENV=production
 ENV PORT=3000
-ENV DATABASE_URL=/app/data/sqp.db
+ENV DATABASE_URL=/app/data/mogiri.db
 
 COPY --from=build /app/build ./build
 # Seed script (optional): run with `bun run ./src/lib/server/db/seed.ts`

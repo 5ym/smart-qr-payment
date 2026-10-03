@@ -1,5 +1,5 @@
 <script lang="ts">
-import '../app.scss';
+import '../app.css';
 import Toasts from '#lib/components/Toasts.svelte';
 import { enhance } from '$app/forms';
 import { page } from '$app/state';

@@ -1,5 +1,5 @@
 /*
- * 見た目は Pico CSS(v2)。使う部品だけを SCSS で読み込む。
+ * 見た目は Blades の Pico(Pico CSS v2 を引き継いだもの。素の CSS で、Sass は要らない)。
  *
  * **Tailwind + daisyUI をやめた。** 出てくる部品は箱・札・ボタン・入力欄くらいで、
  * utility class を並べるより素の HTML を整えるほうが小さく、後から読んで分かる
@@ -7,28 +7,12 @@
  *
  * **色は Pico の既定のまま使う。** 元のテーマの色は写さない。
  * --ui-* は Pico の変数から引いてあるので、明暗の切り替えにもそのまま追従する。
+ *
+ * **Pico は `pico` の層(@layer)に入れる。** 層に入らないこちらの規則は、詳細度に関係なく
+ * 必ず Pico に勝つ。Pico の強い選択子に合わせて同じ強さで書き直す、という張り合いが要らない。
+ * 各画面の <style> も同じく層の外なので、Pico より必ず勝つ。
  */
-@use "@picocss/pico/scss/pico" with (
-	$enable-semantic-container: false,
-	$enable-responsive-typography: false,
-	$enable-responsive-spacings: false,
-	$modules: (
-		"layout/landmarks": false,
-		"content/figure": false,
-		"forms/input-color": false,
-		"forms/input-range": false,
-		"forms/input-file": false,
-		"components/accordion": false,
-		/*
-		 * **card は切らない。** --pico-card-background-color と --pico-card-box-shadow は
-		 * このモジュールが有効なときだけ Pico が出力する。切ると下の .panel の地と影が
-		 * 空になり、箱が透明になる(明暗どちらの値も一緒に消える)
-		 */
-		"components/dropdown": false,
-		"components/nav": false,
-		"components/tooltip": false
-	)
-);
+@import "@anyblades/blades/pico" layer(pico);
 
 :root {
 	/* Web フォントは束ねない(OS のフォントに任せる) */
@@ -46,7 +30,7 @@
 }
 
 /*
- * この app.scss で使う色は**すべて Pico の変数から引く**。自前の色を持たないので、
+ * この app.css で使う色は**すべて Pico の変数から引く**。自前の色を持たないので、
  * Pico 側の明暗の切り替え(prefers-color-scheme / data-theme)にそのまま追従する
  */
 :root {
@@ -87,6 +71,39 @@
 }
 [data-theme="dark"] {
 	--ui-warn: #f0b429;
+}
+
+/*
+ * **Blades で増えた・変わったところを Pico の頃に戻す。** Blades の Pico は部品を選べず丸ごと1枚で来る
+ * (部品ごとに読めるようにする話は anyblades/blades#169)。Pico の Sass で外していた部品
+ * (nav・dropdown・tooltip・accordion・figure・色/範囲/ファイルの入力欄・body 直下の余白)は
+ * こちらの要素に当たらないか、こちらの規則が上書きするので戻すものは無い。Blades で既定の値が
+ * 変わったもののうち、こちらの要素に当たるものだけをここで戻す。部品ごとに読めるようになったら、
+ * この塊ごと消す
+ */
+/*
+ * 影。Blades は 1 枚の影に簡単にしていて、Pico の頃(7 枚重ね)より濃く見える。
+ * .panel と上の帯の影(--ui-shadow → --pico-card-box-shadow → --pico-box-shadow)が変わるので、
+ * Pico の Sass が出していた値をそのまま書く。色だけ明暗で持ち替える
+ */
+:root {
+	--ui-shadow-color: 129 145 181;
+	--pico-box-shadow:
+		0.0145rem 0.029rem 0.174rem rgb(var(--ui-shadow-color) / 0.01698),
+		0.0335rem 0.067rem 0.402rem rgb(var(--ui-shadow-color) / 0.024),
+		0.0625rem 0.125rem 0.75rem rgb(var(--ui-shadow-color) / 0.03),
+		0.1125rem 0.225rem 1.35rem rgb(var(--ui-shadow-color) / 0.036),
+		0.2085rem 0.417rem 2.502rem rgb(var(--ui-shadow-color) / 0.04302),
+		0.5rem 1rem 6rem rgb(var(--ui-shadow-color) / 0.06),
+		0 0 0 0.0625rem rgb(var(--ui-shadow-color) / 0.015);
+}
+@media (prefers-color-scheme: dark) {
+	:root:not([data-theme="light"]) {
+		--ui-shadow-color: 7 8.5 12;
+	}
+}
+[data-theme="dark"] {
+	--ui-shadow-color: 7 8.5 12;
 }
 
 html {
